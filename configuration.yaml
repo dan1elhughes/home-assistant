@@ -6,6 +6,11 @@ tts:
   - platform: google_translate
 
 group: !include groups.yaml
-automation: !include automations.yaml
-script: !include scripts.yaml
-scene: !include scenes.yaml
+
+automation manual: !include_dir_merge_list automations/
+automation ui: !include automations.yaml
+
+script ui: !include scripts.yaml
+
+scene manual: !include_dir_list scenes/
+scene ui: !include scenes.yaml

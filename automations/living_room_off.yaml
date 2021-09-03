@@ -1,0 +1,13 @@
+- alias: "Living room: Off"
+  mode: single
+  trigger:
+    - platform: device
+      type: turned_off
+      device_id: 65ba194082c4a7958fd4458384de21a7
+      entity_id: light.living_room_lamp
+      domain: light
+  action:
+    - type: turn_off
+      device_id: 7bdd071ef03c90a3a5a9a7ff0fd4dee5
+      entity_id: switch.bsd29_1
+      domain: switch

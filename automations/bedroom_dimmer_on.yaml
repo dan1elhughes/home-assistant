@@ -1,0 +1,19 @@
+- alias: "Bedroom dimmer: On"
+  mode: single
+  trigger:
+    - platform: event
+      event_type: zha_event
+      event_data:
+        device_ieee: 00:17:88:01:09:a5:5a:4f
+        command: on_press
+  action:
+    - type: turn_on
+      device_id: 3a54b48bbfa668b4dd79ad4020264556
+      entity_id: light.bedroom_lamp_left
+      domain: light
+      brightness_pct: 100
+    - type: turn_on
+      device_id: 72123316443cca933eb72ca76045b099
+      entity_id: light.bedroom_lamp_right
+      domain: light
+      brightness_pct: 100

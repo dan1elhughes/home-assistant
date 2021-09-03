@@ -11,6 +11,13 @@ office_lights:
     - light.office_lamp
     - light.shelf_lighting_left
 
+living_room_lights:
+  name: "Living room lights"
+  entities:
+    - light.tv_light
+    - light.living_room_lamp
+    - light.living_room_speaker
+
 # PRESENCE
 presence_home:
   name: "Presence home"

@@ -1,0 +1,9 @@
+name: Everything off
+icon: hass:exit-to-app
+entities:
+  group.living_room_lights:
+    state: "off"
+  group.office_lights:
+    state: "off"
+  group.bedroom_lights:
+    state: "off"

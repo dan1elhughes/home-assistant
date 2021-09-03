@@ -1,0 +1,12 @@
+name: Everything on
+icon: hass:door-open
+entities:
+  group.living_room_lights:
+    state: "on"
+    brightness_pct: 100
+  group.office_lights:
+    state: "on"
+    brightness_pct: 100
+  group.bedroom_lights:
+    state: "on"
+    brightness_pct: 100

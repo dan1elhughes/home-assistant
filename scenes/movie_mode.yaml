@@ -1,0 +1,7 @@
+name: "Movie mode"
+icon: hass:movie
+entities:
+  group.living_room_lights:
+    state: "on"
+    brightness_pct: 100
+    color_temp: 500

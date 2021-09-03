@@ -1,0 +1,13 @@
+- alias: "Office: desk button tap"
+  mode: single
+  trigger:
+    - platform: event
+      event_type: zha_event
+      event_data:
+        device_ieee: 00:12:4b:00:22:cf:67:01
+        command: toggle
+  action:
+    - type: toggle
+      device_id: ded7d0fc4f491c9b7572f031c5ee964b
+      entity_id: light.keylight
+      domain: light

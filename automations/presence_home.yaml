@@ -1,0 +1,12 @@
+- alias: Arrive home
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: group.presence_home
+      from: not_home
+      to: home
+  action:
+    - scene: scene.everything_on
+    - service: notify.mobile_app_pixel_5
+      data:
+        message: Arrived home
