@@ -1,0 +1,20 @@
+# LIGHTS
+bedroom_lights:
+  name: "Bedroom lights"
+  entities:
+    - light.bedroom_lamp_left
+    - light.bedroom_lamp_right
+
+office_lights:
+  name: "Office lights"
+  entities:
+    - light.office_lamp
+    - light.shelf_lighting_left
+
+# PRESENCE
+presence_home:
+  name: "Presence home"
+  entities:
+    - person.admin
+    - person.mum
+    - person.george
