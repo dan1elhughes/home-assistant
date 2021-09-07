@@ -3,5 +3,5 @@ icon: hass:movie
 entities:
   group.living_room_lights:
     state: "on"
-    brightness_pct: 100
+    brightness: 100
     color_temp: 500
