@@ -20,7 +20,7 @@ living_room_lights:
 
 # PRESENCE
 presence_home:
-  name: "Presence home"
+  name: "Presence"
   entities:
     - person.admin
     - person.mum
