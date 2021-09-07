@@ -3,7 +3,7 @@
   trigger:
     - platform: device
       type: turned_off
-      device_id: 65ba194082c4a7958fd4458384de21a7
+      device_id: 2460b267c6c74fe6156419f6d4e7b7d3
       entity_id: light.living_room_lamp
       domain: light
   action:
