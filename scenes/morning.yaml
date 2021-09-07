@@ -3,6 +3,5 @@ icon: hass:clock
 entities:
   group.bedroom_lights:
     state: "on"
-    entity_id:
-      - light.bedroom_lamp_left
-      - light.bedroom_lamp_right
+    brightness: 255
+    color_temp: 500
