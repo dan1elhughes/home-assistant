@@ -1,4 +1,4 @@
-- alias: Arrive home
+- alias: "Arrive: lights"
   mode: single
   trigger:
     - platform: state
@@ -10,19 +10,31 @@
       after: sunset
   action:
     - scene: scene.everything_on
+
+- alias: "Arrive: notify+audio"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: group.presence_home
+      from: not_home
+      to: home
+  action:
     - service: notify.mobile_app_pixel_5
       data:
         message: Arrived home
-    # - service: media_player.volume_set
-    #   target:
-    #     entity_id: group.media_players
-    #   data:
-    #     volume_level: 0.3
-    # - service: tts.google_translate_say
-    #   target:
-    #     entity_id: group.media_players
-    #   data:
-    #     message: "Welcome home."
+    - service: media_player.turn_on
+      target:
+        entity_id: media_player.kitchen
+    - service: media_player.volume_set
+      target:
+        entity_id: media_player.kitchen
+      data:
+        volume_level: 0.5
+    - service: tts.google_translate_say
+      target:
+        entity_id: media_player.kitchen
+      data:
+        message: "Welcome home."
 
 - alias: Leave home
   mode: single
