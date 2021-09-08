@@ -18,6 +18,14 @@ living_room_lights:
     - light.living_room_lamp
     - light.living_room_speaker
 
+# MEDIA PLAYERS
+media_players:
+  name: "Media players"
+  entities:
+    - media_player.kitchen
+    - media_player.office
+    - media_player.bedroom_speaker
+
 # PRESENCE
 presence_home:
   name: "Presence"

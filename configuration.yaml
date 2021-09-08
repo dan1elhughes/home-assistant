@@ -1,6 +1,10 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+homeassistant:
+  media_dirs:
+    media: /media
+
 # Text to speech
 tts:
   - platform: google_translate

@@ -5,8 +5,34 @@
       entity_id: group.presence_home
       from: not_home
       to: home
+  condition:
+    - condition: sun
+      after: sunset
   action:
     - scene: scene.everything_on
     - service: notify.mobile_app_pixel_5
       data:
         message: Arrived home
+    # - service: media_player.volume_set
+    #   target:
+    #     entity_id: group.media_players
+    #   data:
+    #     volume_level: 0.3
+    # - service: tts.google_translate_say
+    #   target:
+    #     entity_id: group.media_players
+    #   data:
+    #     message: "Welcome home."
+
+- alias: Leave home
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: group.presence_home
+      from: home
+      to: not_home
+  action:
+    - scene: scene.everything_off
+    - service: notify.mobile_app_pixel_5
+      data:
+        message: Away mode
