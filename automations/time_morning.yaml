@@ -9,4 +9,23 @@
       entity_id: group.presence_home
       state: home
   action:
-    - scene: scene.morning
+    # 08:30
+    - service: light.turn_on
+      target:
+        entity_id: group.bedroom_lights
+      data:
+        brightness: 255
+        color_temp: 500
+
+        # 60 * 10. Appears to start the transition then immediately continue the
+        # automation steps, rather than starting, transitioning, then
+        # continuing.
+        transition: 600
+
+    # 08:30 - 10:00
+    - delay: "01:30:00"
+
+    # 10:00
+    - service: light.turn_off
+      target:
+        entity_id: group.bedroom_lights

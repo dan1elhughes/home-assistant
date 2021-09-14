@@ -1,7 +1,0 @@
-name: Morning
-icon: hass:clock
-entities:
-  group.bedroom_lights:
-    state: "on"
-    brightness: 255
-    color_temp: 500
