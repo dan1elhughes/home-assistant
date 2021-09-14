@@ -1,0 +1,7 @@
+name: "PC streaming"
+icon: mdi:gamepad-variant-outline
+entities:
+  group.office_lights:
+    state: "off"
+  switch.pc_strip:
+    state: "on"
