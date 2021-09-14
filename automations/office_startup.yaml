@@ -11,7 +11,7 @@
   action:
     - type: turn_on
       device_id: bf841bc35e5149cd8e33075fdfd07311
-      entity_id: switch.bsd29_2
+      entity_id: switch.pc_strip
       domain: switch
     - type: turn_on
       device_id: 111c672dcd911159145b56bff87290a0

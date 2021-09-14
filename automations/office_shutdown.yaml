@@ -9,11 +9,11 @@
   action:
     - type: turn_off
       device_id: bf841bc35e5149cd8e33075fdfd07311
-      entity_id: switch.bsd29_2
+      entity_id: switch.pc_strip
       domain: switch
     - type: turn_off
       device_id: 8219482063c73b32176be61a20de405a
-      entity_id: switch.bsd29_3
+      entity_id: switch.office_fan
       domain: switch
     - type: turn_off
       device_id: ded7d0fc4f491c9b7572f031c5ee964b

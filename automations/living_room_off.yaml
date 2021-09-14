@@ -9,5 +9,5 @@
   action:
     - type: turn_off
       device_id: 7bdd071ef03c90a3a5a9a7ff0fd4dee5
-      entity_id: switch.bsd29_1
+      entity_id: switch.living_room_fan
       domain: switch

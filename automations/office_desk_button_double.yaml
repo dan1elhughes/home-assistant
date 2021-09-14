@@ -9,5 +9,5 @@
   action:
     - type: toggle
       device_id: 8219482063c73b32176be61a20de405a
-      entity_id: switch.bsd29_3
+      entity_id: switch.office_fan
       domain: switch
