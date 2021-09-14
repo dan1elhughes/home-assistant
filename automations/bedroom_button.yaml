@@ -1,0 +1,12 @@
+- alias: "Bedroom: Button press"
+  mode: single
+  trigger:
+    - platform: event
+      event_type: zha_event
+      event_data:
+        device_ieee: 00:17:88:01:06:07:6c:d8
+        command: on_press
+  action:
+    service: light.toggle
+    target:
+      entity_id: group.bedroom_lights
