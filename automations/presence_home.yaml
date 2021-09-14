@@ -11,7 +11,7 @@
   action:
     - scene: scene.everything_on
 
-- alias: "Arrive: notify+audio"
+- alias: "Arrive: notify"
   mode: single
   trigger:
     - platform: state
@@ -22,19 +22,6 @@
     - service: notify.mobile_app_pixel_5
       data:
         message: Arrived home
-    - service: media_player.turn_on
-      target:
-        entity_id: media_player.kitchen
-    - service: media_player.volume_set
-      target:
-        entity_id: media_player.kitchen
-      data:
-        volume_level: 0.5
-    - service: tts.google_translate_say
-      target:
-        entity_id: media_player.kitchen
-      data:
-        message: "Welcome home."
 
 - alias: Leave home
   mode: single
