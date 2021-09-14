@@ -7,3 +7,5 @@ entities:
     state: "off"
   group.bedroom_lights:
     state: "off"
+  group.fans:
+    state: "off"
