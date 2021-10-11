@@ -5,6 +5,9 @@
       entity_id:
         - group.power_monitors
   action:
-    service: switch.turn_on
-    target:
-      entity_id: group.power_monitors
+    - service: switch.turn_on
+      target:
+        entity_id: group.power_monitors
+    - service: notify.mobile_app_pixel_5
+      data:
+        message: Power monitor was off, restarted
