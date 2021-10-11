@@ -25,6 +25,7 @@ power_monitors:
   all: true # Only "on" if all entities are on
   entities:
     - switch.dishwasher
+    - switch.washing_machine
 
 # MEDIA PLAYERS
 media_players:
