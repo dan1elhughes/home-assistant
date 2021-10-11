@@ -1,0 +1,10 @@
+- alias: "Power monitors: Always on"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - group.power_monitors
+  action:
+    service: switch.turn_on
+    target:
+      entity_id: group.power_monitors

@@ -18,6 +18,14 @@ living_room_lights:
     - light.living_room_lamp
     - light.living_room_speaker
 
+# ALWAYS-ON SWITCHES
+power_monitors:
+  name: "Power monitors"
+  icon: "hass:power-plug"
+  all: true # Only "on" if all entities are on
+  entities:
+    - switch.dishwasher
+
 # MEDIA PLAYERS
 media_players:
   name: "Media players"
