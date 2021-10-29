@@ -1,0 +1,22 @@
+- alias: "Door: open"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door
+      from: closed
+      to: open
+  action:
+    - service: notify.mobile_app_pixel_5
+      data:
+        message: Door open
+- alias: "Door: closed"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.front_door
+      from: open
+      to: closed
+  action:
+    - service: notify.mobile_app_pixel_5
+      data:
+        message: Door closed
