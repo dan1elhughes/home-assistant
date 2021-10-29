@@ -3,8 +3,8 @@
   trigger:
     - platform: state
       entity_id: binary_sensor.front_door
-      from: closed
-      to: open
+      from: "off"
+      to: "on"
   action:
     - service: notify.mobile_app_pixel_5
       data:
@@ -14,8 +14,8 @@
   trigger:
     - platform: state
       entity_id: binary_sensor.front_door
-      from: open
-      to: closed
+      from: "on"
+      to: "off"
   action:
     - service: notify.mobile_app_pixel_5
       data:
