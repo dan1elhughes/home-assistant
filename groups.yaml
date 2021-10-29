@@ -26,6 +26,7 @@ power_monitors:
   entities:
     - switch.dishwasher
     - switch.washing_machine
+    - switch.microwave
 
 # MEDIA PLAYERS
 media_players:
