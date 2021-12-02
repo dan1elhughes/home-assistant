@@ -49,4 +49,5 @@ presence_home:
   entities:
     - person.admin
     - person.mum
+    - person.dad
     - person.george
