@@ -15,7 +15,7 @@
   condition:
     - condition: state
       entity_id: group.presence_home
-      state: home
+      state: not_home
   action:
     - scene: scene.everything_off
     - service: notify.mobile_app_pixel_5
