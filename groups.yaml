@@ -14,9 +14,10 @@ office_lights:
 living_room_lights:
   name: "Living room lights"
   entities:
-    - light.tv_light
+    - light.dining_room_table
     - light.living_room_lamp
     - light.living_room_speaker
+    - light.tv_light
 
 # ALWAYS-ON SWITCHES
 power_monitors:
