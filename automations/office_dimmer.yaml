@@ -1,15 +1,25 @@
-- alias: "Office dimmer: Toggle"
+- alias: "Office dimmer: Short-hold toggle"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
         device_ieee: 00:17:88:01:09:a6:cf:36
-        command: on_press
+        command: on_short_release
   action:
     service: light.toggle
     target:
       entity_id: light.office_lamp
+- alias: "Office dimmer: Long-hold scene"
+  mode: single
+  trigger:
+    - platform: event
+      event_type: zha_event
+      event_data:
+        device_ieee: 00:17:88:01:09:a6:cf:36
+        command: on_long_release
+  action:
+    - scene: scene.office_daytime
 - alias: "Office dimmer: Up"
   mode: single
   trigger:
