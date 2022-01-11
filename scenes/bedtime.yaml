@@ -1,0 +1,13 @@
+name: Bedtime
+icon: mdi:bed-outline
+entities:
+  group.bedroom_lights:
+    state: "on"
+    color_temp: 500
+    brightness: 3
+  group.living_room_lights:
+    state: "off"
+  group.office_lights:
+    state: "off"
+  group.fans:
+    state: "off"
