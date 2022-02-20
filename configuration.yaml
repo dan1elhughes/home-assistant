@@ -5,6 +5,9 @@ homeassistant:
   media_dirs:
     media: /media
 
+recorder:
+  purge_keep_days: 60
+
 # Text to speech
 tts:
   - platform: google_translate
