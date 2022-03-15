@@ -1,0 +1,15 @@
+name: Day mode
+icon: mdi:weather-sunny
+entities:
+  group.living_room_lights:
+    state: "on"
+    color_temp: 300
+    brightness: 255
+  group.office_lights:
+    state: "on"
+    color_temp: 300
+    brightness: 255
+  group.bedroom_lights:
+    state: "on"
+    color_temp: 300
+    brightness: 255
