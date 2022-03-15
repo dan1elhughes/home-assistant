@@ -1,0 +1,12 @@
+- alias: "Balcony: Auto-off"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: light.dining_room_table
+      from: "off"
+      to: "on"
+      for: 00:10:00
+  action:
+    - service: light.turn_off
+      data:
+        entity_id: light.dining_room_table
