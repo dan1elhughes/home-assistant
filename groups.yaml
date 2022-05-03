@@ -56,3 +56,4 @@ presence_home:
     - person.admin
     - person.mum
     - person.dad
+    - person.katie
