@@ -32,7 +32,6 @@ power_monitors:
     - switch.dishwasher
     - switch.washing_machine
     - switch.microwave
-    - switch.amplifier
 
 # MEDIA PLAYERS
 media_players:
