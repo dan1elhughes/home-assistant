@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
 
-ip="100.77.199.70"
+ip="10.10.10.50"
 
 rsync -rvzP . root@$ip:/media/pit/volumes/homeassistant
