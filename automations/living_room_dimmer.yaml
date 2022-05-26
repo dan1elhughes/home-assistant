@@ -19,9 +19,9 @@
         device_ieee: 00:17:88:01:09:a6:b8:90
         command: on_long_release
   action:
-    service: light.toggle
+    service: switch.toggle
     target:
-      entity_id: group.balcony_lights
+      entity_id: switch.living_room_fan
 - alias: "Living room dimmer: Up"
   mode: single
   trigger:
