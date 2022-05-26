@@ -59,6 +59,9 @@
         device_ieee: 00:17:88:01:09:a6:b8:90
         command: off_press
   action:
-    service: light.turn_off
-    target:
-      entity_id: group.living_room_lights
+    - service: light.turn_off
+      target:
+        entity_id: group.living_room_lights
+    - service: light.turn_off
+      target:
+        entity_id: balcony_lights
