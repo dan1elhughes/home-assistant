@@ -64,4 +64,4 @@
         entity_id: group.living_room_lights
     - service: light.turn_off
       target:
-        entity_id: balcony_lights
+        entity_id: group.balcony_lights
