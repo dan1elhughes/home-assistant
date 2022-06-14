@@ -6,7 +6,7 @@
       from: "off"
       to: "on"
   action:
-    - service: notify.mobile_app_pixel_5
+    - service: notify.dan
       data:
         message: Door open
 - alias: "Door: closed"
@@ -17,6 +17,6 @@
       from: "on"
       to: "off"
   action:
-    - service: notify.mobile_app_pixel_5
+    - service: notify.dan
       data:
         message: Door closed

@@ -8,6 +8,6 @@
     - service: switch.turn_on
       target:
         entity_id: group.power_monitors
-    - service: notify.mobile_app_pixel_5
+    - service: notify.dan
       data:
         message: Power monitor was off, restarted

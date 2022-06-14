@@ -21,3 +21,9 @@ script ui: !include scripts.yaml
 
 scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
+
+notify:
+  - platform: group
+    name: dan
+    services:
+      - service: mobile_app_pixel_6

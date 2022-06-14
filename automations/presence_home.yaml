@@ -19,7 +19,7 @@
       from: not_home
       to: home
   action:
-    - service: notify.mobile_app_pixel_5
+    - service: notify.dan
       data:
         message: Arrived home
 
@@ -32,6 +32,6 @@
       to: not_home
   action:
     - scene: scene.everything_off
-    - service: notify.mobile_app_pixel_5
+    - service: notify.dan
       data:
         message: Away mode
