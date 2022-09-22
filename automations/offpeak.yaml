@@ -1,0 +1,21 @@
+- alias: "Off peak: Start"
+  id: off_peak_start
+  mode: single
+  trigger:
+    - platform: time
+      at: "00:30:00"
+  action:
+    - service: homeassistant.turn_on
+      target:
+        entity_id: group.off_peak
+
+- alias: "Off peak: End"
+  id: off_peak_end
+  mode: single
+  trigger:
+    - platform: time
+      at: "07:30:00"
+  action:
+    - service: homeassistant.turn_off
+      target:
+        entity_id: group.off_peak
