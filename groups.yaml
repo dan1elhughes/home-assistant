@@ -23,16 +23,6 @@ balcony_lights:
   entities:
     - light.dining_room_table
 
-# ALWAYS-ON SWITCHES
-power_monitors:
-  name: "Power monitors"
-  icon: "hass:power-plug"
-  all: true # Only "on" if all entities are on
-  entities:
-    - switch.dishwasher
-    - switch.washing_machine
-    - switch.microwave
-
 # MEDIA PLAYERS
 media_players:
   name: "Media players"
