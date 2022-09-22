@@ -50,7 +50,6 @@ off_peak:
 presence_home:
   name: "Presence"
   entities:
-    - person.admin
     - person.dan
     - person.mum
     - person.dad
