@@ -32,8 +32,8 @@ media_players:
 fans:
   name: "Fans"
   entities:
-    - switch.living_room_fan
-    - switch.office_fan
+    - fan.living_room_fan
+    - fan.office_fan
 
 off_peak:
   name: "Off peak"
