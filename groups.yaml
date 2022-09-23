@@ -17,10 +17,6 @@ living_room_lights:
     - light.living_room_lamp
     - light.living_room_speaker
     - light.tv_light
-
-balcony_lights:
-  name: "Balcony lights"
-  entities:
     - light.dining_room_table
 
 # MEDIA PLAYERS
