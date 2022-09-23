@@ -1,8 +1,2 @@
-.HA_VERSION
-/.storage/
-/image/
-/tts/
-
-# Logs and DBs
-home-assistant*
-zigbee*
+/dist
+/.vscode

@@ -1,0 +1,19 @@
+{
+  "dimmers": [
+    {
+      "name": "Bedroom dimmer",
+      "group": "group.bedroom_lights",
+      "ieee": "00:17:88:01:09:a5:5a:4f"
+    },
+    {
+      "name": "Living room dimmer",
+      "group": "group.living_room_lights",
+      "ieee": "00:17:88:01:09:a6:b8:90"
+    },
+    {
+      "name": "Office dimmer",
+      "group": "group.office_lights",
+      "ieee": "00:17:88:01:09:a6:cf:36"
+    }
+  ]
+}

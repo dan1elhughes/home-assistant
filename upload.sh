@@ -1,4 +1,5 @@
 #!/usr/bin/env bash
 
-rsync -rvzP . root@10.10.10.50:/media/pit/volumes/homeassistant
-scp -rp ./* root@10.10.10.10:/config/
+ssh root@10.10.10.10 "rm -rv /config/automations"
+ssh root@10.10.10.10 "rm -rv /config/scenes"
+scp -rp ./dist/* root@10.10.10.10:config

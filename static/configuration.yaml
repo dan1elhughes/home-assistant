@@ -1,9 +1,15 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
-homeassistant:
-  media_dirs:
-    media: /media
+lovelace:
+  mode: storage
+  dashboards:
+    lovelace-yaml:
+      mode: yaml
+      title: YAML
+      icon: mdi:script
+      show_in_sidebar: true
+      filename: dashboards.yaml
 
 recorder:
   purge_keep_days: 60

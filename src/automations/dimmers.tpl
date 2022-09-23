@@ -1,52 +1,57 @@
-- alias: "Bedroom dimmer: Toggle"
+{% for dimmer in dimmers %}
+- alias: "{{ dimmer.name }}: On"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
-        device_ieee: 00:17:88:01:09:a5:5a:4f
-        command: on_press
+        device_ieee: "{{ dimmer.ieee }}"
+        command: on_short_release
   action:
-    service: light.toggle
+    service: light.turn_on
     target:
-      entity_id: group.bedroom_lights
-- alias: "Bedroom dimmer: Up"
+      entity_id: "{{ dimmer.group }}"
+    data:
+      brightness_pct: 100
+      color_temp: 500
+- alias: "{{ dimmer.name }}: Up"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
-        device_ieee: 00:17:88:01:09:a5:5a:4f
+        device_ieee: "{{ dimmer.ieee }}"
         command: up_press
   action:
     service: light.turn_on
     target:
-      entity_id: group.bedroom_lights
+      entity_id: "{{ dimmer.group }}"
     data:
       brightness_step_pct: 20
-- alias: "Bedroom dimmer: Down"
+- alias: "{{ dimmer.name }}: Down"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
-        device_ieee: 00:17:88:01:09:a5:5a:4f
+        device_ieee: "{{ dimmer.ieee }}"
         command: down_press
   action:
     service: light.turn_on
     target:
-      entity_id: group.bedroom_lights
+      entity_id: "{{ dimmer.group }}"
     data:
       brightness_step_pct: -20
-- alias: "Bedroom dimmer: Off"
+- alias: "{{ dimmer.name }}: Off"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
-        device_ieee: 00:17:88:01:09:a5:5a:4f
+        device_ieee: "{{ dimmer.ieee }}"
         command: off_press
   action:
     service: light.turn_off
     target:
-      entity_id: group.bedroom_lights
+      entity_id: "{{ dimmer.group }}"
+{% endfor %}
