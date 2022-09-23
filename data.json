@@ -15,5 +15,12 @@
       "group": "group.office_lights",
       "ieee": "00:17:88:01:09:a6:cf:36"
     }
+  ],
+  "batteries": [
+    "sensor.bedroom_button_battery",
+    "sensor.bedroom_dimmer_battery",
+    "sensor.front_door_battery",
+    "sensor.living_room_battery",
+    "sensor.office_dimmer_battery "
   ]
 }

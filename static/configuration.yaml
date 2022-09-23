@@ -6,8 +6,8 @@ lovelace:
   dashboards:
     lovelace-yaml:
       mode: yaml
-      title: YAML
-      icon: mdi:script
+      title: Home
+      icon: mdi:home
       show_in_sidebar: true
       filename: dashboards.yaml
 
