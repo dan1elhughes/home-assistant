@@ -1,4 +1,12 @@
 {
+  "buttons": [
+    {
+      "name": "Bedroom button",
+      "ieee": "00:17:88:01:06:07:6c:d8",
+      "toggle": "group.bedroom_lights",
+      "scene": "scene.bedtime"
+    }
+  ],
   "dimmers": [
     {
       "name": "Bedroom dimmer",

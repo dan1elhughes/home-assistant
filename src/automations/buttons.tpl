@@ -1,22 +1,24 @@
-- alias: "Bedroom: Button press"
+{% for button in buttons %}
+- alias: "{{ button.name }}: Toggle"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
-        device_ieee: 00:17:88:01:06:07:6c:d8
+        device_ieee: {{ button.ieee }}
         command: on_short_release
   action:
     service: light.toggle
     target:
-      entity_id: group.bedroom_lights
+      entity_id: {{ button.toggle }}
 - alias: "Bedroom: Long-hold scene"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
-        device_ieee: 00:17:88:01:06:07:6c:d8
+        device_ieee: {{ button.ieee }}
         command: on_long_release
   action:
-    - scene: scene.bedtime
+    - scene: {{ button.scene }}
+{% endfor %}
