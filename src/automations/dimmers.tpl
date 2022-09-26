@@ -1,4 +1,5 @@
 {% for dimmer in dimmers %}
+### {{ dimmer.name }} ###
 - alias: "{{ dimmer.name }}: On"
   mode: single
   trigger:
@@ -54,4 +55,5 @@
     service: light.turn_off
     target:
       entity_id: "{{ dimmer.group }}"
+
 {% endfor %}
