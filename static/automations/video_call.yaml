@@ -1,0 +1,32 @@
+- alias: "Video call: started"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.dans_macbook_pro_camera_in_use
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: sensor.dans_macbook_pro_ssid
+      state: "irulan"
+  action:
+    - service: light.turn_on
+      data:
+        color_temp: 153
+        brightness_pct: 33
+      target:
+        entity_id: light.elgato_keylight
+
+- alias: "Video call: ended"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.dans_macbook_pro_camera_in_use
+      to: "off"
+  condition:
+    - condition: state
+      entity_id: sensor.dans_macbook_pro_ssid
+      state: "irulan"
+  action:
+    - service: light.turn_off
+      target:
+        entity_id: light.elgato_keylight
