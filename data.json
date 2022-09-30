@@ -17,16 +17,23 @@
     {
       "name": "Bedroom dimmer",
       "group": "group.bedroom_lights",
+      "scene": "scene.day_mode",
+      "fan": "fan.living_room_fan",
+      "^^ FIX THIS": "",
       "ieee": "00:17:88:01:09:a5:5a:4f"
     },
     {
       "name": "Living room dimmer",
       "group": "group.living_room_lights",
+      "scene": "scene.movie_mode",
+      "fan": "fan.living_room_fan",
       "ieee": "00:17:88:01:09:a6:b8:90"
     },
     {
       "name": "Office dimmer",
       "group": "group.office_lights",
+      "scene": "scene.office_daytime",
+      "fan": "fan.office_fan",
       "ieee": "00:17:88:01:09:a6:cf:36"
     }
   ],
