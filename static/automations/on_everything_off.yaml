@@ -1,4 +1,4 @@
-- alias: "When everything off"
+- alias: "Everything off -> Media players off"
   trigger:
     platform: event
     event_type: call_service
