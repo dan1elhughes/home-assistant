@@ -1,0 +1,12 @@
+- alias: "When everything off"
+  trigger:
+    platform: event
+    event_type: call_service
+    event_data:
+      service_data:
+        entity_id: scene.everything_off
+      domain: scene
+      service: turn_on
+  action:
+    service: media_player.turn_off
+    entity_id: all

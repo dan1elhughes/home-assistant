@@ -9,5 +9,3 @@ entities:
     state: "off"
   group.fans:
     state: "off"
-  group.media_players:
-    state: "off"
