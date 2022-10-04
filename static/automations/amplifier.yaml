@@ -19,6 +19,7 @@
     - platform: state
       entity_id: media_player.shield
       to: "off"
+      for: "00:02:00"
   condition:
     - condition: state
       entity_id: switch.amplifier
