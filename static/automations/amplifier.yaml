@@ -1,0 +1,29 @@
+- alias: "Amplifier on"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: media_player.shield
+      from: "off"
+  condition:
+    - condition: state
+      entity_id: switch.amplifier
+      state: "off"
+  action:
+    - service: switch.toggle
+      target:
+        entity_id: switch.amplifier
+
+- alias: "Amplifier off"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: media_player.shield
+      to: "off"
+  condition:
+    - condition: state
+      entity_id: switch.amplifier
+      state: "on"
+  action:
+    - service: switch.toggle
+      target:
+        entity_id: switch.amplifier
