@@ -1,6 +1,10 @@
 name: "Movie mode"
 icon: hass:movie
 entities:
+  group.bedroom_lights:
+    state: "off"
+  group.office_lights:
+    state: "off"
   group.living_room_lights:
     state: "on"
     brightness: 100

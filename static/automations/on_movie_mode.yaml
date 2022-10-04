@@ -1,0 +1,14 @@
+- alias: "Movie mode -> Dining room table off"
+  trigger:
+    platform: event
+    event_type: call_service
+    event_data:
+      service_data:
+        entity_id: scene.movie_mode
+      domain: scene
+      service: turn_on
+  action:
+    - delay: "00:00:02"
+    - service: light.turn_off
+      target:
+        entity_id: light.dining_room_table
