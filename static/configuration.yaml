@@ -33,3 +33,5 @@ notify:
     name: dan
     services:
       - service: mobile_app_pixel_6
+
+ecovacs: !include ecovacs.yaml
