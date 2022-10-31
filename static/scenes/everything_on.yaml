@@ -5,9 +5,16 @@ entities:
     state: "on"
     color_temp: 500
     brightness: 255
-  group.office_lights:
+  light.office_lamp:
     state: "on"
     color_temp: 500
+    brightness: 255
+  light.shelf_lighting_left:
+    state: "on"
+    rgb_color:
+      - 255
+      - 164
+      - 74
     brightness: 255
   group.bedroom_lights:
     state: "on"
