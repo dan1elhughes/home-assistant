@@ -1,13 +1,6 @@
 title: Home
 path: home
 views:
-  - title: Batteries
-    cards:
-      - type: entities
-        entities:
-        {% for sensor in batteries %}
-          - entity: {{ sensor }}
-        {% endfor %}
   - title: Environment
     cards:
       {% for room in rooms %}
@@ -29,3 +22,10 @@ views:
                 entity: "{{room.sensorPrefix}}humidity"
                 name: Humidity
       {% endfor %}
+  - title: Batteries
+    cards:
+      - type: entities
+        entities:
+        {% for sensor in batteries %}
+          - entity: {{ sensor }}
+        {% endfor %}
