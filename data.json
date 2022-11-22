@@ -20,8 +20,6 @@
       "name": "Bedroom dimmer",
       "group": "group.bedroom_lights",
       "scene": "scene.day_mode",
-      "fan": "fan.living_room_fan",
-      "^^ FIX THIS": "",
       "ieee": "00:17:88:01:09:a5:5a:4f"
     },
     {

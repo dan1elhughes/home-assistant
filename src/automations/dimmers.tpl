@@ -27,6 +27,7 @@
   action:
     - scene: {{ dimmer.scene }}
 
+{% if dimmer.fan %}
 - alias: "{{ dimmer.name }}: Double-tap"
   mode: single
   trigger:
@@ -39,6 +40,7 @@
     service: fan.toggle
     target:
       entity_id: "{{ dimmer.fan }}"
+{% endif %}
 
 - alias: "{{ dimmer.name }}: Up"
   mode: single
