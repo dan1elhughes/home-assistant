@@ -11,6 +11,17 @@ lovelace:
       show_in_sidebar: true
       filename: dashboards.yaml
 
+sensor:
+  - platform: time_date
+    display_options:
+      - "time"
+      - "date"
+      - "date_time"
+      - "date_time_utc"
+      - "date_time_iso"
+      - "time_date"
+      - "time_utc"
+
 recorder:
   purge_keep_days: 60
 
