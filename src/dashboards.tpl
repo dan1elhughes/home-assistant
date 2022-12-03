@@ -1,8 +1,22 @@
 title: Home
 path: home
 views:
-  - title: Environment
+  - title: Home
     cards:
+      - type: entities
+        title: Scenes
+        entities:
+          - scene.everything_on
+          - scene.day_mode
+          - scene.everything_off
+      - type: entities
+        entities:
+          - group.living_room_lights
+          - group.bedroom_lights
+          - group.office_lights
+          - group.off_peak
+          - group.fans
+          - group.presence_home
       {% for room in rooms %}
       - type: vertical-stack
         cards:
