@@ -48,13 +48,13 @@
     "sensor.living_room_sensor_battery",
     "sensor.office_dimmer_battery",
     "sensor.office_sensor_battery",
-    "sensor.server_room_sensor_battery"
+    "sensor.hallway_sensor_battery"
   ],
   "rooms": [
     { "name": "Living room", "sensorPrefix": "sensor.living_room_sensor_" },
     { "name": "Bedroom", "sensorPrefix": "sensor.bedroom_sensor_" },
     { "name": "Office", "sensorPrefix": "sensor.office_sensor_" },
-    { "name": "Server room", "sensorPrefix": "sensor.server_room_sensor_" },
+    { "name": "Hallway", "sensorPrefix": "sensor.hallway_sensor_" },
     { "name": "Boiler room", "sensorPrefix": "sensor.boiler_room_sensor_" }
   ]
 }
