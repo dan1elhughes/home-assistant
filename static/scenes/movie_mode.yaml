@@ -7,5 +7,5 @@ entities:
     state: "off"
   group.living_room_lights:
     state: "on"
-    brightness: 100
+    brightness: 150
     color_temp: 500
