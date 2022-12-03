@@ -22,7 +22,7 @@ views:
         cards:
           - type: markdown
             content: '# {{ room.name }}'
-          - square: true
+          - square: false
             columns: 2
             type: grid
             cards:
