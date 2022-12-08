@@ -9,14 +9,27 @@ views:
           - scene.everything_on
           - scene.day_mode
           - scene.everything_off
-      - type: entities
-        entities:
-          - group.living_room_lights
-          - group.bedroom_lights
-          - group.office_lights
-          - group.off_peak
-          - group.fans
-          - group.presence_home
+          - entity: input_boolean.presence_automations
+            name: Presence-based automation
+
+      - type: tile
+        entity: group.living_room_lights
+        icon: mdi:floor-lamp
+      - type: tile
+        entity: group.bedroom_lights
+        icon: mdi:floor-lamp
+      - type: tile
+        entity: group.office_lights
+        icon: mdi:floor-lamp
+      - type: tile
+        entity: group.off_peak
+        icon: mdi:home-clock
+      - type: tile
+        entity: group.fans
+        icon: mdi:fan
+      - type: tile
+        entity: group.presence_home
+        icon: mdi:home-account
       {% for room in rooms %}
       - type: vertical-stack
         cards:
