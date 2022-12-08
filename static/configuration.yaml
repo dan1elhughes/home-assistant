@@ -25,6 +25,12 @@ sensor:
 recorder:
   purge_keep_days: 60
 
+input_boolean:
+  presence_automations:
+    name: Enable presence-based automation
+    initial: true
+    icon: mdi:home-account
+
 # Text to speech
 tts:
   - platform: google_translate

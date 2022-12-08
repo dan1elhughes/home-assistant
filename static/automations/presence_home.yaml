@@ -8,6 +8,9 @@
   condition:
     - condition: sun
       after: sunset
+    - condition: state
+      entity_id: input_boolean.presence_automations
+      state: "on"
   action:
     - scene: scene.everything_on
 
@@ -18,6 +21,10 @@
       entity_id: group.presence_home
       from: not_home
       to: home
+  condition:
+    - condition: state
+      entity_id: input_boolean.presence_automations
+      state: "on"
   action:
     - service: notify.dan
       data:
@@ -30,6 +37,10 @@
       entity_id: group.presence_home
       from: home
       to: not_home
+  condition:
+    - condition: state
+      entity_id: input_boolean.presence_automations
+      state: "on"
   action:
     - scene: scene.everything_off
     - service: notify.dan

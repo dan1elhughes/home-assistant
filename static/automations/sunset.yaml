@@ -16,6 +16,9 @@
     - condition: state
       entity_id: group.presence_home
       state: not_home
+    - condition: state
+      entity_id: input_boolean.presence_automations
+      state: "on"
   action:
     - scene: scene.everything_off
     - service: notify.dan
