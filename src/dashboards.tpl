@@ -53,6 +53,10 @@ views:
           name: {{ mode.name }}
           icon: {{ mode.icon }}
       {% endfor %}
+
+      - type: sensor
+        entity: sensor.heater_power
+
       {% for room in rooms %}
       {% if room.heaterPrefix %}
       - type: thermostat
