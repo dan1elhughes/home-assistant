@@ -51,10 +51,35 @@
     "sensor.hallway_sensor_battery"
   ],
   "rooms": [
-    { "name": "Living room", "sensorPrefix": "sensor.living_room_sensor_" },
-    { "name": "Bedroom", "sensorPrefix": "sensor.bedroom_sensor_" },
-    { "name": "Office", "sensorPrefix": "sensor.office_sensor_" },
-    { "name": "Hallway", "sensorPrefix": "sensor.hallway_sensor_" },
-    { "name": "Boiler room", "sensorPrefix": "sensor.boiler_room_sensor_" }
+    {
+      "name": "Living room",
+      "sensorPrefix": "sensor.living_room_sensor_",
+      "heaterPrefix": "light.living_room_heater_"
+    },
+    {
+      "name": "Bedroom",
+      "sensorPrefix": "sensor.bedroom_sensor_",
+      "heaterPrefix": "light.bedroom_heater_"
+    },
+    {
+      "name": "Office",
+      "sensorPrefix": "sensor.office_sensor_",
+      "heaterPrefix": "light.office_heater_"
+    },
+    {
+      "name": "Hallway",
+      "sensorPrefix": "sensor.hallway_sensor_",
+      "heaterPrefix": "light.hallway_heater_"
+    },
+    {
+      "name": "Boiler room",
+      "sensorPrefix": "sensor.boiler_room_sensor_"
+    }
+  ],
+  "climateModes": [
+    { "name": "Away", "id": "away", "icon": "mdi:fire-off" },
+    { "name": "Sleep", "id": "sleep", "icon": "mdi:bed" },
+    { "name": "Home", "id": "home", "icon": "mdi:home" },
+    { "name": "Comfort", "id": "comfort", "icon": "mdi:heat-wave" }
   ]
 }

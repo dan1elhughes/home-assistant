@@ -52,3 +52,5 @@ notify:
       - service: mobile_app_pixel_6
 
 ecovacs: !include ecovacs.yaml
+
+climate: !include climate.yaml

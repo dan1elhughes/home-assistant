@@ -56,3 +56,26 @@ views:
         {% for sensor in batteries %}
           - entity: {{ sensor }}
         {% endfor %}
+  - title: Climate
+    cards:
+      - type: horizontal-stack
+        cards:
+        {% for mode in climateModes %}
+        - type: button
+          tap_action:
+            action: call-service
+            service: climate.set_preset_mode
+            data:
+              preset_mode: {{ mode.id }}
+            target:
+              entity_id: group.thermostats
+          entity: group.thermostats
+          name: {{ mode.name }}
+          icon: {{ mode.icon }}
+      {% endfor %}
+      {% for room in rooms %}
+      {% if room.heaterPrefix %}
+      - type: thermostat
+        entity: climate.{{room.name | lower | replace(" ", "_")}}
+      {% endif %}
+      {% endfor %}

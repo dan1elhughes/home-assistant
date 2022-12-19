@@ -51,3 +51,12 @@ presence_home:
     - person.mum
     - person.dad
     - person.katie
+
+thermostats:
+  name: "Thermostats"
+  entities:
+    {% for room in rooms %}
+    {% if room.heaterPrefix %}
+    - climate.{{room.name | lower | replace(" ", "_")}}
+    {% endif %}
+    {% endfor %}
