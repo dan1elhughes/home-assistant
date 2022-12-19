@@ -29,14 +29,19 @@ views:
       - type: tile
         entity: group.presence_home
         icon: mdi:home-account
-  - title: Batteries
+  - title: Power
     cards:
       - type: entities
         entities:
         {% for sensor in batteries %}
           - entity: {{ sensor }}
         {% endfor %}
-  - title: Climate
+      - type: sensor
+        entity: sensor.pm_energy_power
+        name: Washing machine power usage
+        icon: mdi:washing-machine
+
+  - title: Heating
     cards:
       - type: horizontal-stack
         cards:
