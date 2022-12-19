@@ -11,6 +11,8 @@ views:
           - scene.everything_off
           - entity: input_boolean.presence_automations
             name: Presence-based automation
+          - entity: input_boolean.heating_automations
+            name: Heating automation
       - type: tile
         entity: group.living_room_lights
         icon: mdi:floor-lamp

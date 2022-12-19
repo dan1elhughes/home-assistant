@@ -2,8 +2,9 @@
   id: off_peak_start
   mode: single
   trigger:
-    - platform: time
-      at: "00:30:00"
+    - platform: state
+      entity_id: schedule.offpeak
+      to: "on"
   action:
     - service: homeassistant.turn_on
       target:
@@ -13,8 +14,9 @@
   id: off_peak_end
   mode: single
   trigger:
-    - platform: time
-      at: "07:30:00"
+    - platform: state
+      entity_id: schedule.offpeak
+      to: "off"
   action:
     - service: homeassistant.turn_off
       target:

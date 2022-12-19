@@ -30,6 +30,20 @@ input_boolean:
     name: Enable presence-based automation
     initial: true
     icon: mdi:home-account
+  heating_automations:
+    name: Enable heating automation
+    initial: true
+    icon: mdi:thermostat-auto
+
+input_select:
+  heating_mode:
+    name: Heating mode
+    options:
+      - away
+      - sleep
+      - home
+      - comfort
+    icon: mdi:home-thermometer
 
 # Text to speech
 tts:
@@ -54,3 +68,5 @@ notify:
 ecovacs: !include ecovacs.yaml
 
 climate: !include climate.yaml
+
+schedule: !include schedules.yaml

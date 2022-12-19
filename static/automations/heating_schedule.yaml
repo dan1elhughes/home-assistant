@@ -1,0 +1,39 @@
+- alias: "Heating: Morning"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: schedule.heating
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: input_boolean.heating_automations
+      state: "on"
+    - condition: state
+      entity_id: input_boolean.presence_automations
+      state: "on"
+    - condition: state
+      entity_id: group.presence_home
+      state: home
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.heating_mode
+      data:
+        option: home
+
+- alias: "Heating: Overnight"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: schedule.heating
+      to: "off"
+  condition:
+    - condition: state
+      entity_id: input_boolean.heating_automations
+      state: "on"
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.heating_mode
+      data:
+        option: sleep
