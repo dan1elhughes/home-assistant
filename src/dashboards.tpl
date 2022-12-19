@@ -59,8 +59,21 @@ views:
           icon: {{ mode.icon }}
       {% endfor %}
 
-      - type: sensor
-        entity: sensor.heater_power
+      - type: entity-filter
+        entities:
+          {% for room in rooms %}
+          {% if room.heaterPrefix %}
+          - entity: {{room.heaterPrefix}}power
+            name: {{ room.name }}
+          {% endif %}
+          {% endfor %}
+        state_filter:
+          - 'on'
+        show_empty: false
+        card:
+          type: glance
+          title: "Active heaters"
+
 
       {% for room in rooms %}
       {% if room.heaterPrefix %}
@@ -68,3 +81,16 @@ views:
         entity: climate.{{room.name | lower | replace(" ", "_")}}
       {% endif %}
       {% endfor %}
+
+      - type: sensor
+        entity: sensor.heater_power
+
+      - type: history-graph
+        title: History
+        entities:
+          {% for room in rooms %}
+          {% if room.heaterPrefix %}
+          - entity: {{room.heaterPrefix}}power
+            name: {{ room.name }}
+          {% endif %}
+          {% endfor %}
