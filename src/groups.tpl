@@ -60,3 +60,9 @@ thermostats:
     - climate.{{room.name | lower | replace(" ", "_")}}
     {% endif %}
     {% endfor %}
+
+living_room_heaters_power:
+  name: "Living room heaters"
+  entities:
+    - light.living_room_heater_power
+    - light.living_room_secondary_heater_power

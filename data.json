@@ -54,7 +54,7 @@
     {
       "name": "Living room",
       "sensorPrefix": "sensor.living_room_sensor_",
-      "heaterPrefix": "light.living_room_heater_"
+      "heaterPrefix": "group.living_room_heaters_"
     },
     {
       "name": "Bedroom",
