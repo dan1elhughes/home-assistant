@@ -1,4 +1,4 @@
-- alias: "Arrive: lights"
+- alias: "Arrive home"
   mode: single
   trigger:
     - platform: state
@@ -6,31 +6,21 @@
       from: not_home
       to: home
   condition:
-    - condition: sun
-      after: sunset
     - condition: state
       entity_id: input_boolean.presence_automations
       state: "on"
   action:
     - scene: scene.everything_on
-
-- alias: "Arrive: notify"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: group.presence_home
-      from: not_home
-      to: home
-  condition:
-    - condition: state
-      entity_id: input_boolean.presence_automations
-      state: "on"
-  action:
     - service: notify.dan
       data:
         message: Arrived home
+    - service: climate.set_hvac_mode
+      target:
+        entity_id: group.thermostats
+      data:
+        hvac_mode: "heat"
 
-- alias: Leave home
+- alias: "Leave home"
   mode: single
   trigger:
     - platform: state
@@ -43,6 +33,11 @@
       state: "on"
   action:
     - scene: scene.everything_off
+    - service: climate.set_hvac_mode
+      target:
+        entity_id: group.thermostats
+      data:
+        hvac_mode: "off"
     - service: notify.dan
       data:
         message: Away mode
