@@ -8,8 +8,8 @@
   target_sensor: {{room.sensorPrefix}}temperature
   away_temp: 10
   sleep_temp: 14
-  home_temp: 17
-  comfort_temp: 19
+  home_temp: 18
+  comfort_temp: 20
   max_temp: 25
 {% endif %}
 {% endfor %}
