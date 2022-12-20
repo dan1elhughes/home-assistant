@@ -2,6 +2,7 @@ title: Home
 path: home
 views:
   - title: Home
+    icon: mdi:home-analytics
     cards:
       - type: entities
         title: Scenes
@@ -31,19 +32,9 @@ views:
       - type: tile
         entity: group.presence_home
         icon: mdi:home-account
-  - title: Power
-    cards:
-      - type: entities
-        entities:
-        {% for sensor in batteries %}
-          - entity: {{ sensor }}
-        {% endfor %}
-      - type: sensor
-        entity: sensor.pm_energy_power
-        name: Washing machine power usage
-        icon: mdi:washing-machine
 
   - title: Heating
+    icon: mdi:heat-wave
     cards:
       - type: horizontal-stack
         cards:
@@ -61,6 +52,11 @@ views:
           icon: {{ mode.icon }}
       {% endfor %}
 
+      - type: tile
+        entity: group.thermostats
+        icon: mdi:heat-wave
+        name: Heaters
+
       - type: entity-filter
         entities:
           {% for room in rooms %}
@@ -75,7 +71,6 @@ views:
         card:
           type: glance
           title: "Active heaters"
-
 
       {% for room in rooms %}
       {% if room.heaterPrefix %}
@@ -96,3 +91,52 @@ views:
             name: {{ room.name }}
           {% endif %}
           {% endfor %}
+
+  - title: Car
+    icon: mdi:car
+    cards:
+      - type: conditional
+        conditions:
+          - entity: binary_sensor.zoe_plugged_in
+            state: 'on'
+        card:
+          type: horizontal-stack
+          cards:
+            - type: entity
+              entity: sensor.zoe_charging_power
+              name: Power
+            - type: entity
+              entity: sensor.zoe_charging_remaining_time
+              name: Remaining
+      - type: horizontal-stack
+        cards:
+          - type: entity
+            entity: sensor.zoe_battery_autonomy
+            name: Range
+          - type: gauge
+            entity: sensor.zoe_battery_level
+            name: Battery level
+      - type: entities
+        entities:
+          - entity: sensor.zoe_battery_last_activity
+            name: Last activity
+            secondary_info: none
+          - entity: sensor.zoe_mileage
+            name: Mileage
+            secondary_info: none
+          - entity: sensor.zoe_outside_temperature
+            name: Outside temperature
+            secondary_info: none
+
+  - title: Power
+    icon: mdi:battery
+    cards:
+      - type: entities
+        entities:
+        {% for sensor in batteries %}
+          - entity: {{ sensor }}
+        {% endfor %}
+      - type: sensor
+        entity: sensor.pm_energy_power
+        name: Washing machine power usage
+        icon: mdi:washing-machine
