@@ -11,5 +11,7 @@
   home_temp: 18
   comfort_temp: 19
   max_temp: 25
+  cold_tolerance: 0.2
+  hot_tolerance: 0.2
 {% endif %}
 {% endfor %}
