@@ -15,6 +15,13 @@
       "long": "scene.everything_off"
     }
   ],
+  "toggles": [
+    {
+      "name": "Dehumidifier",
+      "ieee": "00:12:4b:00:29:0f:e9:89",
+      "target": "switch.dehumidifier"
+    }
+  ],
   "dimmers": [
     {
       "name": "Bedroom dimmer",
