@@ -8,9 +8,10 @@
   target_sensor: {{room.sensorPrefix}}temperature
   away_temp: 12
   sleep_temp: 15
-  home_temp: 18
+  home_temp: 17.5
   comfort_temp: 19
-  max_temp: 25
+  min_temp: 10
+  max_temp: 22
   cold_tolerance: 0.2
   hot_tolerance: 0.2
 {% endif %}
