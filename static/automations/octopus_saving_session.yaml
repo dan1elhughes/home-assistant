@@ -1,0 +1,45 @@
+- alias: "Saving session: started"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_saving_session
+      from: "off"
+      to: "on"
+  action:
+    - service: notify.dan
+      data:
+        title: ⚡ Saving session ⚡
+        message: Heating disabled
+        data:
+          channel: "Heating"
+          notification_icon: "mdi:heat-wave"
+    - service: climate.set_hvac_mode
+      target:
+        entity_id: group.thermostats
+      data:
+        hvac_mode: "off"
+
+- alias: "Saving session: ended while home"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_saving_session
+      from: "on"
+      to: "off"
+  condition:
+    - condition: state
+      entity_id: group.presence_home
+      state: home
+  action:
+    - service: notify.dan
+      data:
+        title: ⚡ Saving session ⚡
+        message: Heating re-enabled
+        data:
+          channel: "Heating"
+          notification_icon: "mdi:heat-wave"
+    - service: climate.set_hvac_mode
+      target:
+        entity_id: group.thermostats
+      data:
+        hvac_mode: "heat"
