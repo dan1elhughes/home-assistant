@@ -10,7 +10,19 @@
       entity_id: input_boolean.lighting_automations
       state: "on"
   action:
-    - scene: scene.everything_on
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: sun.sun
+              state: "above_horizon"
+          sequence:
+            - scene: scene.day_mode
+        - conditions:
+            - condition: state
+              entity_id: sun.sun
+              state: "below_horizon"
+          sequence:
+            - scene: scene.everything_on
 
 - alias: "Leave home (lights)"
   mode: single
