@@ -10,8 +10,11 @@ views:
           - scene.everything_on
           - scene.day_mode
           - scene.everything_off
-          - entity: input_boolean.presence_automations
-            name: Presence-based automation
+      - type: entities
+        title: Controls
+        entities:
+          - entity: input_boolean.lighting_automations
+            name: Lighting automation
           - entity: input_boolean.heating_automations
             name: Heating automation
       - type: tile

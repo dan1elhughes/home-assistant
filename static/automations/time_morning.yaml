@@ -9,7 +9,7 @@
       entity_id: group.presence_home
       state: home
     - condition: state
-      entity_id: input_boolean.presence_automations
+      entity_id: input_boolean.lighting_automations
       state: "on"
   action:
     # 08:30

@@ -4,6 +4,10 @@
     - platform: sun
       event: sunset
       offset: "-00:30:00"
+  condition:
+    - condition: state
+      entity_id: input_boolean.lighting_automations
+      state: "on"
   action:
     - scene: scene.everything_on
 
@@ -17,10 +21,7 @@
       entity_id: group.presence_home
       state: not_home
     - condition: state
-      entity_id: input_boolean.presence_automations
+      entity_id: input_boolean.lighting_automations
       state: "on"
   action:
     - scene: scene.everything_off
-    - service: notify.dan
-      data:
-        message: Lights turned off
