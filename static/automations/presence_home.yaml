@@ -49,6 +49,9 @@
     - condition: state
       entity_id: input_boolean.heating_automations
       state: "on"
+    - condition: state
+      entity_id: binary_sensor.octopus_energy_saving_session
+      state: "off"
   action:
     - service: climate.set_hvac_mode
       target:
