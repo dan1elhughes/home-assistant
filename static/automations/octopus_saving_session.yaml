@@ -18,6 +18,7 @@
         entity_id: group.thermostats
       data:
         hvac_mode: "off"
+    - service: shell_command.shutdown_sinkhole
 
 - alias: "Saving session: ended while home"
   mode: single

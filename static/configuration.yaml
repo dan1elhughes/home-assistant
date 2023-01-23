@@ -45,6 +45,9 @@ input_select:
       - comfort
     icon: mdi:home-thermometer
 
+shell_command:
+  shutdown_sinkhole: 'ssh dan@10.10.10.50 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'
+
 # Text to speech
 tts:
   - platform: google_translate
