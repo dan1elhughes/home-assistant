@@ -8,13 +8,31 @@
       event_data:
         device_ieee: "{{ dimmer.ieee }}"
         command: on_press
+
   action:
-    service: light.turn_on
-    target:
-      entity_id: "{{ dimmer.group }}"
-    data:
-      brightness_pct: 100
-      color_temp: 500
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: sun.sun
+              state: "above_horizon"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: "{{ dimmer.group }}"
+              data:
+                brightness_pct: 100
+                color_temp: 300
+        - conditions:
+            - condition: state
+              entity_id: sun.sun
+              state: "below_horizon"
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: "{{ dimmer.group }}"
+              data:
+                brightness_pct: 100
+                color_temp: 500
 
 - alias: "{{ dimmer.name }}: Long-press"
   mode: single
