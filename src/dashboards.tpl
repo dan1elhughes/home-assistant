@@ -21,10 +21,10 @@ views:
         entity: group.living_room_lights
         icon: mdi:floor-lamp
       - type: tile
-        entity: group.bedroom_lights
+        entity: group.office_lights
         icon: mdi:floor-lamp
       - type: tile
-        entity: group.office_lights
+        entity: group.bedroom_lights
         icon: mdi:floor-lamp
       - type: tile
         entity: group.off_peak

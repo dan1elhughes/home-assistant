@@ -35,6 +35,7 @@ fans:
   entities:
     - fan.living_room_fan
     - fan.office_fan
+    - fan.bedroom_fan
 
 off_peak:
   name: "Off peak"
