@@ -48,6 +48,12 @@ input_select:
 shell_command:
   shutdown_sinkhole: 'ssh dan@10.10.10.50 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'
 
+template:
+  - binary_sensor:
+      - name: "Off peak"
+        icon: mdi:transmission-tower
+        state: "{{states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate') | float < 0.3}}"
+
 # Text to speech
 tts:
   - platform: google_translate

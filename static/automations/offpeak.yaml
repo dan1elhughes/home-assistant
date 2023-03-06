@@ -3,7 +3,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: schedule.offpeak
+      entity_id: binary_sensor.off_peak
       to: "on"
   action:
     - service: homeassistant.turn_on
@@ -15,7 +15,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: schedule.offpeak
+      entity_id: binary_sensor.off_peak
       to: "off"
   action:
     - service: homeassistant.turn_off

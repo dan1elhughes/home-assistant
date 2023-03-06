@@ -8,15 +8,6 @@
   "sunday"
 ] -%}
 
-offpeak:
-  name: "Off-peak"
-  icon: mdi:transmission-tower
-  {% for day in daysOfTheWeek %}
-  {{ day }}:
-    - from: "00:30:00"
-      to: "07:30:00"
-  {% endfor %}
-
 heating:
   name: "Heating"
   icon: mdi:thermometer-auto
