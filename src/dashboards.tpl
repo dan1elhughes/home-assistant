@@ -89,8 +89,12 @@ views:
 
       {% for room in rooms %}
       {% if room.heaterPrefix %}
-      - type: thermostat
+      - type: custom:simple-thermostat
         entity: climate.{{room.name | lower | replace(" ", "_")}}
+        layout:
+          step: row
+        control: false
+        header: {}
       {% endif %}
       {% endfor %}
 
