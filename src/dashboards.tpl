@@ -4,6 +4,18 @@ views:
   - title: Home
     icon: mdi:home-analytics
     cards:
+      - type: vertical-stack
+        cards:
+          - show_current: true
+            show_forecast: false
+            type: weather-forecast
+            entity: weather.home
+            name: Reading
+          - show_current: false
+            show_forecast: true
+            type: weather-forecast
+            entity: weather.home
+            name: ' '
       - type: entities
         title: Scenes
         entities:
