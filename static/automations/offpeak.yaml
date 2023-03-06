@@ -7,3 +7,8 @@
     - service_template: switch.turn_{{ trigger.to_state.state }}
       target:
         entity_id: group.off_peak
+    - service: select.select_option
+      target:
+        entity_id: select.electricity_utility_meter
+      data:
+        option: "{{ iif(is_state('binary_sensor.off_peak', 'on'), 'offpeak', 'peak') }}"
