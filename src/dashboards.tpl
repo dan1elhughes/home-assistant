@@ -155,3 +155,29 @@ views:
         entity: sensor.pm_energy_power
         name: Washing machine power usage
         icon: mdi:washing-machine
+
+  - title: Tasmota
+    icon: mdi:power-socket-uk
+    cards:
+      - type: custom:auto-entities
+        card:
+          type: entities
+        sort:
+          method: friendly_name
+        filter:
+          include:
+            - and:
+              - entity_id: sensor.*_firmware_version
+              - integration: tasmota
+      - type: custom:auto-entities
+        card:
+          type: entities
+        sort:
+          method: friendly_name
+        filter:
+          include:
+            - and:
+              - entity_id: sensor.*_ip
+              - integration: tasmota
+      - type: markdown
+        content: '# [Open in TasmoAdmin](http://10.10.10.10:9541/devices)'
