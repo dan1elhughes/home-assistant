@@ -1,23 +1,9 @@
-- alias: "Off peak: Start"
-  id: off_peak_start
+- alias: "Off peak: Changed"
   mode: single
   trigger:
     - platform: state
       entity_id: binary_sensor.off_peak
-      to: "on"
   action:
-    - service: homeassistant.turn_on
-      target:
-        entity_id: group.off_peak
-
-- alias: "Off peak: End"
-  id: off_peak_end
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: binary_sensor.off_peak
-      to: "off"
-  action:
-    - service: homeassistant.turn_off
+    - service_template: switch.turn_{{ trigger.to_state.state }}
       target:
         entity_id: group.off_peak
