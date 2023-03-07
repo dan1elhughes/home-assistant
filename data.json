@@ -49,19 +49,6 @@
       "ieee": "00:17:88:01:09:a6:cf:36"
     }
   ],
-  "batteries": [
-    "sensor.bedroom_button_battery",
-    "sensor.bedroom_dimmer_battery",
-    "sensor.bedroom_sensor_battery",
-    "sensor.boiler_room_sensor_battery",
-    "sensor.front_door_battery",
-    "sensor.front_door_button_battery",
-    "sensor.living_room_battery",
-    "sensor.living_room_sensor_battery",
-    "sensor.office_dimmer_battery",
-    "sensor.office_sensor_battery",
-    "sensor.hallway_sensor_battery"
-  ],
   "rooms": [
     {
       "name": "Living room",

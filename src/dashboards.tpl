@@ -150,15 +150,15 @@ views:
   - title: Power
     icon: mdi:battery
     cards:
-      - type: entities
-        entities:
-        {% for sensor in batteries %}
-          - entity: {{ sensor }}
-        {% endfor %}
-      - type: sensor
-        entity: sensor.pm_energy_power
-        name: Washing machine power usage
-        icon: mdi:washing-machine
+        - type: custom:auto-entities
+          card:
+            type: entities
+          sort:
+            method: state
+            numeric: true
+          filter:
+            include:
+              - entity_id: sensor.*_battery
 
   - title: Tasmota
     icon: mdi:power-socket-uk
