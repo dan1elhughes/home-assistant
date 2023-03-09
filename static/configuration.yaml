@@ -44,6 +44,13 @@ input_select:
       - home
       - comfort
     icon: mdi:home-thermometer
+  active_room:
+    name: Active room
+    options:
+      - bedroom
+      - office
+      - living-room
+    icon: mdi:door-sliding
 
 shell_command:
   shutdown_sinkhole: 'ssh dan@10.10.10.50 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'

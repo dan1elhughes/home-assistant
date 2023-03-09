@@ -10,6 +10,11 @@
         command: on_press
 
   action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.active_room
+      data:
+        option: "{{ dimmer.room }}"
     - choose:
         - conditions:
             - condition: state

@@ -30,12 +30,14 @@
   "dimmers": [
     {
       "name": "Bedroom dimmer",
+      "room": "bedroom",
       "group": "group.bedroom_lights",
       "scene": "scene.day_mode",
       "ieee": "00:17:88:01:09:a5:5a:4f"
     },
     {
       "name": "Living room dimmer",
+      "room": "living-room",
       "group": "group.living_room_lights",
       "scene": "scene.movie_mode",
       "fan": "fan.living_room_fan",
@@ -43,6 +45,7 @@
     },
     {
       "name": "Office dimmer",
+      "room": "office",
       "group": "group.office_lights",
       "scene": "scene.office_daytime",
       "fan": "fan.office_fan",
