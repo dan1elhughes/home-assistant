@@ -34,6 +34,10 @@ input_boolean:
     name: Enable heating automation
     initial: true
     icon: mdi:thermostat-auto
+  one_room_mode:
+    name: One-room mode
+    initial: false
+    icon: mdi:radar
 
 input_select:
   heating_mode:
@@ -49,7 +53,7 @@ input_select:
     options:
       - bedroom
       - office
-      - living-room
+      - living_room
     icon: mdi:door-sliding
 
 shell_command:

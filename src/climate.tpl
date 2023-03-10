@@ -1,11 +1,11 @@
 {% for room in rooms %}
-{% if room.heaterPrefix %}
+{% if room.heaterPower and room.temperature %}
 - platform: generic_thermostat
-  unique_id: thermostat_{{room.name | lower | replace(" ", "_")}}
+  unique_id: thermostat_{{room.id}}
   name: {{room.name}}
   initial_hvac_mode: "heat"
-  heater: {{room.heaterPrefix}}power
-  target_sensor: {{room.sensorPrefix}}temperature
+  heater: {{room.heaterPower}}
+  target_sensor: {{room.temperature}}
   away_temp: 12
   sleep_temp: 15
   home_temp: 17.5

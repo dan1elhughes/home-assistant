@@ -27,55 +27,44 @@
       "target": "fan.living_room_fan"
     }
   ],
-  "dimmers": [
-    {
-      "name": "Bedroom dimmer",
-      "room": "bedroom",
-      "group": "group.bedroom_lights",
-      "scene": "scene.day_mode",
-      "ieee": "00:17:88:01:09:a5:5a:4f"
-    },
-    {
-      "name": "Living room dimmer",
-      "room": "living-room",
-      "group": "group.living_room_lights",
-      "scene": "scene.movie_mode",
-      "fan": "fan.living_room_fan",
-      "ieee": "00:17:88:01:09:a6:b8:90"
-    },
-    {
-      "name": "Office dimmer",
-      "room": "office",
-      "group": "group.office_lights",
-      "scene": "scene.office_daytime",
-      "fan": "fan.office_fan",
-      "ieee": "00:17:88:01:09:a6:cf:36"
-    }
-  ],
   "rooms": [
     {
+      "id": "living_room",
       "name": "Living room",
-      "sensorPrefix": "sensor.living_room_sensor_",
-      "heaterPrefix": "group.living_room_heaters_"
+      "lights": "group.living_room_lights",
+      "fan": "switch.living_room_fan",
+      "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
+      "temperature": "sensor.living_room_sensor_temperature",
+      "heaterPower": "group.living_room_heaters_power"
     },
     {
+      "id": "bedroom",
       "name": "Bedroom",
-      "sensorPrefix": "sensor.bedroom_sensor_",
-      "heaterPrefix": "light.bedroom_heater_"
+      "lights": "group.bedroom_lights",
+      "fan": "switch.bedroom_fan",
+      "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
+      "temperature": "sensor.bedroom_sensor_temperature",
+      "heaterPower": "light.bedroom_heater_power"
     },
     {
+      "id": "office",
       "name": "Office",
-      "sensorPrefix": "sensor.office_sensor_",
-      "heaterPrefix": "light.office_heater_"
+      "lights": "group.office_lights",
+      "fan": "switch.office_fan",
+      "dimmer_ieee": "00:17:88:01:09:a6:cf:36",
+      "temperature": "sensor.office_sensor_temperature",
+      "heaterPower": "light.office_heater_power"
     },
     {
+      "id": "hallway",
       "name": "Hallway",
-      "sensorPrefix": "sensor.hallway_sensor_",
-      "heaterPrefix": "light.hallway_heater_"
+      "temperature": "sensor.hallway_sensor_temperature",
+      "heaterPower": "light.hallway_heater_power"
     },
     {
+      "id": "boiler_room",
       "name": "Boiler room",
-      "sensorPrefix": "sensor.boiler_room_sensor_"
+      "temperature": "sensor.boiler_room_sensor_temperature"
     }
   ],
   "climateModes": [

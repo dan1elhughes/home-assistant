@@ -10,7 +10,6 @@ office_lights:
   entities:
     - light.office_lamp
     - light.shelf_lighting_left
-    - light.elgato_keylight
 
 living_room_lights:
   name: "Living room lights"
@@ -56,11 +55,11 @@ presence_home:
 thermostats:
   name: "Thermostats"
   entities:
-    {% for room in rooms %}
-    {% if room.heaterPrefix %}
-    - climate.{{room.name | lower | replace(" ", "_")}}
-    {% endif %}
-    {% endfor %}
+    {%- for room in rooms -%}
+    {%- if room.heaterPower %}
+    - climate.{{room.id}}
+    {%- endif -%}
+    {%- endfor %}
 
 living_room_heaters_power:
   name: "Living room heaters"

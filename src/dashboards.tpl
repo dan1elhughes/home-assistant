@@ -75,8 +75,8 @@ views:
       - type: entity-filter
         entities:
           {% for room in rooms %}
-          {% if room.heaterPrefix %}
-          - entity: {{room.heaterPrefix}}power
+          {% if room.heaterPower %}
+          - entity: {{room.heaterPower}}
             name: {{ room.name }}
           {% endif %}
           {% endfor %}
@@ -88,9 +88,9 @@ views:
           title: "Active heaters"
 
       {% for room in rooms %}
-      {% if room.heaterPrefix %}
+      {% if room.heaterPower %}
       - type: thermostat
-        entity: climate.{{room.name | lower | replace(" ", "_")}}
+        entity: climate.{{room.id}}
       {% endif %}
       {% endfor %}
 
@@ -101,8 +101,8 @@ views:
         title: History
         entities:
           {% for room in rooms %}
-          {% if room.heaterPrefix %}
-          - entity: {{room.heaterPrefix}}power
+          {% if room.heaterPower %}
+          - entity: {{room.heaterPower}}
             name: {{ room.name }}
           {% endif %}
           {% endfor %}
