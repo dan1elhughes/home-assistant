@@ -24,6 +24,7 @@
       data:
         hvac_mode: "heat"
     {%- endif %}
+
 - alias: "{{ room.name }}: One-room mode (deactivate)"
   mode: single
   trigger:
