@@ -36,7 +36,6 @@ input_boolean:
     icon: mdi:thermostat-auto
   one_room_mode:
     name: One-room mode
-    initial: false
     icon: mdi:radar
 
 input_select:
