@@ -29,6 +29,8 @@ views:
             name: Lighting automation
           - entity: input_boolean.heating_automations
             name: Heating automation
+          - entity: input_boolean.one_room_mode
+            name: One-room mode
       - type: tile
         entity: group.living_room_lights
         icon: mdi:floor-lamp
@@ -144,8 +146,12 @@ views:
             secondary_info: none
 
   - title: Power
-    icon: mdi:battery
+    icon: mdi:home-lightning-bolt
     cards:
+        - type: entity
+          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_cost
+          name: Energy cost yesterday
+          attribute: total
         - type: custom:auto-entities
           card:
             type: entities
