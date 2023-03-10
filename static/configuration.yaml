@@ -1,6 +1,17 @@
 # Configure a default setup of Home Assistant (frontend, api, etc)
 default_config:
 
+automation manual: !include_dir_merge_list automations/
+automation ui: !include automations.yaml
+climate: !include climate.yaml
+group: !include groups.yaml
+input_boolean: !include input_boolean.yaml
+input_select: !include input_select.yaml
+scene manual: !include_dir_list scenes/
+scene ui: !include scenes.yaml
+schedule: !include schedules.yaml
+script ui: !include scripts.yaml
+
 lovelace:
   mode: storage
   dashboards:
@@ -25,36 +36,6 @@ sensor:
 recorder:
   purge_keep_days: 60
 
-input_boolean:
-  lighting_automations:
-    name: Enable lighting automation
-    initial: true
-    icon: mdi:lightbulb-auto
-  heating_automations:
-    name: Enable heating automation
-    initial: true
-    icon: mdi:thermostat-auto
-  one_room_mode:
-    name: One-room mode
-    icon: mdi:radar
-
-input_select:
-  heating_mode:
-    name: Heating mode
-    options:
-      - away
-      - sleep
-      - home
-      - comfort
-    icon: mdi:home-thermometer
-  active_room:
-    name: Active room
-    options:
-      - bedroom
-      - office
-      - living_room
-    icon: mdi:door-sliding
-
 shell_command:
   shutdown_sinkhole: 'ssh dan@10.10.10.50 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'
 
@@ -68,22 +49,8 @@ template:
 tts:
   - platform: google_translate
 
-group: !include groups.yaml
-
-automation manual: !include_dir_merge_list automations/
-automation ui: !include automations.yaml
-
-script ui: !include scripts.yaml
-
-scene manual: !include_dir_list scenes/
-scene ui: !include scenes.yaml
-
 notify:
   - platform: group
     name: dan
     services:
       - service: mobile_app_pixel_6
-
-climate: !include climate.yaml
-
-schedule: !include schedules.yaml
