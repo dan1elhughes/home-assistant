@@ -76,3 +76,29 @@
         entity_id: group.thermostats
       data:
         hvac_mode: "off"
+
+- alias: "Arrive home (kettle)"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: group.presence_home
+      from: not_home
+      to: home
+  condition:
+    - condition: state
+      entity_id: binary_sensor.octopus_energy_saving_session
+      state: "off"
+    - condition: state
+      entity_id: switch.kettle
+      state: "off"
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.kettle
+    - service: notify.dan
+      data:
+        title: 🫖 Kettle 🫖
+        message: Switched on
+        data:
+          channel: "Kettle"
+          notification_icon: "mdi:kettle"
