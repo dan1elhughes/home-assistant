@@ -22,15 +22,6 @@ views:
           - scene.everything_on
           - scene.day_mode
           - scene.everything_off
-      - type: entities
-        title: Controls
-        entities:
-          - entity: input_boolean.lighting_automations
-            name: Lighting automation
-          - entity: input_boolean.heating_automations
-            name: Heating automation
-          - entity: input_boolean.one_room_mode
-            name: One-room mode
       - type: tile
         entity: group.living_room_lights
         icon: mdi:floor-lamp
@@ -187,3 +178,22 @@ views:
               - integration: tasmota
       - type: markdown
         content: '# [Open in TasmoAdmin](http://10.10.10.10:9541/devices)'
+
+  - title: System
+    path: system
+    icon: mdi:cog-box
+    cards:
+      - type: entities
+        title: Controls
+        entities:
+          - entity: input_boolean.lighting_automations
+            name: Lighting automation
+          - entity: input_boolean.heating_automations
+            name: Heating automation
+          - entity: input_boolean.one_room_mode
+            name: One-room mode
+      - type: sensor
+        entity: sensor.home_assistant_v2_db_size
+        graph: line
+        name: Database size
+        icon: mdi:database
