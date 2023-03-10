@@ -40,7 +40,6 @@ off_peak:
   name: "Off peak"
   entities:
     - switch.dehumidifier
-    - switch.offpeak_charger
     - switch.phone_charger
 
 # PRESENCE
