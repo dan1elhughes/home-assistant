@@ -179,6 +179,10 @@ views:
       - type: markdown
         content: '# [Open in TasmoAdmin](http://10.10.10.10:9541/devices)'
 
+      - type: entity
+        entity: sensor.tasmota_latest_release
+        icon: mdi:github
+
   - title: System
     path: system
     icon: mdi:cog-box
