@@ -16,27 +16,46 @@ views:
             type: weather-forecast
             entity: weather.home
             name: ' '
+
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: Disabled automations
+        filter:
+          include:
+            - domain: automation
+              state: 'off'
+        sort:
+          method: friendly_name
+        show_empty: false
+
       - type: entities
         title: Scenes
         entities:
           - scene.everything_on
           - scene.day_mode
           - scene.everything_off
+
       - type: tile
         entity: group.living_room_lights
         icon: mdi:floor-lamp
+
       - type: tile
         entity: group.office_lights
         icon: mdi:floor-lamp
+
       - type: tile
         entity: group.bedroom_lights
         icon: mdi:floor-lamp
+
       - type: tile
         entity: group.off_peak
         icon: mdi:home-clock
+
       - type: tile
         entity: group.fans
         icon: mdi:fan
+
       - type: tile
         entity: group.presence_home
         icon: mdi:home-account
