@@ -13,6 +13,13 @@
       "short_day": "scene.day_mode",
       "short_night": "scene.bedtime",
       "long": "scene.lights_off"
+    },
+    {
+      "name": "Bedroom button secondary",
+      "ieee": "00:17:88:01:06:07:f7:2b",
+      "short_day": "scene.day_mode",
+      "short_night": "scene.bedtime",
+      "long": "scene.lights_off"
     }
   ],
   "toggles": [
