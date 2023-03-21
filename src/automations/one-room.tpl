@@ -17,7 +17,7 @@
         entity_id:
           - {{ room.lights }}
     {%- endif -%}
-    {%- if room.heaterPower %}
+    {%- if room.heater %}
     - service: climate.set_hvac_mode
       target:
         entity_id: climate.{{room.id}}
@@ -42,7 +42,7 @@
         entity_id:
           - {{ room.lights }}
     {%- endif -%}
-    {%- if room.heaterPower %}
+    {%- if room.heater %}
     - service: climate.set_hvac_mode
       target:
         entity_id: climate.{{room.id}}

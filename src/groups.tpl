@@ -55,7 +55,7 @@ thermostats:
   name: "Thermostats"
   entities:
     {%- for room in rooms -%}
-    {%- if room.heaterPower %}
+    {%- if room.heater %}
     - climate.{{room.id}}
     {%- endif -%}
     {%- endfor %}
