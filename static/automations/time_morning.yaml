@@ -25,6 +25,19 @@
         # continuing.
         transition: 1200
 
+    - service: media_player.volume_set
+      target:
+        entity_id: media_player.bedroom
+      data:
+        volume_level: 0.2
+
+    - service: media_player.play_media
+      target:
+        entity_id: media_player.bedroom
+      data:
+        media_content_id: media-source://radio_browser/292895dc-3d1f-4c40-b85a-e877405510f9
+        media_content_type: audio/mpeg
+
     # 08:30 - 10:00
     - delay: "01:29:30"
 
@@ -50,4 +63,7 @@
       entity_id: input_boolean.lighting_automations
       state: "on"
   action:
+    - service: media_player.turn_off
+      target:
+        entity_id: media_player.bedroom
     - scene: scene.day_mode
