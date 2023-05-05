@@ -4,8 +4,7 @@
       "name": "Front door button",
       "ieee": "00:17:88:01:08:96:ad:82",
       "short_day": "scene.day_mode",
-      "short_night": "scene.everything_on",
-      "long": "scene.everything_off"
+      "short_night": "scene.everything_on"
     },
     {
       "name": "Bedroom button",
@@ -72,6 +71,10 @@
       "id": "boiler_room",
       "name": "Boiler room",
       "temperature": "sensor.boiler_room_sensor_temperature"
+    },
+    {
+      "id": "out",
+      "name": "Out"
     }
   ],
   "climateModes": [

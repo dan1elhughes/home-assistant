@@ -23,6 +23,7 @@
           sequence:
             - scene: {{ button.short_night }}
 
+{% if button.long %}
 - alias: "{{ button.name }}: Long"
   mode: single
   trigger:
@@ -33,5 +34,6 @@
         command: on_long_release
   action:
     - scene: {{ button.long }}
+{% endif %}
 
 {% endfor %}

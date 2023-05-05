@@ -1,30 +1,4 @@
-- alias: "Arrive home (lights)"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: group.presence_home
-      from: not_home
-      to: home
-  condition:
-    - condition: state
-      entity_id: input_boolean.lighting_automations
-      state: "on"
-  action:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: sun.sun
-              state: "above_horizon"
-          sequence:
-            - scene: scene.day_mode
-        - conditions:
-            - condition: state
-              entity_id: sun.sun
-              state: "below_horizon"
-          sequence:
-            - scene: scene.everything_on
-
-- alias: "Leave home (lights)"
+- alias: "Leave home (active room -> out)"
   mode: single
   trigger:
     - platform: state
@@ -36,9 +10,13 @@
       entity_id: input_boolean.lighting_automations
       state: "on"
   action:
-    - scene: scene.everything_off
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.active_room
+      data:
+        option: "out"
 
-- alias: "Arrive home (heating)"
+- alias: "Arrive home (active room -> bedroom)"
   mode: single
   trigger:
     - platform: state
@@ -47,35 +25,14 @@
       to: home
   condition:
     - condition: state
-      entity_id: input_boolean.heating_automations
-      state: "on"
-    - condition: state
-      entity_id: binary_sensor.octopus_energy_saving_session
-      state: "off"
-  action:
-    - service: climate.set_hvac_mode
-      target:
-        entity_id: group.thermostats
-      data:
-        hvac_mode: "heat"
-
-- alias: "Leave home (heating)"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: group.presence_home
-      from: home
-      to: not_home
-  condition:
-    - condition: state
-      entity_id: input_boolean.heating_automations
+      entity_id: input_boolean.lighting_automations
       state: "on"
   action:
-    - service: climate.set_hvac_mode
+    - service: input_select.select_option
       target:
-        entity_id: group.thermostats
+        entity_id: input_select.active_room
       data:
-        hvac_mode: "off"
+        option: "bedroom"
 
 - alias: "Arrive home (kettle)"
   mode: single
