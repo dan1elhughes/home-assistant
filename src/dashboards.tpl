@@ -34,7 +34,7 @@ views:
         entities:
           - scene.everything_on
           - scene.day_mode
-          - scene.everything_off
+          - input_select.active_room
 
       - type: tile
         entity: group.living_room_lights
