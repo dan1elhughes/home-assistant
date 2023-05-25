@@ -162,6 +162,12 @@ views:
           entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_cost
           name: Energy cost yesterday
           attribute: total
+
+        - type: sensor
+          graph: line
+          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand
+          name: Current demand
+
         - type: custom:auto-entities
           card:
             type: entities
