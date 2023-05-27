@@ -2,7 +2,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.off_peak
+      entity_id: schedule.offpeak
   condition:
     alias: "State is valid"
     condition: template
