@@ -4,6 +4,11 @@ views:
   - title: Home
     icon: mdi:home-analytics
     cards:
+      - type: glance
+        entities:
+          - entity: sensor.sun_next_setting
+          - entity: sensor.sun_next_rising
+
       - type: vertical-stack
         cards:
           - show_current: true
