@@ -69,13 +69,6 @@ views:
             tap_action:
               action: toggle
 
-          - entity: input_button.living_room_ac_up
-            show_icon: true
-            show_name: false
-            type: button
-            tap_action:
-              action: toggle
-
           - entity: input_button.living_room_ac_down
             show_icon: true
             show_name: false
@@ -83,6 +76,12 @@ views:
             tap_action:
               action: toggle
 
+          - entity: input_button.living_room_ac_up
+            show_icon: true
+            show_name: false
+            type: button
+            tap_action:
+              action: toggle
 
   - title: Heating
     icon: mdi:heat-wave
