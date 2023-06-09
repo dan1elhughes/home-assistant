@@ -26,11 +26,6 @@
       "name": "Dehumidifier",
       "ieee": "00:12:4b:00:29:0f:e9:89",
       "target": "switch.dehumidifier"
-    },
-    {
-      "name": "Living room fan",
-      "ieee": "00:12:4b:00:29:0f:e9:c1",
-      "target": "fan.living_room_fan"
     }
   ],
   "rooms": [

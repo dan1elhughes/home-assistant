@@ -6,6 +6,7 @@ automation ui: !include automations.yaml
 climate: !include climate.yaml
 group: !include groups.yaml
 input_boolean: !include input_boolean.yaml
+input_button: !include input_button.yaml
 input_select: !include input_select.yaml
 sensor: !include sensor.yaml
 scene manual: !include_dir_list scenes/

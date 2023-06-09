@@ -4,11 +4,6 @@ views:
   - title: Home
     icon: mdi:home-analytics
     cards:
-      - type: glance
-        entities:
-          - entity: sensor.sun_next_setting
-          - entity: sensor.sun_next_rising
-
       - type: vertical-stack
         cards:
           - show_current: true
@@ -64,6 +59,30 @@ views:
       - type: tile
         entity: group.presence_home
         icon: mdi:home-account
+
+      - type: horizontal-stack
+        cards:
+          - entity: input_button.living_room_ac
+            show_icon: true
+            show_name: false
+            type: button
+            tap_action:
+              action: toggle
+
+          - entity: input_button.living_room_ac_up
+            show_icon: true
+            show_name: false
+            type: button
+            tap_action:
+              action: toggle
+
+          - entity: input_button.living_room_ac_down
+            show_icon: true
+            show_name: false
+            type: button
+            tap_action:
+              action: toggle
+
 
   - title: Heating
     icon: mdi:heat-wave

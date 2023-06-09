@@ -1,0 +1,9 @@
+living_room_ac:
+  name: AC toggle
+  icon: mdi:snowflake
+living_room_ac_up:
+  name: AC up
+  icon: mdi:thermometer-chevron-up
+living_room_ac_down:
+  name: AC up
+  icon: mdi:thermometer-chevron-down
