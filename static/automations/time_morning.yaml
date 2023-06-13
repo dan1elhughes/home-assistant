@@ -2,7 +2,7 @@
   mode: single
   trigger:
     - platform: time
-      at: 08:30
+      at: sensor.pixel_6_next_alarm
   condition:
     - condition: state
       entity_id: group.presence_home
@@ -11,7 +11,6 @@
       entity_id: input_boolean.lighting_automations
       state: "on"
   action:
-    # 08:30
     - service: light.turn_on
       target:
         entity_id: group.bedroom_lights
@@ -24,23 +23,11 @@
         # continuing.
         transition: 1200
 
-    # 08:30 - 10:00
-    - delay: "01:29:30"
-
-    # 10:00
-    # Just before, so that the lights are still gradually turning off if the
-    # daytime trigger below fires and cancels the switchoff.
-    - service: light.turn_off
-      target:
-        entity_id: group.bedroom_lights
-      data:
-        transition: 600
-
 - alias: Morning radio (BBC R4)
   mode: single
   trigger:
     - platform: time
-      at: 08:30
+      at: sensor.pixel_6_next_alarm
   condition:
     - condition: state
       entity_id: group.presence_home
@@ -73,20 +60,3 @@
           data:
             media_content_id: media-source://radio_browser/292895dc-3d1f-4c40-b85a-e877405510f9
             media_content_type: audio/mpeg
-
-- alias: Morning daytime
-  mode: single
-  trigger:
-    - platform: time
-      at: "10:00"
-  condition:
-    - condition: state
-      entity_id: group.presence_home
-      state: home
-    - condition: state
-      entity_id: input_boolean.lighting_automations
-      state: "on"
-  action:
-    - service: media_player.turn_off
-      target:
-        entity_id: media_player.bedroom
