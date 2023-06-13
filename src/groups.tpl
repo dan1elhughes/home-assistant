@@ -24,9 +24,9 @@ living_room_lights:
 media_players:
   name: "Media players"
   entities:
-    - media_player.kitchen
-    - media_player.office
-    - media_player.bedroom
+    - media_player.living_room_speaker
+    - media_player.office_speaker
+    - media_player.bedroom_speaker
     - media_player.shield
 
 # FANS
