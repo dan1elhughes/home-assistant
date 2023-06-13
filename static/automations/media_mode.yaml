@@ -1,0 +1,11 @@
+- alias: "Movie mode activate"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: media_player.shield
+      attribute: app_name
+      to:
+        - Netflix
+        - Plex
+  action:
+    - scene: scene.movie_mode
