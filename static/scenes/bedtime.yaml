@@ -3,7 +3,7 @@ icon: mdi:bed-outline
 entities:
   group.bedroom_lights:
     state: "on"
-    brightness: 3
+    brightness: 2
   group.living_room_lights:
     state: "off"
   group.office_lights:
