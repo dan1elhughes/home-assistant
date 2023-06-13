@@ -1,7 +1,0 @@
-name: "Office daytime"
-icon: hass:desk
-entities:
-  group.office_lights:
-    state: "on"
-    brightness: 255
-    color_temp: 300

@@ -8,4 +8,3 @@ entities:
   group.living_room_lights:
     state: "on"
     brightness: 150
-    color_temp: 500

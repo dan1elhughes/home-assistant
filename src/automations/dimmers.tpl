@@ -24,29 +24,11 @@
         device_ieee: "{{ room.dimmer_ieee }}"
         command: on_press
   action:
-    - choose:
-        - conditions:
-            - condition: state
-              entity_id: sun.sun
-              state: "above_horizon"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: "{{ room.lights }}"
-              data:
-                brightness_pct: 100
-                color_temp: 300
-        - conditions:
-            - condition: state
-              entity_id: sun.sun
-              state: "below_horizon"
-          sequence:
-            - service: light.turn_on
-              target:
-                entity_id: "{{ room.lights }}"
-              data:
-                brightness_pct: 100
-                color_temp: 500
+    - service: light.turn_on
+      target:
+        entity_id: "{{ room.lights }}"
+      data:
+        brightness_pct: 100
 
 {% if room.fan %}
 - alias: "{{ room.name }}: Double-tap"

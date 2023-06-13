@@ -2,16 +2,15 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.dans_macbook_pro_camera_in_use
+      entity_id: binary_sensor.dan_s_work_laptop_camera_in_use
       to: "on"
   condition:
     - condition: state
-      entity_id: sensor.dans_macbook_pro_ssid
+      entity_id: sensor.dan_s_work_laptop_ssid
       state: "irulan"
   action:
     - service: light.turn_on
       data:
-        color_temp: 153
         brightness_pct: 100
       target:
         entity_id: light.elgato_keylight
@@ -20,11 +19,11 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.dans_macbook_pro_camera_in_use
+      entity_id: binary_sensor.dan_s_work_laptop_camera_in_use
       to: "off"
   condition:
     - condition: state
-      entity_id: sensor.dans_macbook_pro_ssid
+      entity_id: sensor.dan_s_work_laptop_ssid
       state: "irulan"
   action:
     - service: light.turn_off

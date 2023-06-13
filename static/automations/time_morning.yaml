@@ -17,7 +17,6 @@
         entity_id: group.bedroom_lights
       data:
         brightness: 255
-        color_temp: 500
 
         # 20 minutes.
         # Appears to start the transition then immediately continue the
@@ -91,4 +90,3 @@
     - service: media_player.turn_off
       target:
         entity_id: media_player.bedroom
-    - scene: scene.day_mode

@@ -3,20 +3,10 @@ icon: hass:door-open
 entities:
   group.living_room_lights:
     state: "on"
-    color_temp: 500
     brightness: 255
-  light.office_lamp:
+  group.office_lights:
     state: "on"
-    color_temp: 500
-    brightness: 255
-  light.shelf_lighting_left:
-    state: "on"
-    rgb_color:
-      - 255
-      - 164
-      - 74
     brightness: 255
   group.bedroom_lights:
     state: "on"
-    color_temp: 500
     brightness: 255
