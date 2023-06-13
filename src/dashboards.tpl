@@ -33,7 +33,6 @@ views:
         title: Scenes
         entities:
           - scene.everything_on
-          - scene.day_mode
           - input_select.active_room
 
       - type: tile
