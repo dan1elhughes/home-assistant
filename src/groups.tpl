@@ -10,6 +10,7 @@ office_lights:
   entities:
     - light.office_lamp
     - light.shelf_lighting_left
+    - light.elgato_keylight
 
 living_room_lights:
   name: "Living room lights"
