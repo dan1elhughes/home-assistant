@@ -141,6 +141,24 @@ views:
           {% endif %}
           {% endfor %}
 
+  - title: Devices
+    icon: mdi:devices
+    cards:
+      {% for device in devices %}
+      - type: horizontal-stack
+        cards:
+          - graph: line
+            type: sensor
+            entity: {{ device.battery_level }}
+            detail: 2
+            name: {{ device.name }}
+          - type: entities
+            entities:
+              - entity: {{ device.battery_state }}
+                secondary_info: last-updated
+                name: Battery
+      {% endfor %}
+
   - title: Car
     icon: mdi:car
     cards:
