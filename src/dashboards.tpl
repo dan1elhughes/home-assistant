@@ -59,28 +59,20 @@ views:
         entity: group.presence_home
         icon: mdi:home-account
 
-      - type: horizontal-stack
-        cards:
-          - entity: input_button.living_room_ac
-            show_icon: true
-            show_name: false
-            type: button
-            tap_action:
-              action: toggle
-
-          - entity: input_button.living_room_ac_down
-            show_icon: true
-            show_name: false
-            type: button
-            tap_action:
-              action: toggle
-
+      - type: entities
+        title: Air conditioning
+        state_color: true
+        entities:
+          - entity: input_boolean.ac
+            name: Active
+            secondary_info: none
           - entity: input_button.living_room_ac_up
-            show_icon: true
-            show_name: false
-            type: button
-            tap_action:
-              action: toggle
+            name: Increase temperature
+          - entity: input_button.living_room_ac_down
+            name: Decrease temperature
+          - entity: sensor.aircon_energy_power
+            name: Power usage
+            secondary_info: last-updated
 
   - title: Heating
     icon: mdi:heat-wave

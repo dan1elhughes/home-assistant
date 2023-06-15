@@ -11,3 +11,7 @@ heating_automations:
 one_room_mode:
   name: One-room mode
   icon: mdi:radar
+
+ac:
+  name: Air conditioning
+  icon: mdi:air-conditioner

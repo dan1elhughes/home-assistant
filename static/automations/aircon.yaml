@@ -1,15 +1,70 @@
-- alias: "AC button (virtual)"
+- alias: "AC on"
   mode: single
   trigger:
     - platform: state
-      entity_id: input_button.living_room_ac
+      entity_id:
+        - input_boolean.ac
+      to: "on"
   action:
-    - service: remote.send_command
+    - repeat:
+        until:
+          - condition: numeric_state
+            entity_id: sensor.aircon_energy_power
+            above: 100
+        sequence:
+          - service: remote.send_command
+            data:
+              device: aircon
+              command: power
+            target:
+              entity_id: remote.broadlink_rm_mini_3
+          - wait_for_trigger:
+              - platform: state
+                entity_id:
+                  - sensor.aircon_energy_power
+            timeout: "00:00:30"
+          - delay: 10
+    - service: notify.dan
       data:
-        device: aircon
-        command: power
-      target:
-        entity_id: remote.broadlink_rm_mini_3
+        title: ❄️ AC ❄️
+        message: Switched on
+        data:
+          channel: "AC"
+          notification_icon: "mdi:air-conditioner"
+
+- alias: "AC off"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - input_boolean.ac
+      to: "off"
+  action:
+    - repeat:
+        until:
+          - condition: numeric_state
+            entity_id: sensor.aircon_energy_power
+            below: 100
+        sequence:
+          - service: remote.send_command
+            data:
+              device: aircon
+              command: power
+            target:
+              entity_id: remote.broadlink_rm_mini_3
+          - wait_for_trigger:
+              - platform: state
+                entity_id:
+                  - sensor.aircon_energy_power
+            timeout: "00:00:30"
+          - delay: 10
+    - service: notify.dan
+      data:
+        title: ❄️ AC ❄️
+        message: Switched off
+        data:
+          channel: "AC"
+          notification_icon: "mdi:air-conditioner"
 
 - alias: "AC up"
   mode: single
@@ -34,21 +89,5 @@
       data:
         device: aircon
         command: down
-      target:
-        entity_id: remote.broadlink_rm_mini_3
-
-- alias: "AC button (physical toggle)"
-  mode: single
-  trigger:
-    - platform: event
-      event_type: zha_event
-      event_data:
-        device_ieee: 00:12:4b:00:29:0f:e9:c1
-        command: toggle
-  action:
-    - service: remote.send_command
-      data:
-        device: aircon
-        command: power
       target:
         entity_id: remote.broadlink_rm_mini_3
