@@ -7,5 +7,5 @@ living_room_ac_up:
   icon: mdi:thermometer-chevron-up
 
 living_room_ac_down:
-  name: AC up
+  name: AC down
   icon: mdi:thermometer-chevron-down
