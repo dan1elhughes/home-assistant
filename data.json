@@ -99,5 +99,16 @@
       "battery_level": "sensor.dan_s_work_laptop_internal_battery_level",
       "battery_state": "sensor.dan_s_work_laptop_internal_battery_state"
     }
+  ],
+  "lights": [
+    "light.bedroom_lamp_left",
+    "light.bedroom_lamp_right",
+    "light.dining_room_table",
+    "light.elgato_keylight",
+    "light.living_room_lamp",
+    "light.living_room_speaker",
+    "light.office_lamp",
+    "light.shelf_lighting_left",
+    "light.tv_light"
   ]
 }
