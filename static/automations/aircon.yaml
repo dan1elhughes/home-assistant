@@ -18,12 +18,7 @@
               command: power
             target:
               entity_id: remote.broadlink_rm_mini_3
-          - wait_for_trigger:
-              - platform: state
-                entity_id:
-                  - sensor.aircon_energy_power
-            timeout: "00:00:30"
-          - delay: 10
+          - delay: 30
     - service: notify.dan
       data:
         title: ❄️ AC ❄️
@@ -52,12 +47,7 @@
               command: power
             target:
               entity_id: remote.broadlink_rm_mini_3
-          - wait_for_trigger:
-              - platform: state
-                entity_id:
-                  - sensor.aircon_energy_power
-            timeout: "00:00:30"
-          - delay: 10
+          - delay: 30
     - service: notify.dan
       data:
         title: ❄️ AC ❄️
