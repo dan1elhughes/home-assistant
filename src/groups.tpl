@@ -37,12 +37,6 @@ fans:
     - fan.office_fan
     - fan.bedroom_fan
 
-off_peak:
-  name: "Off peak"
-  entities:
-    - switch.dehumidifier
-    - switch.phone_charger
-
 # PRESENCE
 presence_home:
   name: "Presence"

@@ -48,10 +48,6 @@ views:
         icon: mdi:floor-lamp
 
       - type: tile
-        entity: group.off_peak
-        icon: mdi:home-clock
-
-      - type: tile
         entity: group.fans
         icon: mdi:fan
 
@@ -190,15 +186,49 @@ views:
   - title: Power
     icon: mdi:home-lightning-bolt
     cards:
-        - type: entity
-          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_cost
-          name: Energy cost yesterday
-          attribute: total
+        - type: sensor
+          graph: line
+          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
+          detail: 2
+          name: Rate
+
+        - type: horizontal-stack
+          cards:
+            - type: entity
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_rate
+              state_color: false
+              name: Previous
+              unit: ' '
+            - type: entity
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_next_rate
+              name: Next
+              unit: ' '
 
         - type: sensor
           graph: line
           entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand
           name: Current demand
+
+        - type: entity
+          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_cost
+          name: Energy cost yesterday
+          attribute: total
+
+        - type: custom:expander-card
+          title: Targets
+          cards:
+            - type: entities
+              entities:
+                {% for target in agile_targets %}
+                - type: section
+                  label: "{{ target.name }}"
+                - entity: "{{ target.group }}"
+                  name: "Control"
+                - type: attribute
+                  name: "Next time"
+                  entity: "{{ target.id }}"
+                  attribute: next_time
+                {% endfor %}
 
         - type: custom:auto-entities
           card:
