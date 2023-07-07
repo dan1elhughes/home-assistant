@@ -7,8 +7,8 @@
   action:
     - service: notify.dan
       data:
-        title: "{{now().hour}}:{{now().minute}}"
-        message: "{{ states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate') | float | round(4) * 100 }} p/kWh"
+        title: "{{ states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate') | float | round(4) * 100 }} p/kWh"
+        message: "{{now().hour}}:{{now().minute}}"
         data:
           channel: "Energy price"
           tag: "energy-price" # This is used to replace notifications
