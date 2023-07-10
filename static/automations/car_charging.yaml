@@ -1,0 +1,25 @@
+- alias: Car charging
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.zoe_battery_level
+      to: null
+    - platform: state
+      entity_id:
+        - sensor.zoe_charging_power
+      to: null
+  condition:
+    - condition: state
+      entity_id: sensor.zoe_plug_state
+      state: plugged
+  action:
+    - service: notify.dan
+      data:
+        title: Car charged to {{ states('sensor.zoe_battery_level') }}%
+        message: "{{ states('sensor.zoe_charging_power') }} kW"
+        data:
+          channel: Car charging
+          tag: car-charging
+          notification_icon: mdi:car-electric
+          importance: min
