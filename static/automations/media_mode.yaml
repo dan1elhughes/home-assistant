@@ -7,5 +7,6 @@
       to:
         - Netflix
         - Plex
+        - Prime Video
   action:
     - scene: scene.movie_mode
