@@ -18,3 +18,33 @@
           tag: "energy-price" # This is used to replace notifications
           notification_icon: "mdi:lightning-bolt"
           importance: "min"
+
+- alias: "Energy price: Negative"
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
+      below: 0
+  condition:
+    - condition: state
+      entity_id: group.presence_home
+      state: not_home
+  action:
+    - service: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.power_drain
+
+- alias: "Energy price: Positive"
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
+      above: 0
+  condition:
+    - condition: state
+      entity_id: input_boolean.power_drain
+      state: "on"
+  action:
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.power_drain

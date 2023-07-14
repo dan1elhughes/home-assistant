@@ -15,3 +15,7 @@ one_room_mode:
 ac:
   name: Air conditioning
   icon: mdi:air-conditioner
+
+power_drain:
+  name: Power drain
+  icon: mdi:home-lightning-bolt-outline

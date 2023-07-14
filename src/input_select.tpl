@@ -5,6 +5,7 @@ heating_mode:
     - sleep
     - home
     - comfort
+    - activity
   icon: mdi:home-thermometer
 active_room:
   name: Active room
