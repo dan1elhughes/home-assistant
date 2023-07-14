@@ -18,7 +18,7 @@
         {% endfor %}
 
 - alias: "Adaptive lighting: on"
-  mode: single
+  mode: queued
   trigger:
     - platform: state
       to: "on"
