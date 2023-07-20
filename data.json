@@ -113,39 +113,14 @@
   ],
   "agile_targets": [
     {
-      "id": "binary_sensor.octopus_energy_target_continuous_1h",
-      "name": "Continuous 1h",
-      "group": "switch.target_continuous_1h"
-    },
-    {
-      "id": "binary_sensor.octopus_energy_target_continuous_2h",
-      "name": "Continuous 2h",
-      "group": "switch.target_continuous_2h"
-    },
-    {
-      "id": "binary_sensor.octopus_energy_target_continuous_4h",
-      "name": "Continuous 4h",
-      "group": "switch.target_continuous_4h"
-    },
-    {
-      "id": "binary_sensor.octopus_energy_target_intermittent_1h",
-      "name": "Intermittent 1h",
-      "group": "switch.target_intermittent_1h"
-    },
-    {
-      "id": "binary_sensor.octopus_energy_target_intermittent_2h",
-      "name": "Intermittent 2h",
-      "group": "switch.target_intermittent_2h"
-    },
-    {
       "id": "binary_sensor.octopus_energy_target_intermittent_4h",
       "name": "Intermittent 4h",
-      "group": "switch.target_intermittent_4h"
+      "groups": ["group.target_intermittent_4h"]
     },
     {
       "id": "binary_sensor.octopus_energy_target_intermittent_4h_overnight",
       "name": "Intermittent 4h overnight",
-      "group": "switch.target_intermittent_4h_overnight"
+      "groups": ["group.target_intermittent_4h_overnight"]
     }
   ]
 }

@@ -12,7 +12,10 @@
       - "{% raw %}{{ trigger.to_state.state == 'on'}}{% endraw %}"
       - "{% raw %}{{ trigger.to_state.state == 'off'}}{% endraw %}"
   action:
-    - service_template: switch.turn_{% raw %}{{ trigger.to_state.state }}{% endraw %}
+    - service_template: homeassistant.turn_{% raw %}{{ trigger.to_state.state }}{% endraw %}
       target:
-        entity_id: {{ target.group }}
+        entity_id:
+          {% for group in target.groups %}
+          - {{ group }}
+          {% endfor %}
 {% endfor %}

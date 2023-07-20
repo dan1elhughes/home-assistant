@@ -222,8 +222,10 @@ views:
                 {% for target in agile_targets %}
                 - type: section
                   label: "{{ target.name }}"
-                - entity: "{{ target.group }}"
-                  name: "Control"
+                {% for group in target.groups %}
+                - entity: "{{ group }}"
+                  name: "{{ group }}"
+                {% endfor %}
                 - type: attribute
                   name: "Next time"
                   entity: "{{ target.id }}"
