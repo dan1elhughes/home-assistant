@@ -61,11 +61,15 @@ living_room_heaters_power:
     - light.living_room_heater_power
     - light.living_room_secondary_heater_power
 
+target_intermittent_1h:
+  name: "Target: Intermittent 1h"
+  entities:
+    - light.water_heater
+
 target_intermittent_4h:
   name: "Target: Intermittent 4h"
   entities:
     - switch.dehumidifier
-    - light.water_heater
 
 target_intermittent_4h_overnight:
   name: "Target: Intermittent 4h overnight"

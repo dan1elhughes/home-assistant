@@ -113,6 +113,11 @@
   ],
   "agile_targets": [
     {
+      "id": "binary_sensor.octopus_energy_target_intermittent_1h",
+      "name": "Intermittent 1h",
+      "groups": ["group.target_intermittent_1h"]
+    },
+    {
       "id": "binary_sensor.octopus_energy_target_intermittent_4h",
       "name": "Intermittent 4h",
       "groups": ["group.target_intermittent_4h"]
