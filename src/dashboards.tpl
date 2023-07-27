@@ -230,6 +230,11 @@ views:
                   name: "Next time"
                   entity: "{{ target.id }}"
                   attribute: next_time
+                - type: attribute
+                  name: "Average cost"
+                  icon: mdi:currency-gbp
+                  entity: "{{ target.id }}"
+                  attribute: overall_average_cost
                 {% endfor %}
 
         - type: custom:auto-entities
