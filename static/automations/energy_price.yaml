@@ -4,15 +4,23 @@
     - platform: state
       entity_id: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
       to: null
+  variables:
+    prev: "{{
+    states('sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_rate')
+    | float * 100 }}"
+    current: "{{
+    states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate')
+    | float * 100 }}"
+    next: "{{
+    states('sensor.octopus_energy_electricity_20j0046498_2000052144657_next_rate')
+    | float * 100 }}"
   action:
     - service: notify.dan
       data:
-        title: "{{
-        (states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate')
-        | float  * 100) | round(2)}} p/kWh @ {{ now().timestamp() | timestamp_custom('%H:%M') }}"
-        message: "Next: {{
-        (states('sensor.octopus_energy_electricity_20j0046498_2000052144657_next_rate')
-        | float  * 100) | round(2)}} p/kWh"
+        title: "{{ current | round(2) }} p/kWh @ {{ now().timestamp() | timestamp_custom('%H:%M') }}"
+        message: "
+          {{ '↑' if current < prev else '↓' }} Previous: {{ prev | round(2) }} p/kWh<br>
+          {{ '↑' if current < next else '↓' }}  Next: {{ next | round(2) }} p/kWh"
         data:
           channel: "Energy price"
           tag: "energy-price" # This is used to replace notifications
