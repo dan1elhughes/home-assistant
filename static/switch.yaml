@@ -1,0 +1,7 @@
+- platform: wake_on_lan
+  name: "Sinkhole"
+  mac: "34:97:f6:a0:a4:f6"
+  host: "10.10.10.50"
+  broadcast_address: "10.10.10.50"
+  turn_off:
+    service: shell_command.shutdown_sinkhole

@@ -8,11 +8,12 @@ group: !include groups.yaml
 input_boolean: !include input_boolean.yaml
 input_button: !include input_button.yaml
 input_select: !include input_select.yaml
-sensor: !include sensor.yaml
 scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
 schedule: !include schedules.yaml
 script ui: !include scripts.yaml
+sensor: !include sensor.yaml
+switch: !include switch.yaml
 
 lovelace:
   mode: storage
@@ -48,3 +49,5 @@ homeassistant:
 spotcast:
   sp_dc: !secret sp_dc
   sp_key: !secret sp_key
+
+wake_on_lan:
