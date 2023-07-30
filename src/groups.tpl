@@ -61,10 +61,11 @@ living_room_heaters_power:
     - light.living_room_heater_power
     - light.living_room_secondary_heater_power
 
-target_intermittent_1h:
-  name: "Target: Intermittent 1h"
+target_continuous_2h:
+  name: "Target: Continuous 2h"
   entities:
     - light.water_heater
+    - switch.sinkhole
 
 target_intermittent_4h:
   name: "Target: Intermittent 4h"
