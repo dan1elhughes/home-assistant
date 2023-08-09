@@ -67,6 +67,11 @@ target_continuous_2h:
     - light.water_heater
     - switch.sinkhole
 
+target_intermittent_1h_daytime:
+  name: "Target: Intermittent 1h daytime"
+  entities:
+    - light.water_heater
+
 target_intermittent_4h:
   name: "Target: Intermittent 4h"
   entities:

@@ -118,6 +118,11 @@
       "groups": ["group.target_continuous_2h"]
     },
     {
+      "id": "binary_sensor.octopus_energy_target_intermittent_1h_daytime",
+      "name": "Intermittent 1h daytime",
+      "groups": ["group.target_intermittent_1h_daytime"]
+    },
+    {
       "id": "binary_sensor.octopus_energy_target_intermittent_4h",
       "name": "Intermittent 4h",
       "groups": ["group.target_intermittent_4h"]
