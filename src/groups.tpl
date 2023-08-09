@@ -61,23 +61,31 @@ living_room_heaters_power:
     - light.living_room_heater_power
     - light.living_room_secondary_heater_power
 
+# The cheapest 2 hour single block at any time.
+# 16:00 - 16:00
 target_continuous_2h:
   name: "Target: Continuous 2h"
   entities:
-    - light.water_heater
     - switch.sinkhole
 
+# The cheapest 1 hour blocks in the day.
+# 12:00 - 20:00
 target_intermittent_1h_daytime:
   name: "Target: Intermittent 1h daytime"
   entities:
     - light.water_heater
 
+# The cheapest 4 hour blocks at any time.
+# 16:00 - 16:00
 target_intermittent_4h:
   name: "Target: Intermittent 4h"
   entities:
     - switch.dehumidifier
 
+# The cheapest 4 hour blocks overnight.
+# 00:00 - 08:00
 target_intermittent_4h_overnight:
   name: "Target: Intermittent 4h overnight"
   entities:
+    - light.water_heater
     - switch.phone_charger
