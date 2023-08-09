@@ -1,0 +1,6 @@
+healthcheck_start:
+  url: "https://hc-ping.com/{{ ping_key }}/{{ slug }}/start"
+  method: POST
+healthcheck_finish:
+  url: "https://hc-ping.com/{{ ping_key }}/{{ slug }}"
+  method: POST

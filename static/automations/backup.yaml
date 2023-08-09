@@ -8,6 +8,14 @@
       for:
         minutes: 30
   action:
+    - service: rest_command.healthcheck_start
+      data:
+        ping_key: !secret hc_ping_key
+        slug: "home-assistant-backup"
     - service: hassio.backup_full
       data:
         compressed: false
+    - service: rest_command.healthcheck_finish
+      data:
+        ping_key: !secret hc_ping_key
+        slug: "home-assistant-backup"

@@ -8,6 +8,7 @@ group: !include groups.yaml
 input_boolean: !include input_boolean.yaml
 input_button: !include input_button.yaml
 input_select: !include input_select.yaml
+rest_command: !include rest_command.yaml
 scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
 schedule: !include schedules.yaml
