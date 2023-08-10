@@ -192,27 +192,22 @@ views:
           detail: 2
           name: Rate
 
-        - type: horizontal-stack
+        - type: vertical-stack
           cards:
-            - type: entity
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_rate
-              state_color: false
-              name: Previous
-              unit: ' '
-            - type: entity
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_next_rate
-              name: Next
-              unit: ' '
-
-        - type: sensor
-          graph: line
-          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand
-          name: Current demand
-
-        - type: entity
-          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_cost
-          name: Energy cost yesterday
-          attribute: total
+            - type: horizontal-stack
+              cards:
+                - type: sensor
+                  name: Yesterday
+                  graph: none
+                  entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_consumption
+                - type: sensor
+                  name: Today
+                  graph: none
+                  entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_consumption
+            - graph: line
+              type: sensor
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand
+              detail: 1
 
         - type: custom:expander-card
           title: Targets
@@ -237,15 +232,18 @@ views:
                   attribute: overall_average_cost
                 {% endfor %}
 
-        - type: custom:auto-entities
-          card:
-            type: entities
-          sort:
-            method: state
-            numeric: true
-          filter:
-            include:
-              - entity_id: sensor.*_battery
+        - type: custom:expander-card
+          title: Batteries
+          cards:
+          - type: custom:auto-entities
+            card:
+              type: entities
+            sort:
+              method: state
+              numeric: true
+            filter:
+              include:
+                - entity_id: sensor.*_battery
 
   - title: Tasmota
     icon: mdi:power-socket-uk
