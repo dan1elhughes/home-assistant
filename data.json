@@ -1,4 +1,11 @@
 {
+  "people": [
+    "person.dan",
+    "person.dad",
+    "person.mum",
+    "person.katie",
+    "person.guest"
+  ],
   "buttons": [
     {
       "name": "Front door button",

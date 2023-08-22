@@ -10,7 +10,13 @@ heating_automations:
 
 one_room_mode:
   name: One-room mode
+  initial: true
   icon: mdi:radar
+
+presence_notifications:
+  name: Presence notifications
+  initial: false
+  icon: mdi:account-multiple
 
 ac:
   name: Air conditioning

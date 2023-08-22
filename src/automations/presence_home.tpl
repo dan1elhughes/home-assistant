@@ -34,28 +34,24 @@
       data:
         option: "bedroom"
 
-- alias: "Arrive home (kettle)"
+- alias: "Presence monitoring"
   mode: single
   trigger:
     - platform: state
-      entity_id: group.presence_home
-      from: not_home
-      to: home
+      entity_id:
+        {%- for person in people %}
+        - {{ person }}
+        {%- endfor %}
+      to: null
   condition:
     - condition: state
-      entity_id: binary_sensor.octopus_energy_saving_session
-      state: "off"
-    - condition: state
-      entity_id: switch.kettle
-      state: "off"
+      entity_id: input_boolean.presence_notifications
+      state: "on"
   action:
-    - service: switch.turn_on
-      target:
-        entity_id: switch.kettle
     - service: notify.dan
       data:
-        title: 🫖 Kettle 🫖
-        message: Switched on
+        message: "{% raw %}{{ trigger.entity_id }} is now {{ trigger.to_state.state }}{% endraw %}"
         data:
-          channel: "Kettle"
-          notification_icon: "mdi:kettle"
+          channel: "Presence"
+          tag: presence
+          notification_icon: "mdi:account-multiple"

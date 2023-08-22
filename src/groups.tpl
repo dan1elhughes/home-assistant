@@ -39,13 +39,11 @@ fans:
 
 # PRESENCE
 presence_home:
-  name: "Presence"
+  name: "People"
   entities:
-    - person.dan
-    - person.mum
-    - person.dad
-    - person.katie
-    - person.guest
+    {% for person in people -%}
+    - {{ person }}
+    {% endfor %}
 
 thermostats:
   name: "Thermostats"
