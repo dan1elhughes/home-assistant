@@ -186,11 +186,18 @@ views:
   - title: Power
     icon: mdi:home-lightning-bolt
     cards:
-        - type: sensor
-          graph: line
-          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
-          detail: 2
-          name: Rate
+        - type: horizontal-stack
+          cards:
+            - type: sensor
+              graph: line
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand
+              detail: 2
+              name: Demand
+            - type: sensor
+              graph: line
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
+              detail: 2
+              name: Rate
         - type: horizontal-stack
           cards:
             - graph: none
