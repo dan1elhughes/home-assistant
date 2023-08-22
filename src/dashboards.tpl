@@ -191,23 +191,30 @@ views:
           entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
           detail: 2
           name: Rate
-
-        - type: vertical-stack
+        - type: horizontal-stack
           cards:
-            - type: horizontal-stack
-              cards:
-                - type: sensor
-                  name: Yesterday
-                  graph: none
-                  entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_consumption
-                - type: sensor
-                  name: Today
-                  graph: none
-                  entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_consumption
-            - graph: line
+            - graph: none
               type: sensor
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand
+              name: Used today
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_consumption
               detail: 1
+            - graph: none
+              type: sensor
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_cost
+              detail: 1
+              name: Spent today
+        - type: horizontal-stack
+          cards:
+            - graph: none
+              type: sensor
+              name: Used yesterday
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_consumption
+              detail: 1
+            - graph: none
+              type: sensor
+              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_cost
+              detail: 1
+              name: Spent yesterday
 
         - type: custom:expander-card
           title: Targets
