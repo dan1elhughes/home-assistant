@@ -45,6 +45,7 @@ presence_home:
     - person.mum
     - person.dad
     - person.katie
+    - person.guest
 
 thermostats:
   name: "Thermostats"
