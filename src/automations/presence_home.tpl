@@ -39,8 +39,10 @@
   trigger:
     - platform: state
       entity_id:
-        {%- for person in people %}
+        {%- for person in people -%}
+        {%- if person != "person.dan" %}
         - {{ person }}
+        {%- endif -%}
         {%- endfor %}
       to: null
   condition:
