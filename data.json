@@ -130,6 +130,11 @@
       "groups": ["group.target_intermittent_1h_daytime"]
     },
     {
+      "id": "binary_sensor.octopus_energy_target_intermittent_1h_overnight",
+      "name": "Intermittent 1h overnight",
+      "groups": ["group.target_intermittent_1h_overnight"]
+    },
+    {
       "id": "binary_sensor.octopus_energy_target_intermittent_4h",
       "name": "Intermittent 4h",
       "groups": ["group.target_intermittent_4h"]

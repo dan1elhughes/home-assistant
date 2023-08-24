@@ -67,13 +67,6 @@ target_continuous_2h:
   entities:
     - switch.sinkhole
 
-# The cheapest 1 hour blocks in the day.
-# 12:00 - 20:00
-target_intermittent_1h_daytime:
-  name: "Target: Intermittent 1h daytime"
-  entities:
-    - light.water_heater
-
 # The cheapest 4 hour blocks at any time.
 # 16:00 - 16:00
 target_intermittent_4h:
@@ -81,10 +74,23 @@ target_intermittent_4h:
   entities:
     - switch.dehumidifier
 
+# The cheapest 1 hour blocks in the day.
+# 12:00 - 20:00
+target_intermittent_1h_daytime:
+  name: "Target: Intermittent 1h daytime"
+  entities:
+    - light.water_heater
+
+# The cheapest 1 hour blocks overnight.
+# 00:00 - 08:00
+target_intermittent_1h_overnight:
+  name: "Target: Intermittent 1h overnight"
+  entities:
+    - light.water_heater
+
 # The cheapest 4 hour blocks overnight.
 # 00:00 - 08:00
 target_intermittent_4h_overnight:
   name: "Target: Intermittent 4h overnight"
   entities:
-    - light.water_heater
     - switch.phone_charger
