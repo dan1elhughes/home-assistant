@@ -8,5 +8,6 @@
         - Netflix
         - Plex
         - Prime Video
+        - VLC
   action:
     - scene: scene.movie_mode
