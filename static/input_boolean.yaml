@@ -15,7 +15,7 @@ one_room_mode:
 
 presence_notifications:
   name: Presence notifications
-  initial: false
+  initial: true
   icon: mdi:account-multiple
 
 ac:
