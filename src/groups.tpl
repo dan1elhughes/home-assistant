@@ -94,3 +94,4 @@ target_intermittent_4h_overnight:
   name: "Target: Intermittent 4h overnight"
   entities:
     - switch.phone_charger
+    - switch.battery
