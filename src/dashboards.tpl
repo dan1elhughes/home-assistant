@@ -56,19 +56,15 @@ views:
         icon: mdi:home-account
 
       - type: entities
-        title: Air conditioning
+        title: Quick controls
         state_color: true
         entities:
           - entity: input_boolean.ac
-            name: Active
+            name: Air conditioning
             secondary_info: none
-          - entity: input_button.living_room_ac_up
-            name: Increase temperature
-          - entity: input_button.living_room_ac_down
-            name: Decrease temperature
-          - entity: sensor.aircon_energy_power
-            name: Power usage
-            secondary_info: last-updated
+          - entity: switch.amplifier
+            name: Amplifier
+            secondary_info: none
 
   - title: Heating
     icon: mdi:heat-wave
