@@ -182,6 +182,10 @@ views:
   - title: Power
     icon: mdi:home-lightning-bolt
     cards:
+        - type: entity
+          entity: sensor.energy_cost_per_hour
+          name: Cost per hour
+          icon: mdi:currency-gbp
         - type: horizontal-stack
           cards:
             - type: sensor

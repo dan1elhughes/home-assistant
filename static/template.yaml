@@ -1,0 +1,7 @@
+- sensor:
+    - name: Energy cost per hour
+      unit_of_measurement: "£/h"
+      state: |
+        {% set demand = states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand') | float %}
+        {% set rate = states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate') | float %}
+        {{(((demand/1000) * rate) | round(2)) }}
