@@ -296,10 +296,8 @@ views:
       - type: entities
         title: Controls
         entities:
-          - entity: input_boolean.lighting_automations
-            name: Lighting automation
-          - entity: input_boolean.heating_automations
-            name: Heating automation
+          - entity: input_boolean.automations
+            name: Automations
           - entity: input_boolean.one_room_mode
             name: One-room mode
           - entity: input_boolean.presence_notifications

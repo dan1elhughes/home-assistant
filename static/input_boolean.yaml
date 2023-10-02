@@ -1,12 +1,7 @@
-lighting_automations:
-  name: Enable lighting automation
+automations:
+  name: Enable automations
   initial: true
-  icon: mdi:lightbulb-auto
-
-heating_automations:
-  name: Enable heating automation
-  initial: true
-  icon: mdi:thermostat-auto
+  icon: mdi:robot
 
 one_room_mode:
   name: One-room mode

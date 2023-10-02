@@ -8,7 +8,7 @@
       entity_id: group.presence_home
       state: home
     - condition: state
-      entity_id: input_boolean.lighting_automations
+      entity_id: input_boolean.automations
       state: "on"
   action:
     - service: light.turn_on

@@ -7,7 +7,7 @@
       to: not_home
   condition:
     - condition: state
-      entity_id: input_boolean.lighting_automations
+      entity_id: input_boolean.automations
       state: "on"
   action:
     - service: input_select.select_option
@@ -25,7 +25,7 @@
       to: home
   condition:
     - condition: state
-      entity_id: input_boolean.lighting_automations
+      entity_id: input_boolean.automations
       state: "on"
   action:
     - service: input_select.select_option
