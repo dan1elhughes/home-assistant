@@ -7,7 +7,7 @@
       # https://www.home-assistant.io/docs/automation/trigger/#state-trigger
       # Trigger on all *state* changes, but not attributes, by setting to to null.
       # Otherwise, volume changes trigger the automation!
-      to:
+      to: null
   action:
     - service_template: switch.turn_{{ trigger.to_state.state }}
       target:
