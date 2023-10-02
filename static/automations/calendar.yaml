@@ -1,0 +1,17 @@
+- alias: "Control automation toggle by calendar"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: calendar.automations
+      to: null
+  action:
+    - service_template: input_boolean.turn_{{ trigger.to_state.state }}
+      target:
+        entity_id: input_boolean.automations
+    - service: notify.dan
+      data:
+        title: "Automations set to {{ trigger.to_state.state }}"
+        data:
+          channel: "Automations"
+          tag: "calendar"
+          notification_icon: "mdi:calendar"
