@@ -48,7 +48,7 @@
   action:
     - service: notify.dan
       data:
-        message: "{% raw %}{{ trigger.entity_id }} is now {{ trigger.to_state.state }}{% endraw %}"
+        message: "{% raw %}{{ trigger.entity_id  | replace('person.', '') | title }} is now {{ trigger.to_state.state }}{% endraw %}"
         data:
           channel: "Presence"
           tag: presence
