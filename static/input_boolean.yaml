@@ -8,11 +8,6 @@ one_room_mode:
   initial: true
   icon: mdi:radar
 
-presence_notifications:
-  name: Presence notifications
-  initial: true
-  icon: mdi:account-multiple
-
 ac:
   name: Air conditioning
   icon: mdi:air-conditioner

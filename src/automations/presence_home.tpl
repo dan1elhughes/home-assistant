@@ -45,10 +45,6 @@
         {%- endif -%}
         {%- endfor %}
       to: null
-  condition:
-    - condition: state
-      entity_id: input_boolean.presence_notifications
-      state: "on"
   action:
     - service: notify.dan
       data:

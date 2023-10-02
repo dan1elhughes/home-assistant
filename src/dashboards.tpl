@@ -300,8 +300,6 @@ views:
             name: Automations
           - entity: input_boolean.one_room_mode
             name: One-room mode
-          - entity: input_boolean.presence_notifications
-            name: Presence notifications
       - type: sensor
         entity: sensor.home_assistant_v2_db_size
         graph: line
