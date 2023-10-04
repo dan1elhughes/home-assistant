@@ -47,21 +47,12 @@ views:
       {% endif %}
       {% endfor %}
 
-      - type: entities
-        title: Fans
-        show_header_toggle: true
-        state_color: true
-        entities:
-          {% for room in rooms %}
-          {% if room.fan %}
-          - entity: {{ room.fan }}
-          {% endif %}
-          {% endfor %}
+      - type: tile
+        entity: fan.fans
 
       - type: tile
         entity: group.presence_home
         icon: mdi:home-account
-
 
       - type: entities
         title: Quick controls

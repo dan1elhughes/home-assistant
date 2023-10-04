@@ -1,20 +1,3 @@
-# MEDIA PLAYERS
-media_players:
-  name: "Media players"
-  entities:
-    - media_player.living_room_speaker
-    - media_player.office_speaker
-    - media_player.bedroom_speaker
-    - media_player.shield
-
-# FANS
-fans:
-  name: "Fans"
-  entities:
-    - fan.living_room_fan
-    - fan.office_fan
-    - fan.bedroom_fan
-
 # PRESENCE
 presence_home:
   name: "People"

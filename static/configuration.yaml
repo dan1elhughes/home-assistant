@@ -4,11 +4,13 @@ default_config:
 automation manual: !include_dir_merge_list automations/
 automation ui: !include automations.yaml
 climate: !include climate.yaml
+fan: !include fan.yaml
 group: !include groups.yaml
 input_boolean: !include input_boolean.yaml
 input_button: !include input_button.yaml
 input_select: !include input_select.yaml
 light: !include light.yaml
+media_player: !include media_player.yaml
 rest_command: !include rest_command.yaml
 scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
