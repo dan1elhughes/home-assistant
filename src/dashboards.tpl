@@ -38,12 +38,6 @@ views:
       {% if room.lights %}
       - type: tile
         entity: {{ room.lights }}
-        features:
-          - type: light-brightness
-        tap_action:
-          action: toggle
-        icon_tap_action:
-          action: toggle
       {% endif %}
       {% endfor %}
 
