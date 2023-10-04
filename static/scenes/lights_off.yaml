@@ -1,9 +1,9 @@
 name: Lights off
 icon: mdi:ceiling-light-multiple-outline
 entities:
-  group.living_room_lights:
+  light.living_room_lights:
     state: "off"
-  group.office_lights:
+  light.office_lights:
     state: "off"
-  group.bedroom_lights:
+  light.bedroom_lights:
     state: "off"

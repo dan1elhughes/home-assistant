@@ -1,10 +1,10 @@
 name: Bedtime
 icon: mdi:bed-outline
 entities:
-  group.bedroom_lights:
+  light.bedroom_lights:
     state: "on"
     brightness: 2
-  group.living_room_lights:
+  light.living_room_lights:
     state: "off"
-  group.office_lights:
+  light.office_lights:
     state: "off"

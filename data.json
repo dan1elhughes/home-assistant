@@ -39,7 +39,7 @@
     {
       "id": "living_room",
       "name": "Living room",
-      "lights": "group.living_room_lights",
+      "lights": "light.living_room_lights",
       "fan": "fan.living_room_fan",
       "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
       "temperature": "sensor.living_room_sensor_temperature",
@@ -48,7 +48,7 @@
     {
       "id": "bedroom",
       "name": "Bedroom",
-      "lights": "group.bedroom_lights",
+      "lights": "light.bedroom_lights",
       "fan": "fan.bedroom_fan",
       "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
       "temperature": "sensor.bedroom_sensor_temperature",
@@ -57,7 +57,7 @@
     {
       "id": "office",
       "name": "Office",
-      "lights": "group.office_lights",
+      "lights": "light.office_lights",
       "fan": "fan.office_fan",
       "dimmer_ieee": "00:17:88:01:09:a6:cf:36",
       "temperature": "sensor.office_sensor_temperature",

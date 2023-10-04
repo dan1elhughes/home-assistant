@@ -1,9 +1,9 @@
 name: "Movie mode"
 icon: hass:movie
 entities:
-  group.bedroom_lights:
+  light.bedroom_lights:
     state: "off"
-  group.office_lights:
+  light.office_lights:
     state: "off"
 
   # ---

@@ -29,31 +29,39 @@ views:
           method: friendly_name
         show_empty: false
 
+      - type: tile
+        entity: input_select.active_room
+        features:
+          - type: select-options
+
+      {% for room in rooms %}
+      {% if room.lights %}
+      - type: tile
+        entity: {{ room.lights }}
+        features:
+          - type: light-brightness
+        tap_action:
+          action: toggle
+        icon_tap_action:
+          action: toggle
+      {% endif %}
+      {% endfor %}
+
       - type: entities
-        title: Scenes
+        title: Fans
+        show_header_toggle: true
+        state_color: true
         entities:
-          - scene.everything_on
-          - input_select.active_room
-
-      - type: tile
-        entity: group.living_room_lights
-        icon: mdi:floor-lamp
-
-      - type: tile
-        entity: group.office_lights
-        icon: mdi:floor-lamp
-
-      - type: tile
-        entity: group.bedroom_lights
-        icon: mdi:floor-lamp
-
-      - type: tile
-        entity: group.fans
-        icon: mdi:fan
+          {% for room in rooms %}
+          {% if room.fan %}
+          - entity: {{ room.fan }}
+          {% endif %}
+          {% endfor %}
 
       - type: tile
         entity: group.presence_home
         icon: mdi:home-account
+
 
       - type: entities
         title: Quick controls
@@ -107,8 +115,18 @@ views:
 
       {% for room in rooms %}
       {% if room.heater %}
-      - type: thermostat
+      - type: tile
         entity: climate.{{room.id}}
+        icon_tap_action:
+          action: toggle
+        features:
+          - style: icons
+            type: climate-preset-modes
+            preset_modes:
+              - away
+              - comfort
+              - home
+              - sleep
       {% endif %}
       {% endfor %}
 
