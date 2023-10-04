@@ -10,7 +10,6 @@
   sleep_temp: 15
   home_temp: 17.5
   comfort_temp: 19
-  activity_temp: 30
   min_temp: 10
   max_temp: 22
   cold_tolerance: 0.2
