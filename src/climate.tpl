@@ -14,5 +14,6 @@
   max_temp: 22
   cold_tolerance: 0.2
   hot_tolerance: 0.2
+  precision: 0.5
 {% endif %}
 {% endfor %}
