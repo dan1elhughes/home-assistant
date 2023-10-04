@@ -81,9 +81,9 @@
   ],
   "climateModes": [
     { "name": "Away", "id": "away", "icon": "mdi:fire-off" },
-    { "name": "Sleep", "id": "sleep", "icon": "mdi:bed" },
+    { "name": "Comfort", "id": "comfort", "icon": "mdi:sofa" },
     { "name": "Home", "id": "home", "icon": "mdi:home" },
-    { "name": "Comfort", "id": "comfort", "icon": "mdi:heat-wave" }
+    { "name": "Sleep", "id": "sleep", "icon": "mdi:bed" }
   ],
   "devices": [
     {
