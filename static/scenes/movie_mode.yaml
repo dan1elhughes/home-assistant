@@ -5,18 +5,14 @@ entities:
     state: "off"
   light.office_lights:
     state: "off"
-
-  # ---
-
-  light.dining_room_table:
-    state: "off"
-
   light.living_room_lamp:
     state: "on"
-    brightness: 150
+    brightness_pct: 50
   light.living_room_speaker:
     state: "on"
-    brightness: 150
+    brightness_pct: 50
   light.tv_light:
     state: "on"
-    brightness: 150
+    brightness_pct: 50
+  light.dining_room_table:
+    state: "off"

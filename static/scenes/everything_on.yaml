@@ -3,10 +3,10 @@ icon: hass:door-open
 entities:
   light.living_room_lights:
     state: "on"
-    brightness: 255
+    brightness_pct: 100
   light.office_lights:
     state: "on"
-    brightness: 255
+    brightness_pct: 100
   light.bedroom_lights:
     state: "on"
-    brightness: 255
+    brightness_pct: 100
