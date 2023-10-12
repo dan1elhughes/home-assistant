@@ -44,7 +44,7 @@ notify:
   - platform: group
     name: dan
     services:
-      - service: mobile_app_pixel_6
+      - service: mobile_app_pixel_8
 
 homeassistant:
   allowlist_external_dirs:
