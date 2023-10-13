@@ -87,9 +87,9 @@
   ],
   "devices": [
     {
-      "name": "Pixel 6",
-      "battery_level": "sensor.pixel_6_battery_level",
-      "battery_state": "sensor.pixel_6_battery_state"
+      "name": "Phone",
+      "battery_level": "sensor.pixel_8_battery_level",
+      "battery_state": "sensor.pixel_8_battery_state"
     },
     {
       "name": "Aperture",

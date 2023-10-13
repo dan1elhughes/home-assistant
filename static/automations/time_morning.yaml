@@ -2,7 +2,7 @@
   mode: single
   trigger:
     - platform: time
-      at: sensor.pixel_6_next_alarm
+      at: sensor.pixel_8_next_alarm
   condition:
     - condition: state
       entity_id: group.presence_home
@@ -27,7 +27,7 @@
   mode: single
   trigger:
     - platform: time
-      at: sensor.pixel_6_next_alarm
+      at: sensor.pixel_8_next_alarm
   condition:
     - condition: state
       entity_id: group.presence_home
