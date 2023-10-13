@@ -103,8 +103,8 @@
     },
     {
       "name": "Work laptop",
-      "battery_level": "sensor.dan_s_work_laptop_internal_battery_level",
-      "battery_state": "sensor.dan_s_work_laptop_internal_battery_state"
+      "battery_level": "sensor.dans_macbook_pro_internal_battery_level",
+      "battery_state": "sensor.dans_macbook_pro_internal_battery_state"
     }
   ],
   "lights": [
