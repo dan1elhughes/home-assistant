@@ -1,0 +1,20 @@
+- alias: "Office: Phone on charge"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.pixel_8_charger_type
+      to: "wireless"
+  condition:
+    - condition: state
+      entity_id: group.presence_home
+      state: home
+    - condition: time
+      after: "08:00:00"
+      before: "23:00:00"
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.active_room
+      data:
+        option: "office"
