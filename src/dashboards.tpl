@@ -62,21 +62,15 @@ views:
   - title: Heating
     icon: mdi:heat-wave
     cards:
-      - type: horizontal-stack
-        cards:
-        {% for mode in climateModes %}
-        - type: button
-          tap_action:
-            action: call-service
-            service: climate.set_preset_mode
-            data:
-              preset_mode: {{ mode.id }}
-            target:
-              entity_id: group.thermostats
-          entity: group.thermostats
-          name: {{ mode.name }}
-          icon: {{ mode.icon }}
-      {% endfor %}
+      - type: entities
+        entities:
+          {% for room in rooms %}
+          {% if room.temperature %}
+          - entity: {{ room.temperature }}
+            name: {{ room.name }}
+            secondary_info: last-updated
+          {% endif %}
+          {% endfor %}
 
       - type: tile
         entity: group.thermostats
