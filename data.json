@@ -70,11 +70,6 @@
       "heater": "light.hallway_heater_power"
     },
     {
-      "id": "boiler_room",
-      "name": "Boiler room",
-      "temperature": "sensor.boiler_room_sensor_temperature"
-    },
-    {
       "id": "out",
       "name": "Out"
     }
