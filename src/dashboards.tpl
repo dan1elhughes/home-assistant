@@ -220,28 +220,25 @@ views:
               detail: 1
               name: Spent yesterday
 
-        - type: custom:expander-card
-          title: Targets
-          cards:
-            - type: entities
-              entities:
-                {% for target in agile_targets %}
-                - type: section
-                  label: "{{ target.name }}"
-                {% for group in target.groups %}
-                - entity: "{{ group }}"
-                  name: "{{ group }}"
-                {% endfor %}
-                - type: attribute
-                  name: "Next time"
-                  entity: "{{ target.id }}"
-                  attribute: next_time
-                - type: attribute
-                  name: "Average cost"
-                  icon: mdi:currency-gbp
-                  entity: "{{ target.id }}"
-                  attribute: overall_average_cost
-                {% endfor %}
+        {% for target in agile_targets %}
+        - type: entities
+          title: "{{ target.name }}"
+          entities:
+            {% for group in target.groups %}
+            - entity: "{{ group }}"
+              name: "{{ group }}"
+            {% endfor %}
+            - type: divider
+            - type: attribute
+              name: "Next time"
+              entity: "{{ target.id }}"
+              attribute: next_time
+            - type: attribute
+              name: "Average cost"
+              icon: mdi:currency-gbp
+              entity: "{{ target.id }}"
+              attribute: overall_average_cost
+          {% endfor %}
 
         - type: custom:expander-card
           title: Batteries
