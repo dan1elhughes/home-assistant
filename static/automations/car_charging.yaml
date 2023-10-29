@@ -17,7 +17,7 @@
     - service: notify.dan
       data:
         title: Car charged to {{ states('sensor.zoe_battery_level') }}%
-        message: "{{ states('sensor.zoe_charging_power') }} kW"
+        message: "{{ states('sensor.zoe_charging_power') }} kW, done at {{ (now()|as_timestamp + (states('sensor.zoe_charging_remaining_time')|int*60))|timestamp_custom('%H:%M', True) }}"
         data:
           channel: Car charging
           tag: car-charging
