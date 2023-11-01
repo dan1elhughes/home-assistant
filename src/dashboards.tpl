@@ -264,6 +264,13 @@ views:
               include:
                 - entity_id: sensor.*_battery
 
+        - type: custom:octopus-energy-rates-card
+          entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
+          cols: 2
+          showday: true
+          title: Energy prices
+          hour12: false
+
   - title: Tasmota
     icon: mdi:power-socket-uk
     cards:
