@@ -12,11 +12,16 @@
       entity_id: group.presence_home
       state: home
   action:
-    - service: input_select.select_option
-      target:
-        entity_id: input_select.heating_mode
+    {%- for room in rooms %}
+    {%- if room.heater %}
+    - alias: "Set {{ room.name }} to Home"
+      service: climate.set_preset_mode
       data:
-        option: home
+        preset_mode: home
+      target:
+        entity_id: climate.{{ room.id }}
+    {%- endif %}
+    {%- endfor %}
 
 - alias: "Heating: Overnight"
   mode: single
@@ -29,8 +34,13 @@
       entity_id: input_boolean.automations
       state: "on"
   action:
-    - service: input_select.select_option
-      target:
-        entity_id: input_select.heating_mode
+    {%- for room in rooms %}
+    {%- if room.heater %}
+    - alias: "Set {{ room.name }} to Sleep"
+      service: climate.set_preset_mode
       data:
-        option: sleep
+        preset_mode: sleep
+      target:
+        entity_id: climate.{{ room.id }}
+    {%- endif %}
+    {%- endfor %}
