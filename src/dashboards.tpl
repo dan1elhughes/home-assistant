@@ -36,8 +36,22 @@ views:
 
       {% for room in rooms %}
       {% if room.lights %}
-      - type: tile
-        entity: {{ room.lights }}
+      - type: conditional
+        conditions:
+          - condition: screen
+            media_query: '(min-width: 0px) and (max-width: 767px)'
+        card:
+          type: tile
+          entity: {{ room.lights }}
+      - type: conditional
+        conditions:
+          - condition: screen
+            media_query: '(min-width: 768px)'
+        card:
+          features:
+            - type: light-brightness
+          type: tile
+          entity: {{ room.lights }}
       {% endif %}
       {% endfor %}
 
@@ -47,6 +61,9 @@ views:
       - type: tile
         entity: group.presence_home
         icon: mdi:home-account
+        state_content:
+          - state
+          - last-changed
 
       - type: entities
         title: Quick controls
@@ -62,16 +79,6 @@ views:
   - title: Heating
     icon: mdi:heat-wave
     cards:
-      - type: entities
-        entities:
-          {% for room in rooms %}
-          {% if room.temperature %}
-          - entity: {{ room.temperature }}
-            name: {{ room.name }}
-            secondary_info: last-updated
-          {% endif %}
-          {% endfor %}
-
       - type: tile
         entity: group.thermostats
         icon: mdi:heat-wave
@@ -106,6 +113,10 @@ views:
               - comfort
               - home
               - sleep
+        state_content:
+          - temperature
+          - current_temperature
+          - hvac_action
       {% endif %}
       {% endfor %}
 
