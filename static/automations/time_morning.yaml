@@ -1,62 +1,26 @@
-- alias: Morning fade-in
+- alias: Morning lights
   mode: single
   trigger:
     - platform: time
       at: sensor.pixel_8_next_alarm
   condition:
-    - condition: state
+    - alias: "Home"
+      condition: state
       entity_id: group.presence_home
       state: home
-    - condition: state
+    - alias: "Automations enabled"
+      condition: state
       entity_id: input_boolean.automations
       state: "on"
+    - alias: "Alarm is triggered by Clock"
+      condition: state
+      entity_id: sensor.pixel_8_next_alarm
+      attribute: package
+      state: com.google.android.deskclock
   action:
-    - service: light.turn_on
+    - alias: "Turn on bedroom lights"
+      service: light.turn_on
       target:
         entity_id: light.bedroom_lights
       data:
         brightness_pct: 100
-
-        # 20 minutes.
-        # Appears to start the transition then immediately continue the
-        # automation steps, rather than starting, transitioning, then
-        # continuing.
-        transition: 1200
-
-- alias: Morning radio (BBC R4)
-  mode: single
-  trigger:
-    - platform: time
-      at: sensor.pixel_8_next_alarm
-  condition:
-    - condition: state
-      entity_id: group.presence_home
-      state: home
-  action:
-    - choose:
-        - conditions:
-            - condition: time
-              weekday:
-                - sun
-          sequence:
-            - service: spotcast.start
-              data:
-                device_name: Bedroom
-                start_volume: 15
-                uri: spotify:playlist:37i9dQZF1DWUb0uBnlJuTi
-                random_song: true
-                shuffle: true
-
-      default:
-        - service: media_player.volume_set
-          target:
-            entity_id: media_player.bedroom
-          data:
-            volume_level: 0.15
-
-        - service: media_player.play_media
-          target:
-            entity_id: media_player.bedroom
-          data:
-            media_content_id: media-source://radio_browser/292895dc-3d1f-4c40-b85a-e877405510f9
-            media_content_type: audio/mpeg
