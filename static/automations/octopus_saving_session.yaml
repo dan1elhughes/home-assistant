@@ -2,7 +2,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.octopus_energy_saving_session
+      entity_id: binary_sensor.octopus_energy_saving_sessions
       from: "off"
       to: "on"
   action:
@@ -24,7 +24,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.octopus_energy_saving_session
+      entity_id: binary_sensor.octopus_energy_saving_sessions
       from: "on"
       to: "off"
   condition:
