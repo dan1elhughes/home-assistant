@@ -19,6 +19,9 @@
       data:
         hvac_mode: "off"
     - service: shell_command.shutdown_sinkhole
+    - service: light.turn_off
+      target:
+        entity_id: all
 
 - alias: "Saving session: ended while home"
   mode: single
