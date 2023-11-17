@@ -18,7 +18,9 @@
         entity_id: group.thermostats
       data:
         hvac_mode: "off"
-    - service: shell_command.shutdown_sinkhole
+    - service: switch.turn_off
+      target:
+        entity_id: switch.sinkhole
     - service: light.turn_off
       target:
         entity_id: all
@@ -47,3 +49,6 @@
         entity_id: group.thermostats
       data:
         hvac_mode: "heat"
+    - service: switch.turn_on
+      target:
+        entity_id: switch.sinkhole
