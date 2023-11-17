@@ -21,13 +21,6 @@ living_room_heaters_power:
     - light.living_room_heater_power
     - light.living_room_secondary_heater_power
 
-# The cheapest 2 hour single block at any time.
-# 16:00 - 16:00
-target_continuous_2h:
-  name: "Target: Continuous 2h"
-  entities:
-    - switch.sinkhole
-
 # The cheapest 4 hour blocks at any time.
 # 16:00 - 16:00
 target_intermittent_4h:
