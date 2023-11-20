@@ -26,34 +26,3 @@
           tag: "energy-price" # This is used to replace notifications
           notification_icon: "mdi:lightning-bolt"
           importance: "min"
-
-
-- alias: "Energy price: daily rates updated"
-  mode: single
-  trigger:
-    - platform: state
-      # {{
-      # state_attr('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate',
-      # 'current_day_average_rate') }}
-      entity_id: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
-      attribute: current_day_average_rate
-  variables:
-    min: "{{
-    state_attr('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate', 'current_day_min_rate')
-    | round(2) }}"
-    max: "{{
-    state_attr('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate', 'current_day_max_rate')
-    | round(2) }}"
-    avg: "{{
-    state_attr('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate', 'current_day_average_rate')
-    | round(2) }}"
-  action:
-    - service: notify.dan
-      data:
-        title: "Rates published"
-        message: "{{ min }}-{{ max }}p (avg: {{ avg }}p)"
-        data:
-          channel: "Rates published"
-          tag: "rates-published"
-          notification_icon: "mdi:lightning-bolt"
-          importance: "min"
