@@ -42,6 +42,7 @@
       "lights": "light.living_room_lights",
       "fan": "fan.living_room_fan",
       "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
+      "button_ieee": "00:12:4b:00:22:cf:67:01",
       "temperature": "sensor.living_room_sensor_temperature",
       "heater": "group.living_room_heaters_power"
     },
@@ -60,6 +61,7 @@
       "lights": "light.office_lights",
       "fan": "fan.office_fan",
       "dimmer_ieee": "00:17:88:01:09:a6:cf:36",
+      "button_ieee": "00:12:4b:00:29:0f:e9:c1",
       "temperature": "sensor.office_sensor_temperature",
       "heater": "light.office_heater_power"
     },
