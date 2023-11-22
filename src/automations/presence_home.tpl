@@ -27,6 +27,11 @@
     - condition: state
       entity_id: input_boolean.automations
       state: "on"
+  # Only run if we've not outpaced the automation and already set the active room
+  condition:
+    - condition: state
+      entity_id: input_select.active_room
+      state: "out"
   action:
     - service: input_select.select_option
       target:
