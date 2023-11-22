@@ -8,6 +8,7 @@ fan: !include fan.yaml
 group: !include groups.yaml
 input_boolean: !include input_boolean.yaml
 input_button: !include input_button.yaml
+input_datetime: !include input_datetime.yaml
 input_select: !include input_select.yaml
 light: !include light.yaml
 media_player: !include media_player.yaml
