@@ -1,0 +1,20 @@
+- alias: "Office: Keylight check"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - input_select.active_room
+      to: office
+  condition:
+    - condition: state
+      entity_id: light.elgato_keylight
+      state: unavailable
+  action:
+    - service: switch.turn_off
+      target:
+        entity_id: switch.keylight_switch
+    - delay:
+        seconds: 1
+    - service: switch.turn_on
+      target:
+        entity_id: switch.keylight_switch
