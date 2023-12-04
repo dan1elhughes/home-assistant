@@ -273,13 +273,13 @@ views:
         - title: Energy prices
           type: custom:octopus-energy-rates-card
           currentEntity: event.octopus_energy_electricity_20j0046498_2000052144657_current_day_rates
+          futureEntity: event.octopus_energy_electricity_20j0046498_2000052144657_next_day_rates
           targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_4h
           cols: 2
           roundUnits: 1
           showday: true
           hour12: false
           unitstr: 'p'
-
 
   - title: Tasmota
     icon: mdi:power-socket-uk
