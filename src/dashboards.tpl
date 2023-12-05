@@ -196,6 +196,11 @@ views:
   - title: Power
     icon: mdi:home-lightning-bolt
     cards:
+        - type: tile
+          entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
+          state_content: next_joined_event_start
+          name: Saving session
+
         - type: entity
           entity: sensor.energy_cost_per_hour
           name: Cost per hour
