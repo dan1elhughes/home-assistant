@@ -11,7 +11,7 @@
   action:
     - service: light.turn_on
       data:
-        brightness_pct: 100
+        brightness: 255
       target:
         entity_id: light.elgato_keylight
 

@@ -28,7 +28,7 @@
       target:
         entity_id: "{{ room.lights }}"
       data:
-        brightness_pct: 100
+        brightness: 255
 
 {% if room.fan %}
 - alias: "{{ room.name }}: Double-tap"
