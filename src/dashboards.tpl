@@ -36,22 +36,21 @@ views:
 
       {% for room in rooms %}
       {% if room.lights %}
-      - type: conditional
-        conditions:
-          - condition: screen
-            media_query: '(min-width: 0px) and (max-width: 767px)'
-        card:
+      - type: custom:expander-card
+        title: {{ groups[room.lights].name }}
+        gap: '0'
+        padding: '0'
+        child-padding: '0'
+        clear: true
+        title-card:
           type: tile
           entity: {{ room.lights }}
-      - type: conditional
-        conditions:
-          - condition: screen
-            media_query: '(min-width: 768px)'
-        card:
-          features:
-            - type: light-brightness
-          type: tile
-          entity: {{ room.lights }}
+        cards:
+          - type: entities
+            entities:
+              {% for id in groups[room.lights].entities %}
+              - entity: {{ id }}
+              {% endfor %}
       {% endif %}
       {% endfor %}
 

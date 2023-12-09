@@ -6,6 +6,29 @@
     "person.katie",
     "person.guest"
   ],
+  "groups": {
+    "light.bedroom_lights": {
+      "name": "Bedroom lights",
+      "entities": ["light.bedroom_lamp_left", "light.bedroom_lamp_right"]
+    },
+    "light.office_lights": {
+      "name": "Office lights",
+      "entities": [
+        "light.office_lamp",
+        "light.shelf_lighting_left",
+        "light.elgato_keylight"
+      ]
+    },
+    "light.living_room_lights": {
+      "name": "Living room lights",
+      "entities": [
+        "light.living_room_lamp",
+        "light.living_room_speaker",
+        "light.tv_light",
+        "light.dining_room_table"
+      ]
+    }
+  },
   "buttons": [
     {
       "name": "Front door button",
@@ -103,17 +126,6 @@
       "battery_level": "sensor.dans_macbook_pro_internal_battery_level",
       "battery_state": "sensor.dans_macbook_pro_internal_battery_state"
     }
-  ],
-  "lights": [
-    "light.bedroom_lamp_left",
-    "light.bedroom_lamp_right",
-    "light.dining_room_table",
-    "light.elgato_keylight",
-    "light.living_room_lamp",
-    "light.living_room_speaker",
-    "light.office_lamp",
-    "light.shelf_lighting_left",
-    "light.tv_light"
   ],
   "agile_targets": [
     {
