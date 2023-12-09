@@ -6,8 +6,13 @@
         {% set rate = states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate') | float %}
         {{(((demand/1000) * rate) | round(2)) }}
 
-- sensor:
     - name: Occupant count
       state: |
         {{ states.person | selectattr('state', 'equalto', 'home') | list |
         count }}
+
+    - name: Next saving session
+      state: |
+        {{
+        state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions',
+        'next_event_start') }}
