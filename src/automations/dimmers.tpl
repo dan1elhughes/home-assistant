@@ -1,7 +1,7 @@
 {% for room in rooms %}
 {% if room.dimmer_ieee %}
 ### {{ room.name }} ###
-- alias: "{{ room.name }}: Track active room"
+- alias: "{{ room.name }} dimmer: Track active room"
   mode: single
   trigger:
     - platform: event
@@ -15,7 +15,7 @@
       data:
         option: "{{ room.id }}"
 
-- alias: "{{ room.name }}: On"
+- alias: "{{ room.name }} dimmer: On"
   mode: single
   trigger:
     - platform: event
@@ -31,7 +31,7 @@
         brightness: 255
 
 {% if room.fan %}
-- alias: "{{ room.name }}: Double-tap"
+- alias: "{{ room.name }} dimmer: Double tap"
   mode: single
   trigger:
     - platform: event
@@ -45,7 +45,7 @@
         entity_id: "{{ room.fan }}"
 {% endif %}
 
-- alias: "{{ room.name }}: Up"
+- alias: "{{ room.name }} dimmer: Up"
   mode: single
   trigger:
     - platform: event
@@ -60,7 +60,7 @@
       data:
         brightness_step_pct: 20
 
-- alias: "{{ room.name }}: Down"
+- alias: "{{ room.name }} dimmer: Down"
   mode: single
   trigger:
     - platform: event
@@ -75,7 +75,7 @@
       data:
         brightness_step_pct: -20
 
-- alias: "{{ room.name }}: Off"
+- alias: "{{ room.name }} dimmer: Off"
   mode: single
   trigger:
     - platform: event
