@@ -11,6 +11,10 @@
         {{ states.person | selectattr('state', 'equalto', 'home') | list |
         count }}
 
+    - name: One-room mode
+      state: |
+        {{ states('sensor.occupant_count') | int <= 1 }}
+
     - name: Next saving session
       state: |
         {{

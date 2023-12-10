@@ -330,8 +330,6 @@ views:
         entities:
           - entity: input_boolean.automations
             name: Automations
-          - entity: input_boolean.one_room_mode
-            name: One-room mode
       - type: sensor
         entity: sensor.home_assistant_v2_db_size
         graph: line

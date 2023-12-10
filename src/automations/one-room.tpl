@@ -8,7 +8,7 @@
       to: "{{room.id}}"
   condition:
     - condition: state
-      entity_id: input_boolean.one_room_mode
+      entity_id: sensor.one_room_mode
       state: "on"
   action:
     {% if room.lights -%}
@@ -33,7 +33,7 @@
       not_to: "{{room.id}}"
   condition:
     - condition: state
-      entity_id: input_boolean.one_room_mode
+      entity_id: sensor.one_room_mode
       state: "on"
   action:
     {% if room.lights -%}
