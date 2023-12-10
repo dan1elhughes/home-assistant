@@ -23,8 +23,13 @@
     - platform: state
       to: "on"
       entity_id:
-        {% for light in lights -%}
-        - {{ light }}
+        {% for room in rooms -%}
+        {% if room.lights -%}
+        # {{ groups[room.lights].name }}
+        {% for id in groups[room.lights].entities -%}
+        - {{ id }}
+        {% endfor -%}
+        {% endif -%}
         {% endfor %}
   action:
     - service: adaptive_lighting.apply
