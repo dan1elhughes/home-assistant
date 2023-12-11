@@ -9,7 +9,7 @@
   condition:
     - condition: state
       entity_id: sensor.one_room_mode
-      state: "on"
+      state: "True"
   action:
     {% if room.lights -%}
     - service: light.turn_on
@@ -34,7 +34,7 @@
   condition:
     - condition: state
       entity_id: sensor.one_room_mode
-      state: "on"
+      state: "True"
   action:
     {% if room.lights -%}
     - service: light.turn_off
