@@ -13,8 +13,13 @@
         adapt_brightness: false
         turn_on_lights: false
         lights:
-        {% for light in lights -%}
-        - {{ light }}
+        {% for room in rooms -%}
+        {% if room.lights -%}
+        # {{ groups[room.lights].name }}
+        {% for id in groups[room.lights].entities -%}
+        - {{ id }}
+        {% endfor -%}
+        {% endif -%}
         {% endfor %}
 
 - alias: "Adaptive lighting: on"
