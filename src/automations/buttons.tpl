@@ -31,7 +31,7 @@
       event_type: zha_event
       event_data:
         device_ieee: {{ button.ieee }}
-        command: on_long_release
+        command: on_hold
   action:
     - scene: {{ button.long }}
 {% endif %}

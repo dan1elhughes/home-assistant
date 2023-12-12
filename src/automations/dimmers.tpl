@@ -15,7 +15,7 @@
       data:
         option: "{{ room.id }}"
 
-- alias: "{{ room.name }} dimmer: On"
+- alias: "{{ room.name }} dimmer: Power (short)"
   mode: single
   trigger:
     - platform: event
@@ -30,20 +30,18 @@
       data:
         brightness: 255
 
-{% if room.fan %}
-- alias: "{{ room.name }} dimmer: Double tap"
+- alias: "{{ room.name }} dimmer: Power (long)"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
         device_ieee: "{{ room.dimmer_ieee }}"
-        command: on_double_press
+        command: on_hold
   action:
-    - service: fan.toggle
+    - service: light.turn_off
       target:
-        entity_id: "{{ room.fan }}"
-{% endif %}
+        entity_id: "{{ room.lights }}"
 
 - alias: "{{ room.name }} dimmer: Up"
   mode: single
@@ -75,7 +73,8 @@
       data:
         brightness_step_pct: -20
 
-- alias: "{{ room.name }} dimmer: Off"
+{% if room.fan %}
+- alias: "{{ room.name }} dimmer: Hue"
   mode: single
   trigger:
     - platform: event
@@ -84,8 +83,9 @@
         device_ieee: "{{ room.dimmer_ieee }}"
         command: off_press
   action:
-    - service: light.turn_off
+    - service: fan.toggle
       target:
-        entity_id: "{{ room.lights }}"
+        entity_id: "{{ room.fan }}"
+{% endif %}
 {% endif %}
 {% endfor %}
