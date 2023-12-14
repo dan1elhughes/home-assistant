@@ -19,4 +19,4 @@
       state: |
         {{
         state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions',
-        'next_event_start') }}
+        'next_joined_event_start') }}
