@@ -1,3 +1,5 @@
+{% import '../macros/lights.tpl' as lights with context %}
+
 - alias: "Saving session: started"
   mode: single
   trigger:
@@ -5,6 +7,10 @@
       entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
       from: "off"
       to: "on"
+  condition:
+    - condition: state
+      entity_id: input_boolean.automations
+      state: "on"
   action:
     - service: notify.dan
       data:
@@ -23,7 +29,8 @@
         entity_id: switch.sinkhole
     - service: light.turn_off
       target:
-        entity_id: all
+        entity_id:
+          {{- lights.ids() | indent(10) }}
 
 - alias: "Saving session: ended while home"
   mode: single
@@ -36,6 +43,9 @@
     - condition: state
       entity_id: group.presence_home
       state: home
+    - condition: state
+      entity_id: input_boolean.automations
+      state: "on"
   action:
     - service: notify.dan
       data:

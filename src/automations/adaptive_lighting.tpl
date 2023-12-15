@@ -1,3 +1,5 @@
+{% import '../macros/lights.tpl' as lights with context %}
+
 - alias: "Adaptive lighting: change"
   mode: single
   trigger:
@@ -13,14 +15,7 @@
         adapt_brightness: false
         turn_on_lights: false
         lights:
-        {% for room in rooms -%}
-        {% if room.lights -%}
-        # {{ groups[room.lights].name }}
-        {% for id in groups[room.lights].entities -%}
-        - {{ id }}
-        {% endfor -%}
-        {% endif -%}
-        {% endfor %}
+        {{- lights.ids() | indent(10) }}
 
 - alias: "Adaptive lighting: on"
   mode: queued
@@ -28,14 +23,7 @@
     - platform: state
       to: "on"
       entity_id:
-        {% for room in rooms -%}
-        {% if room.lights -%}
-        # {{ groups[room.lights].name }}
-        {% for id in groups[room.lights].entities -%}
-        - {{ id }}
-        {% endfor -%}
-        {% endif -%}
-        {% endfor %}
+        {{- lights.ids() | indent(8) }}
   action:
     - service: adaptive_lighting.apply
       data:
