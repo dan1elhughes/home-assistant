@@ -33,22 +33,28 @@
     {
       "name": "Front door button",
       "ieee": "00:17:88:01:08:96:ad:82",
-      "short_day": "scene.everything_on",
-      "short_night": "scene.everything_on"
+      "actions": {
+        "on": "scene.everything_on",
+        "on_hold": "scene.lights_off"
+      }
     },
     {
-      "name": "Bedroom button",
+      "name": "Bedroom button left",
       "ieee": "00:17:88:01:06:07:6c:d8",
-      "short_day": "scene.everything_on",
-      "short_night": "scene.bedtime",
-      "long": "scene.lights_off"
+      "actions": {
+        "on": "scene.bedtime",
+        "on_double_press": "scene.lights_off",
+        "on_hold": "scene.bedtime_left_off"
+      }
     },
     {
-      "name": "Bedroom button secondary",
+      "name": "Bedroom button right",
       "ieee": "00:17:88:01:06:07:f7:2b",
-      "short_day": "scene.everything_on",
-      "short_night": "scene.bedtime",
-      "long": "scene.lights_off"
+      "actions": {
+        "on": "scene.bedtime",
+        "on_double_press": "scene.lights_off",
+        "on_hold": "scene.bedtime_right_off"
+      }
     }
   ],
   "toggles": [
@@ -99,15 +105,9 @@
       "name": "Out"
     }
   ],
-  "climateModes": [
-    { "name": "Away", "id": "away", "icon": "mdi:fire-off" },
-    { "name": "Comfort", "id": "comfort", "icon": "mdi:sofa" },
-    { "name": "Home", "id": "home", "icon": "mdi:home" },
-    { "name": "Sleep", "id": "sleep", "icon": "mdi:bed" }
-  ],
   "devices": [
     {
-      "name": "Phone",
+      "name": "Pixel 8",
       "battery_level": "sensor.pixel_8_battery_level",
       "battery_state": "sensor.pixel_8_battery_state"
     },

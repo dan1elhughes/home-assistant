@@ -1,0 +1,5 @@
+name: Bedtime right off
+icon: mdi:bed-outline
+entities:
+  light.bedroom_lamp_right:
+    state: "off"

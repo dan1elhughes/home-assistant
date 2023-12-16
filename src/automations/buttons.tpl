@@ -1,39 +1,25 @@
 {% for button in buttons %}
 ### {{ button.name }} ###
-- alias: "{{ button.name }}: Short"
+- alias: "{{ button.name }}"
   mode: single
   trigger:
     - platform: event
       event_type: zha_event
       event_data:
         device_ieee: {{ button.ieee }}
-        command: on_short_release
   action:
     - choose:
-        - conditions:
-            - condition: state
-              entity_id: sun.sun
-              state: "above_horizon"
+        {% for command, scene in button.actions %}
+        - conditions: "{% raw %}{{{% endraw %} trigger.event.data.command == '{{ command }}' {% raw %}}}{% endraw %}"
+          alias: "{{ command }} -> {{ scene }}"
           sequence:
-            - scene: {{ button.short_day }}
-        - conditions:
-            - condition: state
-              entity_id: sun.sun
-              state: "below_horizon"
+            - scene: {{ scene }}
+
+        {% if command == 'on' %}
+        - conditions: "{% raw %}{{ trigger.event.data.command == 'off_with_effect' }}{% endraw %}"
+          alias: "off_with_effect -> {{ scene }}"
           sequence:
-            - scene: {{ button.short_night }}
-
-{% if button.long %}
-- alias: "{{ button.name }}: Long"
-  mode: single
-  trigger:
-    - platform: event
-      event_type: zha_event
-      event_data:
-        device_ieee: {{ button.ieee }}
-        command: on_hold
-  action:
-    - scene: {{ button.long }}
-{% endif %}
-
+            - scene: {{ scene }}
+        {% endif %}
+        {% endfor %}
 {% endfor %}
