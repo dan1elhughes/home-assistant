@@ -99,10 +99,6 @@
       "name": "Hallway",
       "temperature": "sensor.hallway_sensor_temperature",
       "heater": "light.hallway_heater_power"
-    },
-    {
-      "id": "out",
-      "name": "Out"
     }
   ],
   "devices": [

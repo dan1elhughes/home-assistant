@@ -5,3 +5,4 @@ active_room:
     {% for room in rooms -%}
     - {{ room.id }}
     {% endfor %}
+    - out

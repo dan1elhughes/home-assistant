@@ -5,7 +5,7 @@
   trigger:
     - platform: state
       entity_id: input_select.active_room
-      to: "{{room.id}}"
+      to: "{{ room.id }}"
   condition:
     - condition: state
       entity_id: sensor.one_room_mode
@@ -20,7 +20,7 @@
     {%- if room.heater %}
     - service: climate.set_hvac_mode
       target:
-        entity_id: climate.{{room.id}}
+        entity_id: climate.{{ room.id }}
       data:
         hvac_mode: "heat"
     {%- endif %}
@@ -30,7 +30,7 @@
   trigger:
     - platform: state
       entity_id: input_select.active_room
-      not_to: "{{room.id}}"
+      not_to: "{{ room.id }}"
   condition:
     - condition: state
       entity_id: sensor.one_room_mode
@@ -45,8 +45,22 @@
     {%- if room.heater %}
     - service: climate.set_hvac_mode
       target:
-        entity_id: climate.{{room.id}}
+        entity_id: climate.{{ room.id }}
       data:
         hvac_mode: "off"
     {%- endif %}
 {% endfor %}
+
+- alias: "Out: One-room mode (activate)"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_select.active_room
+      to: "out"
+  action:
+    - scene: scene.lights_off
+    - service: climate.set_hvac_mode
+      target:
+        entity_id: group.thermostats
+      data:
+        hvac_mode: "off"
