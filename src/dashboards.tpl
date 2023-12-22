@@ -330,6 +330,8 @@ views:
         entities:
           - entity: input_boolean.automations
             name: Automations
+          - entity: input_boolean.negative_energy_price
+            name: Handle negative energy price
       - type: sensor
         entity: sensor.home_assistant_v2_db_size
         graph: line

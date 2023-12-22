@@ -20,3 +20,9 @@
         {{
         state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions',
         'next_joined_event_start') }}
+
+    - name: Negative electricity price
+      state: |
+        {{
+        states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate')
+        | float < 0 }}

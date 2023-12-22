@@ -6,3 +6,7 @@ automations:
 ac:
   name: Air conditioning
   icon: mdi:air-conditioner
+
+negative_energy_price:
+  name: Handle negative energy price
+  icon: mdi:battery-charging-100
