@@ -1,0 +1,13 @@
+- alias: Out when automations are switched off
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - input_boolean.automations
+      to: "off"
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.active_room
+      data:
+        option: "out"
