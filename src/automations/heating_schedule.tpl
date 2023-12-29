@@ -1,4 +1,4 @@
-- alias: "Heating: Morning"
+- alias: "Heating schedule: On"
   mode: single
   trigger:
     - platform: state
@@ -23,7 +23,7 @@
     {%- endif %}
     {%- endfor %}
 
-- alias: "Heating: Overnight"
+- alias: "Heating schedule: Off"
   mode: single
   trigger:
     - platform: state
