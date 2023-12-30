@@ -18,8 +18,5 @@
   action:
     - service_template: homeassistant.turn_{% raw %}{{ trigger.to_state.state }}{% endraw %}
       target:
-        entity_id:
-          {%- for group in target.groups %}
-          - {{ group }}
-          {% endfor %}
+        entity_id: "{{ target.group }}"
 {% endfor %}

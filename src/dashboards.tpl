@@ -250,11 +250,11 @@ views:
         {% for target in agile_targets %}
         - type: entities
           title: "{{ target.name }}"
+          show_header_toggle: false
           entities:
-            {% for group in target.groups %}
-            - entity: "{{ group }}"
-              name: "{{ group }}"
-            {% endfor %}
+            - entity: "{{ target.group }}"
+              name: "On"
+              secondary_info: last-changed
             - type: divider
             - type: attribute
               name: "Next time"
@@ -265,6 +265,8 @@ views:
               icon: mdi:currency-gbp
               entity: "{{ target.id }}"
               attribute: overall_average_cost
+            - entity: "{{ target.group | replace('group.', 'automation.agile_') }}"
+              name: Automate
           {% endfor %}
 
         - type: custom:expander-card
