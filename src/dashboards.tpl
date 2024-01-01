@@ -248,25 +248,23 @@ views:
               name: Spent yesterday
 
         {% for target in agile_targets %}
-        - type: entities
-          title: "{{ target.name }}"
-          show_header_toggle: false
-          entities:
-            - entity: "{{ target.group }}"
-              name: "On"
-              secondary_info: last-changed
-            - type: divider
-            - type: attribute
-              name: "Next time"
+        - type: vertical-stack
+          cards:
+          - type: tile
+            entity: "{{ target.group }}"
+            hide_state: false
+            vertical: false
+            state_content: last-changed
+          - type: horizontal-stack
+            cards:
+            - type: tile
+              name: Cost (p/kWh)
               entity: "{{ target.id }}"
-              attribute: next_time
-            - type: attribute
-              name: "Average cost"
-              icon: mdi:currency-gbp
-              entity: "{{ target.id }}"
-              attribute: overall_average_cost
-            - entity: "{{ target.group | replace('group.', 'automation.agile_') }}"
-              name: Automate
+              state_content:
+                - overall_average_cost
+            - type: tile
+              name: Automated
+              entity: "{{ target.group | replace('group.', 'automation.agile_') }}"
           {% endfor %}
 
         - type: custom:expander-card
