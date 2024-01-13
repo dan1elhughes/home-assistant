@@ -138,6 +138,15 @@ views:
           {% endif %}
           {% endfor %}
 
+      - type: tile
+        entity: timer.hot_water_boost
+        icon: mdi:water-boiler
+        icon_tap_action:
+          action: call-service
+          service: timer.start
+          target:
+            entity_id: timer.hot_water_boost
+
   - title: Devices
     icon: mdi:devices
     cards:
