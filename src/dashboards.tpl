@@ -266,6 +266,8 @@ views:
             state_content: last-changed
           - type: horizontal-stack
             cards:
+#            - type: markdown
+#              content: "{% raw %}{{ as_timestamp(state_attr('binary_sensor.octopus_energy_target_intermittent_1h_overnight', 'next_time')) | timestamp_custom('%H:%M') }}{% endraw %}"
             - type: tile
               name: Cost (p/kWh)
               entity: "{{ target.id }}"
