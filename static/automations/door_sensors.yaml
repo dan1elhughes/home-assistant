@@ -4,16 +4,25 @@
     - platform: state
       entity_id: binary_sensor.front_door_opening
       to: "on"
+  condition:
+    - condition: state
+      entity_id: group.presence_home
+      state: away
   action:
     - service: notify.dan
       data:
         message: "Door opened at {{ now().strftime('%H:%M') }}"
+
 - alias: "Door: closed"
   mode: single
   trigger:
     - platform: state
       entity_id: binary_sensor.front_door_opening
       to: "off"
+  condition:
+    - condition: state
+      entity_id: group.presence_home
+      state: away
   action:
     - service: notify.dan
       data:
