@@ -295,7 +295,9 @@ views:
           type: custom:octopus-energy-rates-card
           currentEntity: event.octopus_energy_electricity_20j0046498_2000052144657_current_day_rates
           futureEntity: event.octopus_energy_electricity_20j0046498_2000052144657_next_day_rates
-          targetTimesEntity: binary_sensor.octopus_energy_target_intermittent_1h_overnight
+          targetTimesEntities:
+            binary_sensor.octopus_energy_target_intermittent_1h_overnight:
+            binary_sensor.octopus_energy_target_intermittent_1h_daytime:
           cols: 2
           roundUnits: 1
           showday: true
