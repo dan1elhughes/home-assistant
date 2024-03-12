@@ -8,6 +8,9 @@
       event_type: zha_event
       event_data:
         device_ieee: "{{ room.dimmer_ieee }}"
+  condition:
+    - condition: template
+      value_template: "{% raw %}{{ trigger.event.data.command in ['on_short_release', 'on_hold', 'up_press', 'down_press', 'off_press'] }}{% endraw %}"
   action:
     - service: input_select.select_option
       target:
