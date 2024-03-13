@@ -9,12 +9,32 @@
     - condition: state
       entity_id: light.elgato_keylight
       state: unavailable
+
   action:
     - service: switch.turn_off
       target:
         entity_id: switch.keylight_switch
     - delay:
-        seconds: 3
+        seconds: 10
     - service: switch.turn_on
       target:
         entity_id: switch.keylight_switch
+    - wait_for_trigger:
+        - platform: state
+          entity_id:
+            - light.elgato_keylight
+          to: "on"
+        - platform: state
+          entity_id:
+            - light.elgato_keylight
+          to: "off"
+      timeout:
+        hours: 0
+        minutes: 1
+        seconds: 0
+        milliseconds: 0
+    - service: light.turn_on
+      target:
+        entity_id: light.elgato_keylight
+      data:
+        brightness_pct: 100
