@@ -9,6 +9,13 @@
     - condition: state
       entity_id: input_boolean.automations
       state: "on"
+
+    - not:
+      {% for person in people %}
+      - condition: state
+        entity_id: {{ person }}
+        state: "unknown"
+      {% endfor %}
   action:
     - service: input_select.select_option
       target:
@@ -31,6 +38,13 @@
     - condition: state
       entity_id: input_select.active_room
       state: "out"
+
+    - not:
+      {% for person in people %}
+      - condition: state
+        entity_id: {{ person }}
+        state: "unknown"
+      {% endfor %}
   action:
     - service: input_select.select_option
       target:

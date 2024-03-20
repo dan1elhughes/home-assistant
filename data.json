@@ -1,11 +1,5 @@
 {
-  "people": [
-    "person.dan",
-    "person.dad",
-    "person.mum",
-    "person.katie",
-    "person.guest"
-  ],
+  "people": ["person.dan", "person.dad", "person.mum", "person.katie"],
   "groups": {
     "light.bedroom_lights": {
       "name": "Bedroom lights",
