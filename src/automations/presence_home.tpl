@@ -11,11 +11,9 @@
       state: "on"
 
     - not:
-      {% for person in people %}
       - condition: state
-        entity_id: {{ person }}
+        entity_id: person.dan
         state: "unknown"
-      {% endfor %}
   action:
     - service: input_select.select_option
       target:
@@ -40,11 +38,9 @@
       state: "out"
 
     - not:
-      {% for person in people %}
       - condition: state
-        entity_id: {{ person }}
+        entity_id: person.dan
         state: "unknown"
-      {% endfor %}
   action:
     - service: input_select.select_option
       target:
