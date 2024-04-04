@@ -170,35 +170,29 @@ views:
     cards:
       - type: conditional
         conditions:
-          - entity: binary_sensor.zoe_plugged_in
+          - entity: binary_sensor.id_3_charging_cable_connected
             state: 'on'
         card:
           type: horizontal-stack
           cards:
             - type: entity
-              entity: sensor.zoe_charging_power
+              entity: sensor.id_3_charging_power
               name: Power
             - type: entity
-              entity: sensor.zoe_charging_remaining_time
+              entity: sensor.id_3_charging_time_left
               name: Remaining
       - type: horizontal-stack
         cards:
-          - type: entity
-            entity: sensor.zoe_battery_autonomy
-            name: Range
           - type: gauge
-            entity: sensor.zoe_battery_level
+            entity: sensor.id_3_battery_level
             name: Battery level
       - type: entities
         entities:
-          - entity: sensor.zoe_battery_last_activity
+          - entity: sensor.id_3_last_data_refresh
             name: Last activity
             secondary_info: none
-          - entity: sensor.zoe_mileage
+          - entity: sensor.id_3_odometer
             name: Mileage
-            secondary_info: none
-          - entity: sensor.zoe_outside_temperature
-            name: Outside temperature
             secondary_info: none
 
   - title: Power

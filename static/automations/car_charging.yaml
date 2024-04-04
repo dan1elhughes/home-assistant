@@ -3,21 +3,21 @@
   trigger:
     - platform: state
       entity_id:
-        - sensor.zoe_battery_level
+        - sensor.id_3_battery_level
       to: null
     - platform: state
       entity_id:
-        - sensor.zoe_charging_power
+        - sensor.id_3_charging_power
       to: null
   condition:
     - condition: state
-      entity_id: sensor.zoe_plug_state
-      state: plugged
+      entity_id: binary_sensor.id_3_charging_cable_connected
+      state: "on"
   action:
     - service: notify.dan
       data:
-        title: Car charged to {{ states('sensor.zoe_battery_level') }}%
-        message: "{{ states('sensor.zoe_charging_power') }} kW, done at {{ (now()|as_timestamp + (states('sensor.zoe_charging_remaining_time')|int*60))|timestamp_custom('%H:%M', True) }}"
+        title: Car charged to {{ states('sensor.id_3_battery_level') }}%
+        message: "{{ states('sensor.id_3_charging_power') }} kW, done at {{ (now()|as_timestamp + (states('sensor.id_3_charging_time_left') | default(0) |int*60*10))|timestamp_custom('%H:%M', True) }}"
         data:
           channel: Car charging
           tag: car-charging
