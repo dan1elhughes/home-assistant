@@ -11,12 +11,6 @@ views:
             type: weather-forecast
             entity: weather.home
             name: Reading
-          - show_current: false
-            show_forecast: true
-            type: weather-forecast
-            entity: weather.home
-            name: ' '
-
       - type: custom:auto-entities
         card:
           type: entities
