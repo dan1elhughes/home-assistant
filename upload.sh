@@ -1,5 +1,11 @@
 #!/usr/bin/env bash
 
-ssh root@100.106.77.84 "rm -rv /config/automations"
-ssh root@100.106.77.84 "rm -rv /config/scenes"
-scp -rp ./dist/* root@100.106.77.84:config
+server="root@100.106.77.84"
+
+ssh "$server" "rm -rv /config/automations /config/scenes"
+
+# brew install gnu-tar (macos)
+gtar -czf - ./dist/* | ssh "$server" tar -xvzf -
+
+# Todo: extract to /config folder instead of /root/dist
+ssh "$server" '/bin/bash -c "mv -v /root/dist/* /config"'
