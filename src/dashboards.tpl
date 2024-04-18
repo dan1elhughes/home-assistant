@@ -228,21 +228,9 @@ views:
               detail: 1
             - graph: none
               type: sensor
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_cost
+              entity: sensor.accumulative_cost_without_standing_charge
               detail: 1
               name: Spent today
-        - type: horizontal-stack
-          cards:
-            - graph: none
-              type: sensor
-              name: Used yesterday
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_consumption
-              detail: 1
-            - graph: none
-              type: sensor
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_accumulative_cost
-              detail: 1
-              name: Spent yesterday
 
         {% for target in agile_targets %}
         - type: vertical-stack

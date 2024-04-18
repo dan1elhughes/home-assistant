@@ -26,3 +26,9 @@
         {{
         states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate')
         | float < 0 }}
+
+    - name: Accumulative cost without standing charge
+      icon: mdi:currency-gbp
+      unit_of_measurement: "£"
+      state: |
+        {{ state_attr('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_cost', 'total_without_standing_charge') }}
