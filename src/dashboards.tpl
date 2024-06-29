@@ -49,9 +49,6 @@ views:
       {% endfor %}
 
       - type: tile
-        entity: fan.fans
-
-      - type: tile
         entity: group.presence_home
         icon: mdi:home-account
         state_content:
@@ -74,6 +71,20 @@ views:
           - entity: input_datetime.lights_out
             name: Lights out
             secondary_info: none
+
+      - type: custom:expander-card
+        title: Fans
+        gap: '0'
+        padding: '0'
+        child-padding: '0'
+        cards:
+          - type: entities
+            entities:
+              {% for room in rooms %}
+              {% if room.fan %}
+              - entity: {{ room.fan }}
+              {% endif %}
+              {% endfor %}
 
   - title: Heating
     icon: mdi:heat-wave
