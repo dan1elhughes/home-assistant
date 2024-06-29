@@ -30,9 +30,9 @@
         - conditions: "{% raw %}{{ trigger.event.data.command == 'on_hold' }}{% endraw %}"
           alias: "On (hold)"
           sequence:
-            - service: light.turn_off
+            - service: fan.toggle
               target:
-                entity_id: "{{ room.lights }}"
+                entity_id: "{{ room.fan }}"
 
         - conditions: "{% raw %}{{ trigger.event.data.command == 'up_press' }}{% endraw %}"
           alias: "Up"
