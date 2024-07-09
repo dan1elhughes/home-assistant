@@ -11,7 +11,7 @@
   home_temp: 17
   comfort_temp: 18
   min_temp: 10
-  max_temp: 22
+  max_temp: 25
   cold_tolerance: 0.2
   hot_tolerance: 0.2
   precision: 0.5
