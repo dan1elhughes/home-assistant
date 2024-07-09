@@ -10,7 +10,8 @@
       "entities": [
         "light.office_lamp",
         "light.shelf_lighting_left",
-        "light.elgato_keylight"
+        "light.elgato_keylight",
+        "light.desk_light"
       ]
     },
     "light.living_room_lights": {
