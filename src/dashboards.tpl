@@ -175,28 +175,28 @@ views:
     cards:
       - type: conditional
         conditions:
-          - entity: binary_sensor.id_3_charging_cable_connected
+          - entity: binary_sensor.id3_charging_cable_connected
             state: 'on'
         card:
           type: horizontal-stack
           cards:
             - type: entity
-              entity: sensor.id_3_charging_power
+              entity: sensor.id3_charging_power
               name: Power
             - type: entity
-              entity: sensor.id_3_charging_time_left
+              entity: sensor.id3_charging_time_left
               name: Remaining
       - type: horizontal-stack
         cards:
           - type: gauge
-            entity: sensor.id_3_battery_level
+            entity: sensor.id3_battery_level
             name: Battery level
       - type: entities
         entities:
-          - entity: sensor.id_3_last_data_refresh
+          - entity: sensor.id3_last_data_refresh
             name: Last activity
             secondary_info: none
-          - entity: sensor.id_3_odometer
+          - entity: sensor.id3_odometer
             name: Mileage
             secondary_info: none
 

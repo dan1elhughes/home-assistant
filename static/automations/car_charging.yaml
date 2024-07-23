@@ -3,22 +3,22 @@
   trigger:
     - platform: state
       entity_id:
-        - sensor.id_3_battery_level
+        - sensor.id3_battery_level
       to: null
     - platform: state
       entity_id:
-        - sensor.id_3_charging_power
+        - sensor.id3_charging_power
       to: null
   condition:
     - condition: state
-      entity_id: binary_sensor.id_3_charging_cable_connected
+      entity_id: binary_sensor.id3_charging_cable_connected
       state: "on"
   action:
     - service: notify.dan
       data:
-        title: Car charged to {{ states('sensor.id_3_battery_level') }}%
-        message: "{{ states('sensor.id_3_charging_power') }} kW, done at {{ (now() | as_timestamp +
-        (states('sensor.id_3_charging_time_left') | default(0) | int * 60)) |
+        title: Car charged to {{ states('sensor.id3_battery_level') }}%
+        message: "{{ states('sensor.id3_charging_power') }} kW, done at {{ (now() | as_timestamp +
+        (states('sensor.id3_charging_time_left') | default(0) | int * 60)) |
         timestamp_custom('%H:%M', True) }}"
         data:
           channel: Car charging
