@@ -71,9 +71,6 @@ views:
           - entity: input_datetime.lights_out
             name: Lights out
             secondary_info: none
-          - entity: input_boolean.automatic_fans
-            name: Automatic fans
-            secondary_info: none
 
       - type: custom:expander-card
         title: Fans
@@ -335,6 +332,8 @@ views:
             name: Automations
           - entity: input_boolean.negative_electricity_price
             name: Handle negative electricity price
+          - entity: input_boolean.automatic_fans
+            name: Automatic fans
       - type: sensor
         entity: sensor.home_assistant_v2_db_size
         graph: line
