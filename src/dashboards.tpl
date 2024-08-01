@@ -71,6 +71,9 @@ views:
           - entity: input_datetime.lights_out
             name: Lights out
             secondary_info: none
+          - entity: input_boolean.automatic_fans
+            name: Automatic fans
+            secondary_info: none
 
       - type: custom:expander-card
         title: Fans

@@ -32,6 +32,17 @@
           data:
             hvac_mode: "heat"
     {%- endif %}
+    {%- if room.fan %}
+    - alias: "Automate fans"
+      if:
+      - condition: state
+        entity_id: input_boolean.automatic_fans
+        state: "on"
+      then:
+        - service: fan.turn_on
+          target:
+            entity_id: {{ room.fan }}
+    {%- endif %}
 
 - alias: "{{ room.name }}: One-room mode (deactivate)"
   mode: single
@@ -56,6 +67,11 @@
         entity_id: climate.{{ room.id }}
       data:
         hvac_mode: "off"
+    {%- endif %}
+    {%- if room.fan %}
+    - service: fan.turn_off
+      target:
+        entity_id: {{ room.fan }}
     {%- endif %}
 {% endfor %}
 

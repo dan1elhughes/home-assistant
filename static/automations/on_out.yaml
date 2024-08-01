@@ -6,12 +6,3 @@
   action:
     service: media_player.turn_off
     entity_id: all
-
-- alias: "Out -> Fans off"
-  trigger:
-    - platform: state
-      entity_id: input_select.active_room
-      to: "out"
-  action:
-    service: fan.turn_off
-    entity_id: all
