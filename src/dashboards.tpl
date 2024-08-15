@@ -222,12 +222,12 @@ views:
           cards:
             - type: sensor
               graph: line
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand
+              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand
               detail: 2
               name: Demand
             - type: sensor
               graph: line
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
+              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate
               detail: 2
               name: Rate
         - type: horizontal-stack
@@ -235,7 +235,7 @@ views:
             - graph: none
               type: sensor
               name: Used today
-              entity: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_consumption
+              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_consumption
               detail: 1
             - graph: none
               type: sensor
@@ -280,8 +280,8 @@ views:
 
         - title: Energy prices
           type: custom:octopus-energy-rates-card
-          currentEntity: event.octopus_energy_electricity_20j0046498_2000052144657_current_day_rates
-          futureEntity: event.octopus_energy_electricity_20j0046498_2000052144657_next_day_rates
+          currentEntity: event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates
+          futureEntity: event.octopus_energy_electricity_15p0706167_2000050773706_next_day_rates
           targetTimesEntities:
             binary_sensor.octopus_energy_target_intermittent_1h_overnight:
             binary_sensor.octopus_energy_target_intermittent_1h_daytime:

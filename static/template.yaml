@@ -2,8 +2,8 @@
     - name: Energy cost per hour
       unit_of_measurement: "£/h"
       state: |
-        {% set demand = states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_demand') | float %}
-        {% set rate = states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate') | float %}
+        {% set demand = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand') | float %}
+        {% set rate = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float %}
         {{(((demand/1000) * rate) | round(2)) }}
 
     - name: Occupant count
@@ -24,11 +24,11 @@
     - name: Negative electricity price
       state: |
         {{
-        states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate')
+        states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate')
         | float < 0 }}
 
     - name: Accumulative cost without standing charge
       icon: mdi:currency-gbp
       unit_of_measurement: "£"
       state: |
-        {{ state_attr('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_accumulative_cost', 'total_cost_without_standing_charge') }}
+        {{ state_attr('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_cost', 'total_cost_without_standing_charge') }}

@@ -2,17 +2,17 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate
+      entity_id: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate
       to: null
   variables:
     prev: "{{
-    states('sensor.octopus_energy_electricity_20j0046498_2000052144657_previous_rate')
+    states('sensor.octopus_energy_electricity_15p0706167_2000050773706_previous_rate')
     | float * 100 }}"
     current: "{{
-    states('sensor.octopus_energy_electricity_20j0046498_2000052144657_current_rate')
+    states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate')
     | float * 100 }}"
     next: "{{
-    states('sensor.octopus_energy_electricity_20j0046498_2000052144657_next_rate')
+    states('sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate')
     | float * 100 }}"
   action:
     - service: notify.dan
