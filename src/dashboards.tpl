@@ -327,9 +327,3 @@ views:
         name: Database size
         icon: mdi:database
         detail: 2
-      - type: sensor
-        entity: sensor.archiveteam_contributions
-        graph: line
-        name: ArchiveTeam contributions
-        icon: mdi:archive-arrow-down
-        detail: 2
