@@ -278,19 +278,6 @@ views:
               include:
                 - entity_id: sensor.*_battery
 
-        - title: Energy prices
-          type: custom:octopus-energy-rates-card
-          currentEntity: event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates
-          futureEntity: event.octopus_energy_electricity_15p0706167_2000050773706_next_day_rates
-          targetTimesEntities:
-            binary_sensor.octopus_energy_target_intermittent_1h_overnight:
-            binary_sensor.octopus_energy_target_intermittent_1h_daytime:
-          cols: 2
-          roundUnits: 1
-          showday: true
-          hour12: false
-          unitstr: 'p'
-
   - title: Tasmota
     icon: mdi:power-socket-uk
     cards:
