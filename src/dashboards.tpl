@@ -193,11 +193,14 @@ views:
             name: Battery level
       - type: entities
         entities:
-          - entity: sensor.id3_last_data_refresh
-            name: Last activity
+          - entity: sensor.id3_last_connected
+            name: Last connected
             secondary_info: none
           - entity: sensor.id3_odometer
             name: Mileage
+            secondary_info: none
+          - entity: switch.id3_charging
+            name: Charging
             secondary_info: none
 
   - title: Power
