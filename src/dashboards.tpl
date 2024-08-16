@@ -55,6 +55,21 @@ views:
           - state
           - last-changed
 
+      - type: conditional
+        conditions:
+          - condition: state
+            entity: switch.kettle
+            state: 'off'
+        card:
+          name: Kettle
+          type: button
+          tap_action:
+            action: perform-action
+            perform_action: switch.turn_on
+            target:
+              entity_id: switch.kettle
+          icon: mdi:kettle
+
       - type: entities
         title: Quick controls
         state_color: true
