@@ -7,10 +7,6 @@ ac:
   name: Air conditioning
   icon: mdi:air-conditioner
 
-negative_electricity_price:
-  name: Handle negative electricity price
-  icon: mdi:battery-charging-100
-
 automatic_fans:
   name: Automatic fans
   icon: mdi:fan

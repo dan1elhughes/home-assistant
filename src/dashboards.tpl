@@ -335,8 +335,6 @@ views:
         entities:
           - entity: input_boolean.automations
             name: Automations
-          - entity: input_boolean.negative_electricity_price
-            name: Handle negative electricity price
           - entity: input_boolean.automatic_fans
             name: Automatic fans
       - type: sensor

@@ -21,12 +21,6 @@
         state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions',
         'next_joined_event_start') }}
 
-    - name: Negative electricity price
-      state: |
-        {{
-        states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate')
-        | float < 0 }}
-
     - name: Accumulative cost without standing charge
       icon: mdi:currency-gbp
       unit_of_measurement: "£"
