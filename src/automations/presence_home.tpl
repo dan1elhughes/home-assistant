@@ -21,7 +21,7 @@
       data:
         option: "out"
 
-- alias: "Arrive home (active room -> bedroom)"
+- alias: "Arrive home (active room -> living room)"
   mode: single
   trigger:
     - platform: state
@@ -46,7 +46,7 @@
       target:
         entity_id: input_select.active_room
       data:
-        option: "bedroom"
+        option: "living_room"
 
 - alias: "Presence monitoring"
   mode: single
