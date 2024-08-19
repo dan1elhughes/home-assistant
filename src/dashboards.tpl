@@ -343,3 +343,13 @@ views:
         name: Database size
         icon: mdi:database
         detail: 2
+
+      - type: button
+        name: Restart modem
+        entity: button.b320_323_restart
+        icon: mdi:router-wireless
+        tap_action:
+          action: perform-action
+          perform_action: button.press
+          target:
+            entity_id: button.b320_323_restart
