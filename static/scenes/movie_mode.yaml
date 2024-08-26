@@ -1,13 +1,12 @@
 name: "Movie mode"
 icon: hass:movie
 entities:
+  # Other rooms
   light.bedroom_lights:
     state: "off"
   light.office_lights:
     state: "off"
-  light.living_room_lamp:
-    state: "on"
-    brightness: 127
+  # Living room
   light.living_room_speaker:
     state: "on"
     brightness: 127
@@ -15,4 +14,6 @@ entities:
     state: "on"
     brightness: 127
   light.dining_room_table:
+    state: "off"
+  light.living_room_lamp:
     state: "off"
