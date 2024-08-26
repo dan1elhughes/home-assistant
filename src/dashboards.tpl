@@ -23,6 +23,18 @@ views:
           method: friendly_name
         show_empty: false
 
+      - type: custom:auto-entities
+        card:
+          type: entities
+          title: Leak sensors
+        filter:
+          include:
+            - entity_id: binary_sensor.leak_sensor_*
+              state: 'on'
+        sort:
+          method: friendly_name
+        show_empty: false
+
       - type: tile
         entity: input_select.active_room
         features:
