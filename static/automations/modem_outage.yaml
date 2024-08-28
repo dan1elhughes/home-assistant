@@ -1,0 +1,18 @@
+- alias: "Reboot modem when offline"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.dream_machine_cloudflare_wan_latency
+      to: "0"
+      for:
+        minutes: 5
+  condition:
+    - alias: Automations enabled
+      condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+  action:
+    - action: button.press
+      target:
+        entity_id: button.b320_323_restart
