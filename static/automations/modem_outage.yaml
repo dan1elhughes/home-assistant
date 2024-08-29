@@ -6,7 +6,7 @@
         - sensor.dream_machine_cloudflare_wan_latency
       to: "0"
       for:
-        minutes: 5
+        minutes: 2
   condition:
     - alias: Automations enabled
       condition: state
