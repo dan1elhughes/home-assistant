@@ -119,11 +119,74 @@ views:
       - type: tile
         entity: climate.thermostat
 
-      - type: sensor
-        entity: sensor.accumulative_gas_cost_without_standing_charge
-        graph: line
-        name: Gas spend today
-        icon: mdi:gas-burner
+      - type: horizontal-stack
+        cards:
+          - graph: none
+            type: sensor
+            name: Used today
+            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
+            detail: 1
+          - graph: none
+            type: sensor
+            entity: sensor.accumulative_gas_cost_without_standing_charge
+            detail: 1
+            name: Spent today
+
+  - title: Power
+    icon: mdi:lightning-bolt
+    cards:
+        - type: conditional
+          conditions:
+            - condition: state
+              entity: sensor.next_saving_session
+              state_not: unknown
+          card:
+            type: tile
+            entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
+            state_content: next_joined_event_start
+            name: Saving session
+
+        - type: entity
+          entity: sensor.energy_cost_per_hour
+          name: Cost per hour
+          icon: mdi:currency-gbp
+        - type: horizontal-stack
+          cards:
+            - type: sensor
+              graph: line
+              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand
+              detail: 2
+              name: Demand
+            - type: sensor
+              graph: line
+              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate
+              detail: 2
+              name: Rate
+        - type: horizontal-stack
+          cards:
+            - graph: none
+              type: sensor
+              name: Used today
+              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_consumption
+              detail: 1
+            - graph: none
+              type: sensor
+              entity: sensor.accumulative_electricity_cost_without_standing_charge
+              detail: 1
+              name: Spent today
+
+        - type: custom:expander-card
+          title: Batteries
+          cards:
+          - type: custom:auto-entities
+            card:
+              type: entities
+            sort:
+              method: state
+              numeric: true
+            filter:
+              include:
+                - entity_id: sensor.*_battery
 
   - title: Devices
     icon: mdi:devices
@@ -175,84 +238,6 @@ views:
           - entity: switch.id3_charging
             name: Charging
             secondary_info: none
-
-  - title: Power
-    icon: mdi:home-lightning-bolt
-    cards:
-        - type: conditional
-          conditions:
-            - condition: state
-              entity: sensor.next_saving_session
-              state_not: unknown
-          card:
-            type: tile
-            entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
-            state_content: next_joined_event_start
-            name: Saving session
-
-        - type: entity
-          entity: sensor.energy_cost_per_hour
-          name: Cost per hour
-          icon: mdi:currency-gbp
-        - type: horizontal-stack
-          cards:
-            - type: sensor
-              graph: line
-              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand
-              detail: 2
-              name: Demand
-            - type: sensor
-              graph: line
-              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate
-              detail: 2
-              name: Rate
-        - type: horizontal-stack
-          cards:
-            - graph: none
-              type: sensor
-              name: Used today
-              entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_consumption
-              detail: 1
-            - graph: none
-              type: sensor
-              entity: sensor.accumulative_cost_without_standing_charge
-              detail: 1
-              name: Spent today
-
-        {% for target in agile_targets %}
-        - type: vertical-stack
-          cards:
-          - type: tile
-            entity: "{{ target.group }}"
-            hide_state: false
-            vertical: false
-            state_content: last-changed
-          - type: horizontal-stack
-            cards:
-#            - type: markdown
-#              content: "{% raw %}{{ as_timestamp(state_attr('binary_sensor.octopus_energy_target_intermittent_1h_overnight', 'next_time')) | timestamp_custom('%H:%M') }}{% endraw %}"
-            - type: tile
-              name: Cost (p/kWh)
-              entity: "{{ target.id }}"
-              state_content:
-                - overall_average_cost
-            - type: tile
-              name: Automated
-              entity: "{{ target.group | replace('group.', 'automation.agile_') }}"
-          {% endfor %}
-
-        - type: custom:expander-card
-          title: Batteries
-          cards:
-          - type: custom:auto-entities
-            card:
-              type: entities
-            sort:
-              method: state
-              numeric: true
-            filter:
-              include:
-                - entity_id: sensor.*_battery
 
   - title: Tasmota
     icon: mdi:power-socket-uk
