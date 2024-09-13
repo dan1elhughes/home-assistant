@@ -9,11 +9,12 @@ entities:
   # Living room
   light.living_room_speaker:
     state: "on"
-    brightness: 127
+    brightness_pcrt: 169
   light.tv_light:
     state: "on"
-    brightness: 127
+    brightness: 169
   light.dining_room_table:
-    state: "off"
+    state: "on"
+    brightness: 169
   light.living_room_lamp:
     state: "off"
