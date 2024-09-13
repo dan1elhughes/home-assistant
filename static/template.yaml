@@ -21,8 +21,14 @@
         state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions',
         'next_joined_event_start') }}
 
-    - name: Accumulative cost without standing charge
+    - name: Accumulative electricity cost without standing charge
       icon: mdi:currency-gbp
       unit_of_measurement: "£"
       state: |
         {{ state_attr('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_cost', 'total_cost_without_standing_charge') }}
+
+    - name: Accumulative gas cost without standing charge
+      icon: mdi:currency-gbp
+      unit_of_measurement: "£"
+      state: |
+        {{ state_attr('sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_cost', 'total_without_standing_charge') }}

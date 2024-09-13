@@ -114,10 +114,16 @@ views:
               {% endfor %}
 
   - title: Heating
-    icon: mdi:heat-wave
+    icon: mdi:fire
     cards:
       - type: tile
         entity: climate.thermostat
+
+      - type: sensor
+        entity: sensor.accumulative_gas_cost_without_standing_charge
+        graph: line
+        name: Gas spend today
+        icon: mdi:gas-burner
 
   - title: Devices
     icon: mdi:devices
