@@ -1,5 +1,4 @@
 name: Bedtime left off
 icon: mdi:bed-outline
 entities:
-  light.bedroom_lamp_left:
-    state: "off"
+  light.bedroom_lamp_left: "off"
