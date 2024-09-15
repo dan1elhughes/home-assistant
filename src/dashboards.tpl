@@ -227,6 +227,11 @@ views:
           - type: gauge
             entity: sensor.id3_battery_level
             name: Battery level
+          - type: gauge
+            entity: sensor.id3_electric_range
+            max: 240
+            min: 0
+            name: Range
       - type: entities
         entities:
           - entity: sensor.id3_last_connected
