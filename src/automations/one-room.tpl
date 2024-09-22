@@ -17,21 +17,6 @@
         entity_id:
           - {{ room.lights }}
     {%- endif -%}
-    {%- if room.heater %}
-    - alias: "If time is not peak"
-      if:
-      - condition: not
-        conditions:
-          - condition: time
-            after: "16:00:00"
-            before: "19:00:00"
-      then:
-        - service: climate.set_hvac_mode
-          target:
-            entity_id: climate.{{ room.id }}
-          data:
-            hvac_mode: "heat"
-    {%- endif %}
     {%- if room.fan %}
     - alias: "Automate fans"
       if:
@@ -61,13 +46,6 @@
         entity_id:
           - {{ room.lights }}
     {%- endif -%}
-    {%- if room.heater %}
-    - service: climate.set_hvac_mode
-      target:
-        entity_id: climate.{{ room.id }}
-      data:
-        hvac_mode: "off"
-    {%- endif %}
     {%- if room.fan %}
     - service: fan.turn_off
       target:
