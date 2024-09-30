@@ -3,7 +3,11 @@
   "groups": {
     "light.bedroom_lights": {
       "name": "Bedroom lights",
-      "entities": ["light.bedroom_lamp_left", "light.bedroom_lamp_right"]
+      "entities": [
+        "light.bedroom_lamp_left",
+        "light.bedroom_lamp_right",
+        "light.bedroom_cupboard_light"
+      ]
     },
     "light.office_lights": {
       "name": "Office lights",
