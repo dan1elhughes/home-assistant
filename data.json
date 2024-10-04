@@ -26,6 +26,10 @@
         "light.tv_light",
         "light.dining_room_table"
       ]
+    },
+    "light.garden_lighting": {
+      "name": "Garden lighting",
+      "entities": ["light.garden_lights"]
     }
   },
   "buttons": [
@@ -90,6 +94,11 @@
     {
       "id": "hallway",
       "name": "Hallway"
+    },
+    {
+      "id": "garden",
+      "name": "Garden",
+      "lights": "light.garden_lighting"
     }
   ],
   "devices": [
