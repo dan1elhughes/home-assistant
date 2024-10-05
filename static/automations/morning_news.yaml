@@ -1,0 +1,83 @@
+- alias: Morning news (Dan)
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.pixel_8_charger_type
+      from: "wireless"
+      to: "none"
+  condition:
+    - alias: "Home"
+      condition: state
+      entity_id: group.presence_home
+      state: "home"
+    - alias: "Automations enabled"
+      condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+    - alias: "Time Condition"
+      condition: time
+      after: "06:00:00"
+      before: "10:00:00"
+  action:
+    - service: media_player.turn_on
+      target:
+        entity_id: media_player.bedroom_speaker_dan
+    - service: media_player.volume_set
+      target:
+        entity_id: media_player.bedroom_speaker_dan
+      data:
+        volume_level: 0.15 # Set volume level (0.0 to 1.0)
+    - service: google_assistant_sdk.send_text_command
+      data:
+        media_player: media_player.bedroom_speaker_dan
+        command: "How's the weather?"
+    - wait_for_trigger:
+        - platform: state
+          entity_id: media_player.bedroom_speaker_dan
+          from: "playing"
+          to: "idle"
+    - service: script.play_bbc_news
+      data:
+        media_player: media_player.bedroom_speaker_dan
+
+- alias: Morning news (Katie)
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.pixel_7a_charger_type
+      from: "wireless"
+      to: "none"
+  condition:
+    - alias: "Home"
+      condition: state
+      entity_id: group.presence_home
+      state: "home"
+    - alias: "Automations enabled"
+      condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+    - alias: "Time Condition"
+      condition: time
+      after: "06:00:00"
+      before: "10:00:00"
+  action:
+    - service: media_player.turn_on
+      target:
+        entity_id: media_player.bedroom_speaker_katie
+    - service: media_player.volume_set
+      target:
+        entity_id: media_player.bedroom_speaker_katie
+      data:
+        volume_level: 0.15 # Set volume level (0.0 to 1.0)
+    - service: google_assistant_sdk.send_text_command
+      data:
+        media_player: media_player.bedroom_speaker_katie
+        command: "How's the weather?"
+    - wait_for_trigger:
+        - platform: state
+          entity_id: media_player.bedroom_speaker_katie
+          from: "playing"
+          to: "idle"
+    - service: script.play_bbc_news
+      data:
+        media_player: media_player.bedroom_speaker_katie

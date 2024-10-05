@@ -17,10 +17,15 @@ rest_command: !include rest_command.yaml
 scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
 schedule: !include schedules.yaml
-script ui: !include scripts.yaml
+script: !include scripts.yaml
 switch: !include switch.yaml
 template: !include template.yaml
 timer: !include timer.yaml
+
+command_line:
+  - sensor:
+      name: BBC news
+      command: curl -s https://www.bbc.co.uk/programmes/p002vsn1/episodes/player | grep '"@type":"RadioSeries"' | jq -r '.episode[0].url' | xargs curl -s | grep 'audio-nondrm-download/' | sed -n 's/.*href="\/\/\([^"]*\)".*/https:\/\/\1/p'
 
 lovelace:
   mode: storage
