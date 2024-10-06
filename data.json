@@ -1,5 +1,5 @@
 {
-  "people": ["person.dan", "person.dad", "person.mum", "person.katie"],
+  "people": ["person.dan", "person.katie"],
   "groups": {
     "light.bedroom_lights": {
       "name": "Bedroom lights",
