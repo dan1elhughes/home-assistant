@@ -46,4 +46,9 @@ views:
                 entity: {{ room.fan }}
               {% endif %}
 
+              {% if room.curtains %}
+              - type: tile
+                entity: {{ room.curtains }}
+              {% endif %}
+
       {% endfor %}

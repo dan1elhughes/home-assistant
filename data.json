@@ -79,7 +79,8 @@
       "id": "bedroom",
       "name": "Bedroom",
       "lights": "light.bedroom_lights",
-      "dimmer_ieee": "00:17:88:01:09:a5:5a:4f"
+      "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
+      "curtains": "cover.curtains"
     },
     {
       "id": "office",
