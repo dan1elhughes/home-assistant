@@ -27,12 +27,14 @@
               data:
                 brightness: 255
 
+        {% if room.fan %}
         - conditions: "{% raw %}{{ trigger.event.data.command == 'on_hold' }}{% endraw %}"
           alias: "On (hold)"
           sequence:
             - service: fan.toggle
               target:
                 entity_id: "{{ room.fan }}"
+        {% endif %}
 
         - conditions: "{% raw %}{{ trigger.event.data.command == 'up_press' }}{% endraw %}"
           alias: "Up"
