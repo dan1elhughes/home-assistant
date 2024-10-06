@@ -11,12 +11,7 @@
     },
     "light.office_lights": {
       "name": "Office lights",
-      "entities": [
-        "light.office_lamp",
-        "light.shelf_lighting_left",
-        "light.elgato_keylight",
-        "light.desk_light"
-      ]
+      "entities": ["light.office_lamp", "light.desk_light"]
     },
     "light.living_room_lights": {
       "name": "Living room lights",
