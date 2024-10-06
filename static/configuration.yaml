@@ -4,7 +4,6 @@ default_config:
 adaptive_lighting: !include adaptive_lighting.yaml
 automation manual: !include_dir_merge_list automations/
 automation ui: !include automations.yaml
-fan: !include fan.yaml
 group: !include groups.yaml
 input_boolean: !include input_boolean.yaml
 input_button: !include input_button.yaml
