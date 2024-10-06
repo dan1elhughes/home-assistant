@@ -6,3 +6,4 @@ entities:
     brightness: 2
   light.living_room_lights: "off"
   light.office_lights: "off"
+  light.bedroom_cupboard_light: "off"
