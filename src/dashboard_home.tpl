@@ -1,5 +1,3 @@
-title: Home
-path: home
 views:
   - title: Home
     icon: mdi:home-analytics
@@ -291,3 +289,4 @@ views:
         name: Database size
         icon: mdi:database
         detail: 2
+

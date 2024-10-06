@@ -30,12 +30,18 @@ command_line:
 lovelace:
   mode: storage
   dashboards:
-    lovelace-yaml:
+    home-old:
       mode: yaml
       title: Home
       icon: mdi:home
       show_in_sidebar: true
-      filename: dashboards.yaml
+      filename: dashboard_home.yaml
+    home-new:
+      mode: yaml
+      title: Home new
+      icon: mdi:home
+      show_in_sidebar: true
+      filename: dashboard_sections.yaml
 
 recorder:
   purge_keep_days: 60
