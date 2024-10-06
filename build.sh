@@ -1,5 +1,7 @@
 #!/usr/bin/env bash
 
+set -euo pipefail
+
 rsync -a --delete static/ dist/
 
 # npm i -g nunjucks-cli
