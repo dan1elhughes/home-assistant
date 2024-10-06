@@ -10,7 +10,7 @@
         device_ieee: "{{ room.dimmer_ieee }}"
   condition:
     - condition: template
-      value_template: "{% raw %}{{ trigger.event.data.command in ['on_short_release', 'on_hold', 'up_press', 'down_press', 'off_press'] }}{% endraw %}"
+      value_template: "{% raw %}{{ trigger.event.data.command in ['on_press', 'up_hold', 'down_hold', 'off_press'] }}{% endraw %}"
   action:
     - service: input_select.select_option
       target:
@@ -18,7 +18,7 @@
       data:
         option: "{{ room.id }}"
     - choose:
-        - conditions: "{% raw %}{{ trigger.event.data.command == 'on_short_release' }}{% endraw %}"
+        - conditions: "{% raw %}{{ trigger.event.data.command == 'on_press' }}{% endraw %}"
           alias: "On (press)"
           sequence:
             - service: light.turn_on
@@ -27,16 +27,7 @@
               data:
                 brightness: 255
 
-        {% if room.fan %}
-        - conditions: "{% raw %}{{ trigger.event.data.command == 'on_hold' }}{% endraw %}"
-          alias: "On (hold)"
-          sequence:
-            - service: fan.toggle
-              target:
-                entity_id: "{{ room.fan }}"
-        {% endif %}
-
-        - conditions: "{% raw %}{{ trigger.event.data.command == 'up_press' }}{% endraw %}"
+        - conditions: "{% raw %}{{ trigger.event.data.command == 'up_hold' }}{% endraw %}"
           alias: "Up"
           sequence:
             - service: light.turn_on
@@ -45,7 +36,7 @@
               data:
                 brightness_step_pct: 20
 
-        - conditions: "{% raw %}{{ trigger.event.data.command == 'down_press' }}{% endraw %}"
+        - conditions: "{% raw %}{{ trigger.event.data.command == 'down_hold' }}{% endraw %}"
           alias: "Down"
           sequence:
             - service: light.turn_on
