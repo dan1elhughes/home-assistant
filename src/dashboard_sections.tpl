@@ -22,6 +22,9 @@ views:
       - type: grid
         cards:
           - type: heading
+            badges:
+              - type: entity
+                entity: sensor.{{ room.id }}_sensor_temperature
             heading: {{ room.name }}
             tap_action:
               action: perform-action
@@ -31,27 +34,27 @@ views:
               data:
                 option: {{ room.id }}
 
-            badges:
-              - type: entity
-                entity: sensor.{{ room.id }}_sensor_temperature
-
           - type: vertical-stack
             cards:
 
-              {% if room.lights %}
-              - type: tile
+            - type: custom:expander-card
+              gap: '0'
+              padding: '0'
+              child-padding: '0'
+              title-card:
+                type: tile
                 entity: {{ room.lights }}
-              {% endif %}
+              cards:
+                - type: entities
+                  entities:
+                    {% for id in groups[room.lights].entities %}
+                    - entity: {{ id }}
+                    {% endfor %}
 
-              {% if room.fan %}
-              - type: tile
-                entity: {{ room.fan }}
-              {% endif %}
-
-              {% if room.curtains %}
-              - type: tile
-                entity: {{ room.curtains }}
-              {% endif %}
+            {% if room.curtains %}
+            - type: tile
+              entity: {{ room.curtains }}
+            {% endif %}
 
       {% endfor %}
 
