@@ -183,3 +183,50 @@ views:
               - condition: state
                 entity: binary_sensor.wp22lxc_charging
                 state: 'on'
+
+  - title: Settings
+    path: settings
+    icon: mdi:cog
+    type: sections
+    sections:
+      - type: grid
+        cards:
+          - type: vertical-stack
+            cards:
+            - type: tile
+              entity: group.presence_home
+              icon: mdi:home-account
+              state_content:
+                - state
+                - last-changed
+
+      - type: grid
+        cards:
+        - type: entities
+          title: Quick controls
+          state_color: true
+          entities:
+            - entity: switch.amplifier
+              name: Amplifier
+              secondary_info: none
+            - entity: input_datetime.wake_up
+              name: Wake up
+              secondary_info: none
+            - entity: input_datetime.lights_out
+              name: Lights out
+              secondary_info: none
+
+      - type: grid
+        cards:
+        - type: custom:expander-card
+          title: Batteries
+          cards:
+          - type: custom:auto-entities
+            card:
+              type: entities
+            sort:
+              method: state
+              numeric: true
+            filter:
+              include:
+                - entity_id: sensor.*_battery
