@@ -69,49 +69,65 @@ views:
             heading: Electricity
             heading_style: title
             icon: mdi:transmission-tower
-          - graph: none
-            type: sensor
+            badges:
+              - type: entity
+                entity: sensor.accumulative_electricity_cost_without_standing_charge
+                show_icon: false
+          - type: sensor
+            name: Import now
+            entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand
+            graph: line
+            detail: 2
+          - type: sensor
+            name: Import today
             entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_consumption
-            detail: 1
-            name: Used today
-          - graph: none
-            type: sensor
-            entity: sensor.accumulative_electricity_cost_without_standing_charge
-            detail: 1
-            name: Spent today
-          - type: vertical-stack
-            cards:
-              - graph: line
-                type: sensor
-                entity: >-
-                  sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand
-                detail: 2
-                name: Import
-                icon: mdi:home-import-outline
+            graph: none
       - type: grid
         cards:
           - type: heading
             heading: Gas
             heading_style: title
             icon: mdi:fire
-          - graph: none
-            type: sensor
+            badges:
+              - type: entity
+                entity: sensor.accumulative_gas_cost_without_standing_charge
+                show_icon: false
+          - type: sensor
+            name: Import now
+            icon: mdi:home-import-outline
+            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_consumption
+            graph: line
+            detail: 2
+          - type: sensor
+            name: Import today
             entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
-            detail: 1
-            name: Used today
-          - graph: none
-            type: sensor
-            entity: sensor.accumulative_gas_cost_without_standing_charge
-            detail: 1
-            name: Spent today
-          - type: vertical-stack
-            cards:
-              - graph: line
-                type: sensor
-                entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_consumption
-                detail: 2
-                name: Import
-                icon: mdi:home-import-outline
+            graph: none
+      - type: grid
+        cards:
+          - type: heading
+            heading: Solar
+            heading_style: title
+            icon: mdi:solar-power
+          - type: sensor
+            name: Export now
+            entity: sensor.myenergi_myenergi_hub_power_export
+            graph: line
+            detail: 2
+          - type: sensor
+            name: Export today
+            entity: sensor.myenergi_myenergi_hub_grid_export_today
+            graph: none
+          - type: sensor
+            name: Generation
+            icon: mdi:solar-power-variant
+            entity: sensor.solar_power_generation
+            graph: line
+            detail: 2
+          - type: sensor
+            name: Generated today
+            icon: mdi:solar-power-variant
+            entity: sensor.myenergi_myenergi_hub_generated_today
+            graph: none
 
   - title: Cars
     path: cars
