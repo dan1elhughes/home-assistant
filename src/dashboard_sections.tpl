@@ -161,6 +161,11 @@ views:
               - condition: state
                 entity: switch.id3_charging
                 state: 'on'
+          - type: map
+            entities:
+              - entity: device_tracker.id3_position
+                name: ID3
+            theme_mode: auto
       - type: grid
         cards:
           - type: heading
@@ -183,6 +188,11 @@ views:
               - condition: state
                 entity: binary_sensor.wp22lxc_charging
                 state: 'on'
+          - type: map
+            entities:
+              - entity: device_tracker.wp22lxc_location
+                name: Zoe
+            theme_mode: auto
 
   - title: Settings
     path: settings
