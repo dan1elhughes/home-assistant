@@ -28,15 +28,9 @@ command_line:
 lovelace:
   mode: storage
   dashboards:
-    home-old:
+    home-page:
       mode: yaml
       title: Home
-      icon: mdi:home
-      show_in_sidebar: true
-      filename: dashboard_home.yaml
-    home-new:
-      mode: yaml
-      title: Home new
       icon: mdi:home
       show_in_sidebar: true
       filename: dashboard_sections.yaml
