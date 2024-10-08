@@ -74,13 +74,26 @@ views:
                 entity: sensor.accumulative_electricity_cost_without_standing_charge
                 show_icon: false
           - type: sensor
+            icon: mdi:transmission-tower-import
             name: Import now
             entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand
             graph: line
             detail: 2
           - type: sensor
+            icon: mdi:transmission-tower-import
             name: Import today
             entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_consumption
+            graph: none
+          - type: sensor
+            name: Export now
+            entity: sensor.myenergi_myenergi_hub_power_export
+            icon: mdi:transmission-tower-export
+            graph: line
+            detail: 2
+          - type: sensor
+            name: Export today
+            entity: sensor.myenergi_myenergi_hub_grid_export_today
+            icon: mdi:transmission-tower-export
             graph: none
       - type: grid
         cards:
@@ -94,12 +107,13 @@ views:
                 show_icon: false
           - type: sensor
             name: Import now
-            icon: mdi:home-import-outline
+            icon: mdi:gas-burner
             entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_consumption
             graph: line
             detail: 2
           - type: sensor
             name: Import today
+            icon: mdi:gas-burner
             entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
             graph: none
       - type: grid
@@ -109,22 +123,13 @@ views:
             heading_style: title
             icon: mdi:solar-power
           - type: sensor
-            name: Export now
-            entity: sensor.myenergi_myenergi_hub_power_export
-            graph: line
-            detail: 2
-          - type: sensor
-            name: Export today
-            entity: sensor.myenergi_myenergi_hub_grid_export_today
-            graph: none
-          - type: sensor
             name: Generation
             icon: mdi:solar-power-variant
             entity: sensor.solar_power_generation
             graph: line
             detail: 2
           - type: sensor
-            name: Generated today
+            name: Generation today
             icon: mdi:solar-power-variant
             entity: sensor.myenergi_myenergi_hub_generated_today
             graph: none
