@@ -76,13 +76,13 @@ views:
           - type: sensor
             icon: mdi:transmission-tower-import
             name: Import now
-            entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand
+            entity: sensor.myenergi_myenergi_hub_power_grid
             graph: line
             detail: 2
           - type: sensor
             icon: mdi:transmission-tower-import
             name: Import today
-            entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_consumption
+            entity: sensor.myenergi_myenergi_hub_grid_import_today
             graph: none
           - type: sensor
             name: Export now
