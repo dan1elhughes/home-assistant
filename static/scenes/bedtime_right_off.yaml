@@ -2,3 +2,4 @@ name: Bedtime right off
 icon: mdi:bed-outline
 entities:
   light.bedroom_lamp_right: "off"
+  light.bedroom_cupboard_light: "off"
