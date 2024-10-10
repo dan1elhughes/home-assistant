@@ -83,7 +83,7 @@ views:
           - type: sensor
             icon: mdi:transmission-tower-import
             name: Import now
-            entity: sensor.myenergi_myenergi_hub_power_grid
+            entity: sensor.myenergi_myenergi_hub_power_import
             graph: line
             detail: 2
           - type: sensor
