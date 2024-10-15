@@ -129,6 +129,10 @@ views:
             heading: Solar
             heading_style: title
             icon: mdi:solar-power
+            badges:
+              - type: entity
+                entity: sensor.solar_power_generation_paid
+                show_icon: false
           - type: sensor
             name: Generation
             icon: mdi:solar-power-variant

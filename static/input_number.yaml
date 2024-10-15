@@ -1,0 +1,6 @@
+fit_generation_per_kwh:
+  name: FIT generation per kWh (£)
+  unit_of_measurement: "£/kWh"
+  initial: 0.7185
+  min: 0
+  max: 1

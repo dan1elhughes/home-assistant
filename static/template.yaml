@@ -42,3 +42,9 @@
         {% else %}
           {{ states('sensor.myenergi_myenergi_hub_power_generation') }}
         {% endif %}
+
+    - name: "Solar power generation paid"
+      unit_of_measurement: "£"
+      state: >
+        {{ (states('sensor.myenergi_myenergi_hub_generated_today') | float *
+        states('input_number.fit_generation_per_kwh') | float) | round(2) }}
