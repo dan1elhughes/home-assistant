@@ -1,17 +1,40 @@
-- alias: Garden lights on at sunset
+- alias: "Start timer when button pressed, or arrive home"
   mode: single
-  trigger:
-    - platform: sun
-      event: sunset
-  action:
-    - service: switch.turn_on
-      entity_id: switch.garden_lights
+  triggers:
+    - trigger: event
+      event_type: zha_event
+      event_data:
+        device_ieee: 00:12:4b:00:22:cf:67:01
+        command: toggle
+    - trigger: state
+      entity_id: group.presence_home
+      from: not_home
+      to: home
+  actions:
+    - action: timer.start
+      target:
+        entity_id: timer.garden_lights
 
-- alias: Garden lights off at midnight
+- alias: "Turn garden lights on when timer starts"
   mode: single
-  trigger:
-    - platform: time
-      at: "00:00:00"
-  action:
-    - service: switch.turn_off
-      entity_id: switch.garden_lights
+  triggers:
+    - trigger: event
+      event_type: timer.started
+      event_data:
+        entity_id: timer.garden_lights
+  actions:
+    - action: light.turn_on
+      target:
+        entity_id: light.garden_lighting
+
+- alias: "Turn garden lights off when timer ends"
+  mode: single
+  triggers:
+    - trigger: event
+      event_type: timer.finished
+      event_data:
+        entity_id: timer.garden_lights
+  actions:
+    - action: light.turn_off
+      target:
+        entity_id: light.garden_lighting

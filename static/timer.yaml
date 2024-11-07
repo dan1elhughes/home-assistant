@@ -1,3 +1,3 @@
-hot_water_boost:
-  name: "Hot water boost"
-  duration: "01:00:00"
+garden_lights:
+  name: "Garden lights"
+  duration: "00:05:00"
