@@ -2,13 +2,18 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: media_player.tv
-
-      # https://www.home-assistant.io/docs/automation/trigger/#state-trigger
-      # Trigger on all *state* changes, but not attributes, by setting to to null.
-      # Otherwise, volume changes trigger the automation!
-      to: null
+      entity_id: media_player.shield
   action:
-    - service_template: switch.turn_{{ trigger.to_state.state }}
-      target:
-        entity_id: switch.amplifier
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: media_player.shield
+              state: "off"
+          sequence:
+            - service: switch.turn_off
+              target:
+                entity_id: switch.amplifier
+      default:
+        - service: switch.turn_on
+          target:
+            entity_id: switch.amplifier
