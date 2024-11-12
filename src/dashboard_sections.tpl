@@ -34,9 +34,9 @@ views:
               data:
                 option: {{ room.id }}
 
+          {% if room.lights %}
           - type: vertical-stack
             cards:
-
             - type: custom:expander-card
               gap: '0'
               padding: '0'
@@ -50,11 +50,15 @@ views:
                     {% for id in groups[room.lights].entities %}
                     - entity: {{ id }}
                     {% endfor %}
+          {% endif %}
 
-            {% if room.curtains %}
+          {% if room.curtains %}
+          - type: vertical-stack
+            cards:
+
             - type: tile
               entity: {{ room.curtains }}
-            {% endif %}
+          {% endif %}
 
       {% endfor %}
 
