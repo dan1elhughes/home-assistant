@@ -25,6 +25,8 @@ views:
             badges:
               - type: entity
                 entity: sensor.{{ room.id }}_sensor_temperature
+              - type: entity
+                entity: sensor.{{ room.id }}_sensor_humidity
             heading: {{ room.name }}
             tap_action:
               action: perform-action
