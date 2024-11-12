@@ -10,6 +10,9 @@
       entity_id: group.presence_home
       from: not_home
       to: home
+    - trigger: state
+      entity_id: binary_sensor.back_door_opening
+      to: "on"
   actions:
     - action: timer.start
       target:
