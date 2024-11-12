@@ -83,6 +83,10 @@
       "lights": "light.office_lights",
       "dimmer_ieee": "00:17:88:01:09:a6:cf:36",
       "button_ieee": "00:12:4b:00:29:0f:e9:c1"
+    },
+    {
+      "id": "conservatory",
+      "name": "Conservatory"
     }
   ],
   "devices": [
