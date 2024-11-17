@@ -1,0 +1,9 @@
+- alias: "Close curtains at sunset"
+  mode: single
+  triggers:
+    - trigger: sun
+      event: sunset
+  action:
+    - service: cover.close_cover
+      target:
+        entity_id: cover.curtains
