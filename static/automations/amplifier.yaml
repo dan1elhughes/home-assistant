@@ -2,12 +2,12 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: media_player.shield
+      entity_id: media_player.tv
   action:
     - choose:
         - conditions:
             - condition: state
-              entity_id: media_player.shield
+              entity_id: media_player.tv
               state: "off"
             - condition: state
               entity_id: switch.amplifier
