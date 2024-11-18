@@ -11,7 +11,11 @@
     },
     "light.office_lights": {
       "name": "Office lights",
-      "entities": ["light.office_lamp", "light.desk_light"]
+      "entities": [
+        "light.office_lamp",
+        "light.desk_light",
+        "light.office_leds_light"
+      ]
     },
     "light.living_room_lights": {
       "name": "Living room lights",
