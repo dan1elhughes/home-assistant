@@ -1,0 +1,7 @@
+- platform: generic_thermostat
+  name: "Server cabinet"
+  heater: switch.server_fans
+  target_sensor: sensor.servers_sensor_temperature
+  target_temp: 25
+  ac_mode: true
+  initial_hvac_mode: "cool"
