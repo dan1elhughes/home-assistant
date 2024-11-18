@@ -3,6 +3,8 @@
   triggers:
     - trigger: sun
       event: sunset
+      # 30 minutes after sunset
+      offset: "00:30:00"
   action:
     - service: cover.close_cover
       target:
