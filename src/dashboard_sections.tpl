@@ -5,22 +5,47 @@ views:
     type: sections
     sections:
       - type: grid
+        column_span: 2
         cards:
-          - type: weather-forecast
-            show_current: true
-            show_forecast: false
-            entity: weather.home
-            forecast_type: daily
-            name: Kingsclere
-          - type: vertical-stack
+          - type: horizontal-stack
+            grid_options:
+              columns: full
             cards:
-              - type: tile
-                entity: climate.thermostat
-                features:
-                  - type: target-temperature
-      {% for room in rooms %}
+            - type: weather-forecast
+              show_current: true
+              show_forecast: false
+              entity: weather.home
+              forecast_type: daily
+              name: Kingsclere
+            - type: vertical-stack
+              cards:
+                - type: tile
+                  entity: climate.thermostat
+                  features:
+                    - type: target-temperature
+
+          - type: custom:atomic-calendar-revive
+            name: Calendar
+            entities:
+              - entity: calendar.k_d
+                name: K&D
+            maxDaysToShow: 5
+            showDate: true
+            grid_options:
+              columns: full
+
       - type: grid
         cards:
+          - type: tile
+            grid_options:
+              columns: full
+            name: Active room
+            entity: input_select.active_room
+            hide_state: true
+            features:
+              - type: select-options
+
+          {% for room in rooms %}
           - type: heading
             badges:
               - type: entity
@@ -28,41 +53,32 @@ views:
               - type: entity
                 entity: sensor.{{ room.id }}_sensor_humidity
             heading: {{ room.name }}
-            tap_action:
-              action: perform-action
-              perform_action: input_select.select_option
-              target:
-                entity_id: input_select.active_room
-              data:
-                option: {{ room.id }}
-
           {% if room.lights %}
-          - type: vertical-stack
+          - type: custom:expander-card
+            grid_options:
+              columns: full
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title-card:
+              type: tile
+              entity: {{ room.lights }}
             cards:
-            - type: custom:expander-card
-              gap: '0'
-              padding: '0'
-              child-padding: '0'
-              title-card:
-                type: tile
-                entity: {{ room.lights }}
-              cards:
-                - type: entities
-                  entities:
-                    {% for id in groups[room.lights].entities %}
-                    - entity: {{ id }}
-                    {% endfor %}
+              - type: entities
+                entities:
+                  {% for id in groups[room.lights].entities %}
+                  - entity: {{ id }}
+                  {% endfor %}
           {% endif %}
 
           {% if room.curtains %}
-          - type: vertical-stack
-            cards:
-
-            - type: tile
-              entity: {{ room.curtains }}
+          - type: tile
+            grid_options:
+              columns: full
+            entity: {{ room.curtains }}
           {% endif %}
 
-      {% endfor %}
+        {% endfor %}
 
   - title: Energy
     path: energy
