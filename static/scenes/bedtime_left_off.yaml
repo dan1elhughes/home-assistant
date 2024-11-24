@@ -3,3 +3,8 @@ icon: mdi:bed-outline
 entities:
   light.bedroom_lamp_left: "off"
   light.bedroom_cupboard_light: "off"
+
+  light.bedroom_lamp_right:
+    state: "on"
+    xy_color: [0.589, 0.329]
+    brightness: 3
