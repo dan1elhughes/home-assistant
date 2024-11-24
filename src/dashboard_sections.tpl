@@ -9,6 +9,35 @@ views:
         cards:
           - type: horizontal-stack
             grid_options:
+                columns: full
+            cards:
+            - type: entity
+              entity: sensor.kingsclere_waste
+              name: Waste
+              show_name: true
+              icon: mdi:trash-can
+              color: grey
+            - type: entity
+              entity: sensor.kingsclere_recycling
+              name: Recycling
+              show_name: true
+              icon: mdi:recycle
+              color: green
+            - type: entity
+              entity: sensor.kingsclere_garden
+              name: Garden
+              show_name: true
+              icon: mdi:grass
+              color: brown
+            - type: entity
+              entity: sensor.kingsclere_glass
+              name: Glass
+              show_name: true
+              icon: mdi:glass-wine
+              color: light-green
+
+          - type: horizontal-stack
+            grid_options:
               columns: full
             cards:
             - type: weather-forecast
@@ -36,15 +65,6 @@ views:
 
       - type: grid
         cards:
-          - type: tile
-            grid_options:
-              columns: full
-            name: Active room
-            entity: input_select.active_room
-            hide_state: true
-            features:
-              - type: select-options
-
           {% for room in rooms %}
           - type: heading
             badges:
