@@ -15,25 +15,21 @@ views:
               entity: sensor.kingsclere_waste
               name: Waste
               show_name: true
-              icon: mdi:trash-can
               color: grey
             - type: entity
               entity: sensor.kingsclere_recycling
               name: Recycling
               show_name: true
-              icon: mdi:recycle
               color: green
             - type: entity
               entity: sensor.kingsclere_garden
               name: Garden
               show_name: true
-              icon: mdi:grass
               color: brown
             - type: entity
               entity: sensor.kingsclere_glass
               name: Glass
               show_name: true
-              icon: mdi:glass-wine
               color: light-green
 
           - type: horizontal-stack
