@@ -1,0 +1,12 @@
+- alias: Notify when Homelab power goes unavailable
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.homelab_energy_power
+      to: unavailable
+  action:
+    - service: notify.dan
+      data:
+        message: "Homelab is on UPS power"
+        data:
+          notification_icon: "mdi:battery-clock"
