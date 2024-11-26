@@ -3,3 +3,9 @@
   mac: "34:97:f6:a0:a4:f6"
   turn_off:
     service: shell_command.shutdown_sinkhole
+
+- platform: wake_on_lan
+  name: "Eden"
+  mac: "30:24:a9:91:36:aa"
+  turn_off:
+    service: shell_command.shutdown_eden

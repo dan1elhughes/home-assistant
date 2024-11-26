@@ -42,6 +42,7 @@ recorder:
 
 shell_command:
   shutdown_sinkhole: 'ssh dan@10.10.10.50 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'
+  shutdown_eden: 'ssh dan@10.10.10.51 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'
 
 # Text to speech
 tts:
