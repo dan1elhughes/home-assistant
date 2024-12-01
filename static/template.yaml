@@ -48,3 +48,15 @@
       state: >
         {{ (states('sensor.myenergi_myenergi_hub_generated_today') | float *
         states('input_number.fit_generation_per_kwh') | float) | round(2) }}
+
+    - name: "Garden sensor temperature"
+      unit_of_measurement: "°C"
+      icon: mdi:thermometer
+      state: >
+        {{ state_attr('weather.home', 'temperature') }}
+
+    - name: "Garden sensor humidity"
+      unit_of_measurement: "%"
+      icon: mdi:water-percent
+      state: >
+        {{ state_attr('weather.home', 'humidity') }}
