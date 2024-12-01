@@ -72,25 +72,28 @@
       "name": "Living room",
       "lights": "light.living_room_lights",
       "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
-      "button_ieee": "00:12:4b:00:22:cf:67:01"
+      "button_ieee": "00:12:4b:00:22:cf:67:01",
+      "other_devices": ["switch.amplifier"]
     },
     {
       "id": "bedroom",
       "name": "Bedroom",
       "lights": "light.bedroom_lights",
       "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
-      "curtains": "cover.curtains"
+      "other_devices": ["cover.curtains"]
     },
     {
       "id": "office",
       "name": "Office",
       "lights": "light.office_lights",
       "dimmer_ieee": "00:17:88:01:09:a6:cf:36",
-      "button_ieee": "00:12:4b:00:29:0f:e9:c1"
+      "button_ieee": "00:12:4b:00:29:0f:e9:c1",
+      "other_devices": ["light.office_spotlights"]
     },
     {
       "id": "conservatory",
-      "name": "Conservatory"
+      "name": "Conservatory",
+      "other_devices": ["switch.dehumidifier"]
     },
     {
       "id": "barn",

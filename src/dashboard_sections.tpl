@@ -87,11 +87,13 @@ views:
                   {% endfor %}
           {% endif %}
 
-          {% if room.curtains %}
+          {% if room.other_devices %}
+          {% for device in room.other_devices %}
           - type: tile
             grid_options:
               columns: full
-            entity: {{ room.curtains }}
+            entity: {{ device }}
+          {% endfor %}
           {% endif %}
 
         {% endfor %}
