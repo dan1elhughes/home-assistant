@@ -95,6 +95,11 @@
     {
       "id": "barn",
       "name": "Barn"
+    },
+    {
+      "id": "garden",
+      "name": "Garden",
+      "lights": "light.garden_lighting"
     }
   ],
   "devices": [
