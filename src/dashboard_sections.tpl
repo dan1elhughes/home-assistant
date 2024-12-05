@@ -276,6 +276,9 @@ views:
             - entity: input_datetime.lights_out
               name: Lights out
               secondary_info: none
+            - entity: input_select.active_room
+              name: Active room
+              secondary_info: none
 
       - type: grid
         cards:
