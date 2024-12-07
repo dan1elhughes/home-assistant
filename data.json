@@ -73,7 +73,7 @@
       "lights": "light.living_room_lights",
       "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
       "button_ieee": "00:12:4b:00:22:cf:67:01",
-      "other_devices": ["switch.amplifier"]
+      "other_devices": ["switch.amplifier", "switch.tree"]
     },
     {
       "id": "bedroom",
@@ -81,6 +81,11 @@
       "lights": "light.bedroom_lights",
       "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
       "other_devices": ["cover.curtains"]
+    },
+    {
+      "id": "kitchen",
+      "name": "Kitchen",
+      "other_devices": ["switch.kitchen_counter"]
     },
     {
       "id": "office",
