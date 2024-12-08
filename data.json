@@ -17,10 +17,13 @@
         "light.office_leds_light"
       ]
     },
+    "light.conservatory_lights": {
+      "name": "Conservatory lights",
+      "entities": ["light.conservatory_lamp"]
+    },
     "light.living_room_lights": {
       "name": "Living room lights",
       "entities": [
-        "light.living_room_lamp",
         "light.living_room_side_light",
         "light.tv_light",
         "light.dining_room_table"
@@ -98,6 +101,7 @@
     {
       "id": "conservatory",
       "name": "Conservatory",
+      "lights": "light.conservatory_lights",
       "other_devices": ["switch.dehumidifier"]
     },
     {
