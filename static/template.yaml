@@ -1,36 +1,26 @@
 - sensor:
-    - name: Energy cost per hour
-      unit_of_measurement: "£/h"
-      state: |
-        {% set demand = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_demand') | float %}
-        {% set rate = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float %}
-        {{(((demand/1000) * rate) | round(2)) }}
-
     - name: Occupant count
-      state: |
-        {{ states.person | selectattr('state', 'equalto', 'home') | list |
-        count }}
+      state: >
+        {{ states.person | selectattr('state', 'equalto', 'home') | list | count }}
 
     - name: One-room mode
-      state: |
+      state: >
         {{ states('sensor.occupant_count') | int <= 1 }}
 
     - name: Next saving session
-      state: |
-        {{
-        state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions',
-        'next_joined_event_start') }}
+      state: >
+        {{ state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'next_joined_event_start') }}
 
     - name: Accumulative electricity cost without standing charge
       icon: mdi:currency-gbp
       unit_of_measurement: "£"
-      state: |
+      state: >
         {{ state_attr('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_accumulative_cost', 'total_cost_without_standing_charge') }}
 
     - name: Accumulative gas cost without standing charge
       icon: mdi:currency-gbp
       unit_of_measurement: "£"
-      state: |
+      state: >
         {{ state_attr('sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_cost', 'total_without_standing_charge') }}
 
     - name: "Solar power generation"
@@ -46,8 +36,7 @@
     - name: "Solar power generation paid"
       unit_of_measurement: "£"
       state: >
-        {{ (states('sensor.myenergi_myenergi_hub_generated_today') | float *
-        states('input_number.fit_generation_per_kwh') | float) | round(2) }}
+        {{ (states('sensor.myenergi_myenergi_hub_generated_today') | float * states('input_number.fit_generation_per_kwh') | float) | round(2) }}
 
     - name: "Garden sensor temperature"
       unit_of_measurement: "°C"
