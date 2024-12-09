@@ -9,3 +9,9 @@
   mac: "30:24:a9:91:36:aa"
   turn_off:
     service: shell_command.shutdown_eden
+
+- platform: wake_on_lan
+  name: "Mele"
+  mac: "00:ce:39:d1:10:c1"
+  turn_off:
+    service: shell_command.shutdown_mele
