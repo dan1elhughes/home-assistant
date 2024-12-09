@@ -1,5 +1,9 @@
-- alias: "Start timer when button pressed, or arrive home"
+- alias: "Start timer when back door opens, or arrive home"
   mode: single
+  conditions:
+    - condition: state
+      entity_id: sun.sun
+      state: "below_horizon"
   triggers:
     - trigger: event
       event_type: zha_event
