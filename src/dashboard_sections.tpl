@@ -7,30 +7,21 @@ views:
       - type: grid
         column_span: 2
         cards:
-          - type: horizontal-stack
+          - type: glance
             grid_options:
                 columns: full
-            cards:
-            - type: entity
-              entity: sensor.kingsclere_waste
-              name: Waste
-              show_name: true
-              color: grey
-            - type: entity
-              entity: sensor.kingsclere_recycling
-              name: Recycling
-              show_name: true
-              color: green
-            - type: entity
-              entity: sensor.kingsclere_garden
-              name: Garden
-              show_name: true
-              color: brown
-            - type: entity
-              entity: sensor.kingsclere_glass
-              name: Glass
-              show_name: true
-              color: light-green
+            show_name: true
+            show_icon: true
+            show_state: true
+            entities:
+              - entity: sensor.kingsclere_waste
+                name: Waste
+              - entity: sensor.kingsclere_recycling
+                name: Recycling
+              - entity: sensor.kingsclere_garden
+                name: Garden
+              - entity: sensor.kingsclere_glass
+                name: Glass
 
           - type: horizontal-stack
             grid_options:
