@@ -26,7 +26,8 @@
       "entities": [
         "light.living_room_side_light",
         "light.tv_light",
-        "light.dining_room_table"
+        "light.dining_room_table",
+        "light.living_room_lamp"
       ]
     },
     "light.garden_lighting": {
