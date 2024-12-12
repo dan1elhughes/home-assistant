@@ -1,4 +1,4 @@
-- alias: "Movie mode activate"
+- alias: "Movie mode - activate"
   mode: single
   trigger:
     - platform: state
@@ -15,3 +15,25 @@
       - "VLC"
   action:
     - scene: scene.movie_mode
+
+- alias: "Movie mode - deactivate"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: media_player.shield
+      to: "paused"
+  condition:
+    condition: state
+    entity_id: media_player.shield
+    attribute: app_name
+    state:
+      - "Netflix"
+      - "Plex"
+      - "Prime Video"
+      - "VLC"
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.living_room_lights
+      data:
+        brightness: 255

@@ -27,12 +27,17 @@
         "light.living_room_side_light",
         "light.tv_light",
         "light.dining_room_table",
-        "light.living_room_lamp"
+        "light.living_room_lamp",
+        "light.tree"
       ]
     },
     "light.garden_lighting": {
       "name": "Garden lighting",
       "entities": ["light.garden_lights"]
+    },
+    "light.kitchen_lights": {
+      "name": "Kitchen lights",
+      "entities": ["light.kitchen_counter"]
     }
   },
   "buttons": [
@@ -77,7 +82,7 @@
       "lights": "light.living_room_lights",
       "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
       "button_ieee": "00:12:4b:00:22:cf:67:01",
-      "other_devices": ["switch.amplifier", "switch.tree"]
+      "other_devices": ["switch.amplifier"]
     },
     {
       "id": "bedroom",
@@ -89,7 +94,7 @@
     {
       "id": "kitchen",
       "name": "Kitchen",
-      "other_devices": ["switch.kitchen_counter"]
+      "lights": "light.kitchen_lights"
     },
     {
       "id": "office",
