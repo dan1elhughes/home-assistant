@@ -11,7 +11,7 @@
     - service: notify.dan
       data:
         title: "Homelab is on UPS power"
-        message: "Battery runtime is {{ states('sensor.homelab_ups_battery_runtime') }} minutes"
+        message: "{{ states('sensor.homelab_ups_battery_charge')}}% ({{ states('sensor.homelab_ups_battery_runtime') }} minutes) remaining"
         data:
           channel: "ups"
           tag: ups
