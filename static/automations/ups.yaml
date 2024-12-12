@@ -13,4 +13,32 @@
         title: "Homelab is on UPS power"
         message: "Battery runtime is {{ states('sensor.homelab_ups_battery_runtime') }} minutes"
         data:
+          channel: "ups"
+          tag: ups
           notification_icon: "mdi:battery-clock"
+
+- alias: Reconnect UPS power at 10 min runtime remaining
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.homelab_ups_battery_runtime
+      below: 10
+  condition:
+    - condition: state
+      entity_id: sensor.homelab_ups_status_data
+      state: "OB DISCHRG"
+    - condition: state
+      entity_id: switch.homelab
+      state: "off"
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.homelab
+    - service: notify.dan
+      data:
+        title: "Homelab UPS power restored"
+        message: "Power has been restored to the Homelab"
+        data:
+          channel: "ups"
+          tag: ups
+          notification_icon: "mdi:power-plug"

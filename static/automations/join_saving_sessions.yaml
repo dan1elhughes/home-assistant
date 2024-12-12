@@ -1,0 +1,5 @@
+- alias: Octopus Energy - Join Saving Session
+  use_blueprint:
+    path: BottlecapDave/octopus_energy_octoplus_join_saving_session.yml.yaml
+    input:
+      saving_session_event_entity: event.octopus_energy_a_fad3b08a_octoplus_saving_session_events

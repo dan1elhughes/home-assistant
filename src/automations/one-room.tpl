@@ -52,17 +52,3 @@
         entity_id: {{ room.fan }}
     {%- endif %}
 {% endfor %}
-
-- alias: "Out: One-room mode (activate)"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: input_select.active_room
-      to: "out"
-  action:
-    - scene: scene.lights_off
-    - service: climate.set_hvac_mode
-      target:
-        entity_id: group.thermostats
-      data:
-        hvac_mode: "off"
