@@ -264,8 +264,11 @@ views:
             - entity: input_datetime.wake_up
               name: Wake up
               secondary_info: none
-            - entity: input_datetime.lights_out
-              name: Lights out
+            - entity: input_number.thermostat_low
+              name: Thermostat low temp
+              secondary_info: none
+            - entity: input_number.thermostat_high
+              name: Thermostat high temp
               secondary_info: none
             - entity: input_select.active_room
               name: Active room
