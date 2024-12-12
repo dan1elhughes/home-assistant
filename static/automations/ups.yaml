@@ -1,4 +1,4 @@
-- alias: Homelab UPS notification
+- alias: UPS - notify when running
   mode: single
   trigger:
     - platform: state
@@ -17,7 +17,7 @@
           tag: ups
           notification_icon: "mdi:battery-clock"
 
-- alias: Switch off UPS when offpeak ends
+- alias: UPS - switch off when offpeak ends
   mode: single
   trigger:
     - platform: state
@@ -29,7 +29,7 @@
       target:
         entity_id: switch.homelab
 
-- alias: Reconnect UPS power at 10 min runtime remaining
+- alias: UPS - reconnect to grid when 10 minutes remaining
   mode: single
   trigger:
     - platform: numeric_state
