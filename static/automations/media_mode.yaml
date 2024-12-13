@@ -22,6 +22,8 @@
     - platform: state
       entity_id: media_player.shield
       to: "paused"
+      for:
+        seconds: 5 # Account for fast-forwarding and rewinding
   condition:
     condition: state
     entity_id: media_player.shield
