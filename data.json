@@ -108,7 +108,7 @@
       "id": "conservatory",
       "name": "Conservatory",
       "lights": "light.conservatory_lights",
-      "other_devices": ["switch.dehumidifier"]
+      "other_devices": ["humidifier.conservatory_dehumidifier"]
     },
     {
       "id": "barn",

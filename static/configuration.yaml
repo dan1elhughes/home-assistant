@@ -5,6 +5,7 @@ adaptive_lighting: !include adaptive_lighting.yaml
 automation manual: !include_dir_merge_list automations/
 automation ui: !include automations.yaml
 climate ui: !include climate.yaml
+generic_hygrostat: !include generic_hygrostat.yaml
 group: !include groups.yaml
 input_boolean: !include input_boolean.yaml
 input_button: !include input_button.yaml
