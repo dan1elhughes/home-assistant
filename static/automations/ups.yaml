@@ -17,18 +17,6 @@
           tag: ups
           notification_icon: "mdi:battery-clock"
 
-- alias: UPS - switch off when offpeak ends
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
-      from: "on"
-      to: "off"
-  action:
-    - service: switch.turn_off
-      target:
-        entity_id: switch.homelab
-
 - alias: UPS - reconnect to grid when 10 minutes remaining
   mode: single
   trigger:
