@@ -30,7 +30,7 @@
     - service: google_assistant_sdk.send_text_command
       data:
         media_player: media_player.bedroom_speaker_dan
-        command: "How's the weather?"
+        command: "How's the weather in Kingsclere, Hampshire?"
     - wait_for_trigger:
         - platform: state
           entity_id: media_player.bedroom_speaker_dan
