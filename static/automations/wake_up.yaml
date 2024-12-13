@@ -12,6 +12,10 @@
       condition: state
       entity_id: input_boolean.automations
       state: "on"
+    - alias: "Enabled"
+      condition: state
+      entity_id: input_boolean.wake_up_katie_enabled
+      state: "on"
   action:
     - alias: "Turn on lamp"
       service: light.turn_on
@@ -33,6 +37,10 @@
     - alias: "Automations enabled"
       condition: state
       entity_id: input_boolean.automations
+      state: "on"
+    - alias: "Enabled"
+      condition: state
+      entity_id: input_boolean.wake_up_dan_enabled
       state: "on"
   action:
     - alias: "Turn on lamp"

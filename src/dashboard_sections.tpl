@@ -251,38 +251,75 @@ views:
               state_content:
                 - state
                 - last-changed
+            - type: tile
+              entity: input_select.active_room
+              icon: mdi:home-thermometer
+              state_content:
+                - state
+                - last-changed
+      - type: grid
+        cards:
+          - type: custom:expander-card
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title: "Wake up (Katie)"
+            cards:
+              - type: entity
+                entity: input_datetime.wake_up_katie
+                name: Time
+                secondary_info: none
+              - type: entity
+                entity: input_boolean.wake_up_katie_enabled
+                name: Enabled
+                secondary_info: none
+      - type: grid
+        cards:
+          - type: custom:expander-card
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title: "Wake up (Dan)"
+            cards:
+              - type: entity
+                entity: input_datetime.wake_up_dan
+                name: Time
+                secondary_info: none
+              - type: entity
+                entity: input_boolean.wake_up_dan_enabled
+                name: Enabled
+                secondary_info: none
+      - type: grid
+        cards:
+          - type: custom:expander-card
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title: Thermostat
+            cards:
+              - type: entity
+                entity: input_number.thermostat_low
+                name: Low
+                secondary_info: none
+              - type: entity
+                entity: input_number.thermostat_high
+                name: High
+                secondary_info: none
 
       - type: grid
         cards:
-        - type: entities
-          title: Quick controls
-          state_color: true
-          entities:
-            - entity: input_datetime.wake_up_dan
-              secondary_info: none
-            - entity: input_datetime.wake_up_katie
-              secondary_info: none
-            - entity: input_number.thermostat_low
-              name: Thermostat low temp
-              secondary_info: none
-            - entity: input_number.thermostat_high
-              name: Thermostat high temp
-              secondary_info: none
-            - entity: input_select.active_room
-              name: Active room
-              secondary_info: none
-
-      - type: grid
-        cards:
-        - type: custom:expander-card
-          title: Batteries
-          cards:
-          - type: custom:auto-entities
-            card:
-              type: entities
-            sort:
-              method: state
-              numeric: true
-            filter:
-              include:
-                - entity_id: sensor.*_battery
+          - type: custom:expander-card
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title: Batteries
+            cards:
+            - type: custom:auto-entities
+              card:
+                type: entities
+              sort:
+                method: state
+                numeric: true
+              filter:
+                include:
+                  - entity_id: sensor.*_battery

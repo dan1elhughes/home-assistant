@@ -10,3 +10,11 @@ ac:
 automatic_fans:
   name: Automatic fans
   icon: mdi:fan
+
+wake_up_dan_enabled:
+  name: Wake up Dan enabled
+  icon: mdi:alarm
+
+wake_up_katie_enabled:
+  name: Wake up Katie enabled
+  icon: mdi:alarm
