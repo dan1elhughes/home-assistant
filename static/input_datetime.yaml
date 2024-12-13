@@ -1,4 +1,9 @@
-wake_up:
-  name: Wake up time
+wake_up_dan:
+  name: Wake up time (Dan)
+  has_date: false
+  has_time: true
+
+wake_up_katie:
+  name: Wake up time (Katie)
   has_date: false
   has_time: true

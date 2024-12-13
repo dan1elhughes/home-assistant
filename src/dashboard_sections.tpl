@@ -258,11 +258,9 @@ views:
           title: Quick controls
           state_color: true
           entities:
-            - entity: switch.amplifier
-              name: Amplifier
+            - entity: input_datetime.wake_up_dan
               secondary_info: none
-            - entity: input_datetime.wake_up
-              name: Wake up
+            - entity: input_datetime.wake_up_katie
               secondary_info: none
             - entity: input_number.thermostat_low
               name: Thermostat low temp
