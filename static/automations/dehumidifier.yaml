@@ -1,0 +1,35 @@
+- alias: "Dehumidifier: Peak"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+      to: "off"
+  condition:
+    - condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+  action:
+    - service: humidifier.set_humidity
+      data:
+        humidity: >
+          {{ states("input_number.dehumidifier_peak") | float }}
+      target:
+        entity_id: humidifier.conservatory_dehumidifier
+
+- alias: "Dehumidifier: Off-peak"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+  action:
+    - service: humidifier.set_humidity
+      data:
+        humidity: >
+          {{ states("input_number.dehumidifier_offpeak") | float }}
+      target:
+        entity_id: humidifier.conservatory_dehumidifier

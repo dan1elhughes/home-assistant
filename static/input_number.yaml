@@ -18,3 +18,17 @@ thermostat_low:
   min: 7
   max: 18
   step: 0.5
+
+dehumidifier_peak:
+  name: Dehumidifier peak humidity
+  unit_of_measurement: "%"
+  min: 0
+  max: 100
+  step: 1
+
+dehumidifier_offpeak:
+  name: Dehumidifier off-peak humidity
+  unit_of_measurement: "%"
+  min: 0
+  max: 100
+  step: 1
