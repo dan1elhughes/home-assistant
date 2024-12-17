@@ -33,3 +33,23 @@
           {{ states("input_number.dehumidifier_offpeak") | float }}
       target:
         entity_id: humidifier.conservatory_dehumidifier
+
+- alias: "Dehumidifier: Full"
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.dehumidifier_energy_power
+      below: 50
+      for:
+        minutes: 10
+  condition:
+    - condition: state
+      entity_id: switch.dehumidifier
+      state: "on"
+  action:
+    - service: notify.dan
+      data:
+        title: "Dehumidifier Full"
+        message: "Power below 50W for 10 minutes"
+        data:
+          channel: "dehumidifier"
+          notification_icon: "mdi:water-alert"
