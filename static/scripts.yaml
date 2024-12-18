@@ -12,3 +12,28 @@ play_bbc_news:
       data:
         media_content_id: "{{ states('sensor.bbc_news') }}"
         media_content_type: "audio/mp3"
+
+# https://tasmota.github.io/docs/Device-Recovery/#fast-power-cycle-device-recovery
+tasmota_provide_reset_sequence:
+  alias: "Tasmota: Provide reset sequence"
+  description: "Provide the reset sequence for a Tasmota device"
+  fields:
+    device:
+      description: "The Tasmota device to provide the reset sequence for"
+      example: "switch.tasmota_device"
+      required: true
+  sequence:
+    - repeat:
+        count: 6
+        sequence:
+          - service: switch.turn_on
+            target:
+              entity_id: "{{ device }}"
+          - delay: "00:00:01"
+          - service: switch.turn_off
+            target:
+              entity_id: "{{ device }}"
+          - delay: "00:00:01"
+    - service: switch.turn_on
+      target:
+        entity_id: "{{ device }}"
