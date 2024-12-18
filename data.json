@@ -37,7 +37,7 @@
     },
     "light.kitchen_lights": {
       "name": "Kitchen lights",
-      "entities": ["light.kitchen_counter"]
+      "entities": ["light.kitchen_counter", "light.sink_lights"]
     }
   },
   "buttons": [
