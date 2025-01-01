@@ -27,17 +27,12 @@
         "light.living_room_side_light",
         "light.tv_light",
         "light.dining_room_table",
-        "light.living_room_lamp",
-        "light.tree"
+        "light.living_room_lamp"
       ]
     },
     "light.garden_lighting": {
       "name": "Garden lighting",
       "entities": ["light.garden_lights"]
-    },
-    "light.kitchen_lights": {
-      "name": "Kitchen lights",
-      "entities": ["light.kitchen_counter", "light.sink_lights"]
     }
   },
   "buttons": [
@@ -90,11 +85,6 @@
       "lights": "light.bedroom_lights",
       "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
       "other_devices": ["cover.curtains"]
-    },
-    {
-      "id": "kitchen",
-      "name": "Kitchen",
-      "lights": "light.kitchen_lights"
     },
     {
       "id": "office",

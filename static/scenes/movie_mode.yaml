@@ -4,11 +4,9 @@ entities:
   # Other rooms
   light.bedroom_lights: "off"
   light.office_lights: "off"
-  light.kitchen_lights: "off"
   # Living room
   light.living_room_lamp: "off"
   light.living_room_side_light: "off"
-  light.tree: "off"
   light.tv_light:
     state: "on"
     brightness: 169

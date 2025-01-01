@@ -5,5 +5,3 @@ entities:
   light.office_lights: "off"
   light.bedroom_lights: "off"
   light.garden_lighting: "off"
-  switch.tree: "off"
-  switch.kitchen_counter: "off"
