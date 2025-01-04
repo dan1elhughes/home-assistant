@@ -56,8 +56,4 @@ notify:
     services:
       - service: mobile_app_pixel_8
 
-homeassistant:
-  allowlist_external_dirs:
-    - "/config"
-
 wake_on_lan:
