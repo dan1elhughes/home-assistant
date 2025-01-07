@@ -2,40 +2,12 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: media_player.shield
-      to: "playing"
+      entity_id: media_player.shield_android_tv
+      attribute: app_name
+      to: "com.plexapp.android"
   condition:
-    condition: state
-    entity_id: media_player.shield
-    attribute: app_name
-    state:
-      - "Netflix"
-      - "Plex"
-      - "Prime Video"
-      - "VLC"
+    - condition: state
+      entity_id: input_boolean.automations
+      state: "on"
   action:
     - scene: scene.movie_mode
-
-- alias: "Movie mode - deactivate"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: media_player.shield
-      to: "paused"
-      for:
-        seconds: 5 # Account for fast-forwarding and rewinding
-  condition:
-    condition: state
-    entity_id: media_player.shield
-    attribute: app_name
-    state:
-      - "Netflix"
-      - "Plex"
-      - "Prime Video"
-      - "VLC"
-  action:
-    - service: light.turn_on
-      target:
-        entity_id: light.living_room_lights
-      data:
-        brightness: 255
