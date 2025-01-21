@@ -19,16 +19,13 @@
         data:
           channel: "saving-session"
           notification_icon: "mdi:heat-wave"
-    - action: climate.turn_off
-      target:
-        entity_id:
-          - climate.thermostat
-    - service: switch.turn_off
+    - service: homeassistant.turn_off
       target:
         entity_id:
           - switch.sinkhole
           - switch.homelab
-          - switch.dehumidifier
+          - humidifier.conservatory_dehumidifier
+
     - scene: scene.lights_off
 
 - alias: "Saving session: ended while home"
@@ -50,23 +47,9 @@
         data:
           channel: "saving-session"
           notification_icon: "mdi:heat-wave"
-    - action: climate.turn_on
-      target:
-        entity_id:
-          - climate.thermostat
-
-    - service: switch.turn_on
-      target:
-        entity_id:
-          - switch.homelab
-
-    # Stop here if no one is home
-    - condition: state
-      entity_id: group.presence_home
-      state: home
-
-    - service: switch.turn_on
+    - service: homeassistant.turn_on
       target:
         entity_id:
           - switch.sinkhole
-          - switch.dehumidifier
+          - switch.homelab
+          - humidifier.conservatory_dehumidifier
