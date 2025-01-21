@@ -1,107 +1,100 @@
 {
-  "people": ["person.dan", "person.katie", "person.guest"],
+  "buttons": [
+    {
+      "actions": {
+        "on": "scene.everything_on",
+        "on_hold": "scene.lights_off"
+      },
+      "ieee": "00:17:88:01:08:96:ad:82",
+      "name": "Front door button"
+    },
+    {
+      "actions": {
+        "on": "scene.bedtime",
+        "on_double_press": "scene.lights_off",
+        "on_hold": "scene.bedtime_left_off"
+      },
+      "ieee": "00:17:88:01:06:07:6c:d8",
+      "name": "Bedroom button left"
+    },
+    {
+      "actions": {
+        "on": "scene.bedtime",
+        "on_double_press": "scene.lights_off",
+        "on_hold": "scene.bedtime_right_off"
+      },
+      "ieee": "00:17:88:01:06:07:f7:2b",
+      "name": "Bedroom button right"
+    }
+  ],
   "groups": {
     "light.bedroom_lights": {
-      "name": "Bedroom lights",
       "entities": [
         "light.bedroom_lamp_left",
         "light.bedroom_lamp_right",
         "light.bedroom_cupboard_light"
-      ]
-    },
-    "light.office_lights": {
-      "name": "Office lights",
-      "entities": [
-        "light.office_lamp",
-        "light.desk_light",
-        "light.office_leds_light"
-      ]
+      ],
+      "name": "Bedroom lights"
     },
     "light.conservatory_lights": {
-      "name": "Conservatory lights",
-      "entities": ["light.conservatory_lamp"]
+      "entities": ["light.conservatory_lamp"],
+      "name": "Conservatory lights"
+    },
+    "light.garden_lighting": {
+      "entities": ["light.garden_lights"],
+      "name": "Garden lighting"
+    },
+    "light.kitchen_lights": {
+      "entities": ["light.kitchen_counter"],
+      "name": "Kitchen lights"
     },
     "light.living_room_lights": {
-      "name": "Living room lights",
       "entities": [
         "light.living_room_side_light",
         "light.tv_light",
         "light.dining_room_table",
         "light.living_room_lamp"
-      ]
+      ],
+      "name": "Living room lights"
     },
-    "light.garden_lighting": {
-      "name": "Garden lighting",
-      "entities": ["light.garden_lights"]
-    },
-    "light.kitchen_lights": {
-      "name": "Kitchen lights",
-      "entities": ["light.kitchen_counter"]
+    "light.office_lights": {
+      "entities": [
+        "light.office_lamp",
+        "light.desk_light",
+        "light.office_leds_light"
+      ],
+      "name": "Office lights"
     }
   },
-  "buttons": [
-    {
-      "name": "Front door button",
-      "ieee": "00:17:88:01:08:96:ad:82",
-      "actions": {
-        "on": "scene.everything_on",
-        "on_hold": "scene.lights_off"
-      }
-    },
-    {
-      "name": "Bedroom button left",
-      "ieee": "00:17:88:01:06:07:6c:d8",
-      "actions": {
-        "on": "scene.bedtime",
-        "on_double_press": "scene.lights_off",
-        "on_hold": "scene.bedtime_left_off"
-      }
-    },
-    {
-      "name": "Bedroom button right",
-      "ieee": "00:17:88:01:06:07:f7:2b",
-      "actions": {
-        "on": "scene.bedtime",
-        "on_double_press": "scene.lights_off",
-        "on_hold": "scene.bedtime_right_off"
-      }
-    }
-  ],
-  "toggles": [
-    {
-      "name": "Dehumidifier",
-      "ieee": "00:12:4b:00:29:0f:e9:89",
-      "target": "switch.dehumidifier"
-    }
-  ],
+  "people": ["person.dan", "person.katie", "person.guest"],
   "rooms": [
     {
-      "id": "living_room",
-      "name": "Living room",
-      "lights": "light.living_room_lights",
-      "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
       "button_ieee": "00:12:4b:00:22:cf:67:01",
+      "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
+      "id": "living_room",
+      "lights": "light.living_room_lights",
+      "name": "Living room",
       "other_devices": ["switch.amplifier"]
     },
     {
-      "id": "bedroom",
-      "name": "Bedroom",
-      "lights": "light.bedroom_lights",
       "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
+      "id": "bedroom",
+      "lights": "light.bedroom_lights",
+      "name": "Bedroom",
       "other_devices": ["cover.curtains"]
     },
     {
-      "id": "office",
-      "name": "Office",
-      "lights": "light.office_lights",
-      "dimmer_ieee": "00:17:88:01:09:a6:cf:36",
       "button_ieee": "00:12:4b:00:29:0f:e9:c1",
+      "dimmer_ieee": "00:17:88:01:09:a6:cf:36",
+      "id": "office",
+      "lights": "light.office_lights",
+      "name": "Office",
       "other_devices": ["light.office_spotlights", "climate.server_cabinet"]
     },
     {
       "id": "conservatory",
-      "name": "Conservatory",
       "lights": "light.conservatory_lights",
+      "name": "Conservatory",
       "other_devices": ["humidifier.conservatory_dehumidifier"]
     },
     {
@@ -110,35 +103,26 @@
     },
     {
       "id": "garden",
-      "name": "Garden",
-      "lights": "light.garden_lighting"
+      "lights": "light.garden_lighting",
+      "name": "Garden"
     },
     {
       "id": "kitchen",
-      "name": "Kitchen",
-      "lights": "light.kitchen_lights"
+      "lights": "light.kitchen_lights",
+      "name": "Kitchen"
     }
   ],
-  "devices": [
+  "savingSessionDevices": [
+    "switch.robot_vacuum",
+    "switch.sinkhole",
+    "switch.homelab",
+    "humidifier.conservatory_dehumidifier"
+  ],
+  "toggles": [
     {
-      "name": "Pixel 8",
-      "battery_level": "sensor.pixel_8_battery_level",
-      "battery_state": "sensor.pixel_8_battery_state"
-    },
-    {
-      "name": "Aperture",
-      "battery_level": "sensor.aperture_internal_battery_level",
-      "battery_state": "sensor.aperture_internal_battery_state"
-    },
-    {
-      "name": "iPad",
-      "battery_level": "sensor.dans_ipad_battery_level",
-      "battery_state": "sensor.dans_ipad_battery_state"
-    },
-    {
-      "name": "Work laptop",
-      "battery_level": "sensor.dans_macbook_pro_internal_battery_level",
-      "battery_state": "sensor.dans_macbook_pro_internal_battery_state"
+      "ieee": "00:12:4b:00:29:0f:e9:89",
+      "name": "Dehumidifier",
+      "target": "switch.dehumidifier"
     }
   ]
 }

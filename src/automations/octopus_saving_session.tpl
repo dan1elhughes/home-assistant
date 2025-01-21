@@ -22,9 +22,9 @@
     - service: homeassistant.turn_off
       target:
         entity_id:
-          - switch.sinkhole
-          - switch.homelab
-          - humidifier.conservatory_dehumidifier
+          {% for id in savingSessionDevices %}
+          - {{ id }}
+          {% endfor %}
 
     - scene: scene.lights_off
 
@@ -50,6 +50,6 @@
     - service: homeassistant.turn_on
       target:
         entity_id:
-          - switch.sinkhole
-          - switch.homelab
-          - humidifier.conservatory_dehumidifier
+          {% for id in savingSessionDevices %}
+          - {{ id }}
+          {% endfor %}
