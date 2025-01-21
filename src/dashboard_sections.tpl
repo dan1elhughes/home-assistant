@@ -96,6 +96,15 @@ views:
     sections:
       - type: grid
         cards:
+          - type: tile
+            entity: sensor.next_saving_session
+            hide_state: false
+            vertical: false
+            visibility:
+              - condition: state
+                entity: sensor.next_saving_session
+                state_not: unknown
+
           - type: heading
             heading: Electricity
             heading_style: title
