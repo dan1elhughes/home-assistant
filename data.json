@@ -33,6 +33,10 @@
     "light.garden_lighting": {
       "name": "Garden lighting",
       "entities": ["light.garden_lights"]
+    },
+    "light.kitchen_lights": {
+      "name": "Kitchen lights",
+      "entities": ["light.kitchen_counter"]
     }
   },
   "buttons": [
@@ -108,6 +112,11 @@
       "id": "garden",
       "name": "Garden",
       "lights": "light.garden_lighting"
+    },
+    {
+      "id": "kitchen",
+      "name": "Kitchen",
+      "lights": "light.kitchen_lights"
     }
   ],
   "devices": [
