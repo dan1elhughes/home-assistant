@@ -36,10 +36,6 @@
       ],
       "name": "Bedroom lights"
     },
-    "light.conservatory_lights": {
-      "entities": ["light.conservatory_lamp"],
-      "name": "Conservatory lights"
-    },
     "light.garden_lighting": {
       "entities": ["light.garden_lights"],
       "name": "Garden lighting"
@@ -53,7 +49,8 @@
         "light.living_room_side_light",
         "light.tv_light",
         "light.dining_room_table",
-        "light.living_room_lamp"
+        "light.living_room_lamp",
+        "light.living_room_big_light"
       ],
       "name": "Living room lights"
     },
@@ -93,7 +90,6 @@
     },
     {
       "id": "conservatory",
-      "lights": "light.conservatory_lights",
       "name": "Conservatory",
       "other_devices": ["humidifier.conservatory_dehumidifier"]
     },
