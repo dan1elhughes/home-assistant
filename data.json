@@ -120,5 +120,15 @@
       "name": "Dehumidifier",
       "target": "switch.dehumidifier"
     }
+  ],
+  "leak_sensors": [
+    {
+      "name": "Bath",
+      "entity": "binary_sensor.bath_leak_sensor_moisture"
+    },
+    {
+      "name": "Kitchen sink",
+      "entity": "binary_sensor.leak_sensor_kitchen_sink_moisture"
+    }
   ]
 }
