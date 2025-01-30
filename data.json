@@ -41,7 +41,7 @@
       "name": "Garden lighting"
     },
     "light.kitchen_lights": {
-      "entities": ["light.kitchen_counter"],
+      "entities": ["light.kitchen_counter", "light.dining_table_light"],
       "name": "Kitchen lights"
     },
     "light.living_room_lights": {
@@ -49,8 +49,7 @@
         "light.living_room_side_light",
         "light.tv_light",
         "light.side_table",
-        "light.living_room_lamp",
-        "light.living_room_big_light"
+        "light.living_room_lamp"
       ],
       "name": "Living room lights"
     },
