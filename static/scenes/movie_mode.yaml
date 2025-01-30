@@ -9,11 +9,10 @@ entities:
   # Living room
   light.living_room_lamp: "off"
   light.living_room_side_light: "off"
-  light.living_room_big_light: "off"
 
   light.tv_light:
     state: "on"
     brightness: 169
-  light.dining_room_table:
+  light.side_table:
     state: "on"
     brightness: 169
