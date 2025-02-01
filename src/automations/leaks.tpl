@@ -5,6 +5,7 @@
   trigger:
     - platform: state
       entity_id: "{{ sensor.entity }}"
+      from: "off"
       to: "on"
   action:
     - service: notify.dan
@@ -20,6 +21,7 @@
   trigger:
     - platform: state
       entity_id: "{{ sensor.entity }}"
+      from: "on"
       to: "off"
   action:
     - service: notify.dan
