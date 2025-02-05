@@ -280,6 +280,27 @@ views:
               columns: 6
               rows: auto
 
+  - type: sections
+    max_columns: 4
+    title: Devices
+    path: devices
+    icon: mdi:alarm
+    sections:
+      {% for device in devices %}
+      - type: grid
+        cards:
+          - type: heading
+            heading: {{ device.name }}
+            heading_style: title
+          - type: tile
+            entity: {{ device.prefix }}_next_alarm
+            name: Next alarm
+            vertical: false
+          - type: tile
+            entity: {{ device.prefix }}_charger_type
+            name: Charger
+        {% endfor %}
+
   - title: Settings
     path: settings
     icon: mdi:cog
