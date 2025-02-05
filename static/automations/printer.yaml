@@ -1,0 +1,15 @@
+- alias: Printer progress
+  mode: single
+  triggers:
+    - trigger: state
+      entity_id: sensor.a1_print_progress
+      from: null
+  action:
+    - service: notify.dan
+      data:
+        title: "{{ states('sensor.a1_print_progress') }}% complete"
+        message: "{{ states('sensor.a1_task_name')}}"
+        data:
+          channel: "printer"
+          tag: printer
+          notification_icon: "mdi:printer-3d"
