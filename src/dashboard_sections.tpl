@@ -253,7 +253,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: New section
+            heading: Bambu Lab A1
           - type: tile
             entity: sensor.a1_task_name
             grid_options:
