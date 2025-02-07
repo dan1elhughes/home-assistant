@@ -85,7 +85,7 @@
       "id": "office",
       "lights": "light.office_lights",
       "name": "Office",
-      "other_devices": ["light.office_spotlights", "climate.server_cabinet"]
+      "other_devices": ["light.office_ceiling_light", "climate.server_cabinet"]
     },
     {
       "id": "conservatory",
