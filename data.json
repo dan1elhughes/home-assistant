@@ -37,7 +37,7 @@
       "name": "Bedroom lights"
     },
     "light.garden_lighting": {
-      "entities": ["light.garden_lights"],
+      "entities": ["light.garden_lights", "light.patio_light"],
       "name": "Garden lighting"
     },
     "light.kitchen_lights": {
