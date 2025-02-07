@@ -39,8 +39,25 @@ views:
                   entity: climate.thermostat
                   features:
                     - type: target-temperature
-                - type: tile
-                  entity: light.ceiling_lights
+                - type: custom:expander-card
+                  grid_options:
+                    columns: full
+                  gap: '0'
+                  padding: '0'
+                  child-padding: '0'
+                  title-card:
+                    type: tile
+                    entity: light.ceiling_lights
+                  cards:
+                    - type: entities
+                      entities:
+                        {% for groupID, group in groups %}
+                        {% if groupID == 'light.ceiling_lights' %}
+                        {% for id in group.entities %}
+                        - entity: {{ id }}
+                        {% endfor %}
+                        {% endif %}
+                        {% endfor %}
 
           - type: custom:atomic-calendar-revive
             name: Calendar
