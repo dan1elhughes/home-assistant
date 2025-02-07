@@ -60,6 +60,20 @@
         "light.office_leds_light"
       ],
       "name": "Office lights"
+    },
+    "light.ceiling_lights": {
+      "name": "Ceiling lights",
+      "entities": [
+        "light.bedroom_ceiling_light",
+        "light.hallway_ceiling_light",
+        "light.office_ceiling_light",
+        "light.katie_s_room_ceiling_light",
+        "light.landing_ceiling_light",
+        "light.hallway_ceiling_light",
+        "light.living_room_front_ceiling_light",
+        "light.living_room_rear_ceiling_light",
+        "light.utility_room_ceiling_light"
+      ]
     }
   },
   "people": ["person.dan", "person.katie", "person.guest"],

@@ -39,6 +39,8 @@ views:
                   entity: climate.thermostat
                   features:
                     - type: target-temperature
+                - type: tile
+                  entity: light.ceiling_lights
 
           - type: custom:atomic-calendar-revive
             name: Calendar
