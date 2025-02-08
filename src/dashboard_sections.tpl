@@ -47,16 +47,14 @@ views:
                   child-padding: '0'
                   title-card:
                     type: tile
-                    entity: light.ceiling_lights
+                    entity: group.ceiling_lights
                   cards:
                     - type: entities
                       entities:
-                        {% for groupID, group in groups %}
-                        {% if groupID == 'light.ceiling_lights' %}
-                        {% for id in group.entities %}
-                        - entity: {{ id }}
+                        {% for room in rooms %}
+                        {% for light_id in room.ceiling %}
+                        - entity: {{ light_id }}
                         {% endfor %}
-                        {% endif %}
                         {% endfor %}
 
           - type: custom:atomic-calendar-revive
@@ -74,10 +72,14 @@ views:
           {% for room in rooms %}
           - type: heading
             badges:
+              {% if room.temperature_sensor %}
               - type: entity
-                entity: sensor.{{ room.id }}_sensor_temperature
+                entity: {{ room.temperature_sensor}}
+              {% endif %}
+              {% if room.humidity_sensor %}
               - type: entity
-                entity: sensor.{{ room.id }}_sensor_humidity
+                entity: {{ room.humidity_sensor}}
+              {% endif %}
             heading: {{ room.name }}
           {% if room.lights %}
           - type: custom:expander-card
