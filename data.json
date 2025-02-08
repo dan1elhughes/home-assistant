@@ -131,7 +131,7 @@
     },
     {
       "id": "garden",
-      "icon": "mdi:flower",
+      "icon": "mdi:pine-tree",
       "lights": "light.garden_lighting",
       "name": "Garden",
       "temperature_sensor": "sensor.garden_sensor_temperature",
