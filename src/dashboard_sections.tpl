@@ -5,7 +5,6 @@ views:
     type: sections
     sections:
       - type: grid
-        column_span: 2
         cards:
           - type: glance
             grid_options:
@@ -70,45 +69,18 @@ views:
       - type: grid
         cards:
           {% for room in rooms %}
-          - type: heading
-            badges:
-              {% if room.temperature_sensor %}
-              - type: entity
-                entity: {{ room.temperature_sensor}}
-              {% endif %}
-              {% if room.humidity_sensor %}
-              - type: entity
-                entity: {{ room.humidity_sensor}}
-              {% endif %}
-            heading: {{ room.name }}
-          {% if room.lights %}
-          - type: custom:expander-card
+          - type: button
+            name: {{ room.name }}
+            icon: {{ room.icon }}
+            tap_action:
+              action: navigate
+              navigation_path: /home-page/sub-{{ room.id }}
+            hold_action:
+              action: none
             grid_options:
-              columns: full
-            gap: '0'
-            padding: '0'
-            child-padding: '0'
-            title-card:
-              type: tile
-              entity: {{ room.lights }}
-            cards:
-              - type: entities
-                entities:
-                  {% for id in groups[room.lights].entities %}
-                  - entity: {{ id }}
-                  {% endfor %}
-          {% endif %}
-
-          {% if room.other_devices %}
-          {% for device in room.other_devices %}
-          - type: tile
-            grid_options:
-              columns: full
-            entity: {{ device }}
+              columns: 3
+              rows: 2
           {% endfor %}
-          {% endif %}
-
-        {% endfor %}
 
   - title: Energy
     path: energy
@@ -426,3 +398,59 @@ views:
               filter:
                 include:
                   - entity_id: sensor.*_battery
+
+  {% for room in rooms %}
+  - title: {{ room.name }}
+    path: sub-{{ room.id }}
+    subview: true
+    badges:
+      {% if room.temperature_sensor %}
+      - type: entity
+        entity: {{ room.temperature_sensor }}
+      {% endif %}
+      {% if room.humidity_sensor %}
+      - type: entity
+        entity: {{ room.humidity_sensor }}
+      {% endif %}
+      {% if room.ceiling %}
+      {% for light_id in room.ceiling %}
+      - type: entity
+        icon: mdi:ceiling-light
+        show_state: false
+        show_icon: true
+        entity: {{ light_id }}
+      {% endfor %}
+      {% endif %}
+
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: {{ room.name }}
+
+          {% if room.lights %}
+          - type: custom:expander-card
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title-card:
+              type: tile
+              entity: {{ room.lights }}
+            cards:
+              - type: entities
+                entities:
+                  {% for id in groups[room.lights].entities %}
+                  - entity: {{ id }}
+                  {% endfor %}
+          {% endif %}
+
+          {% if room.other_devices %}
+          {% for device in room.other_devices %}
+          - type: tile
+            grid_options:
+              columns: full
+            entity: {{ device }}
+          {% endfor %}
+          {% endif %}
+
+  {% endfor %}
