@@ -92,7 +92,7 @@
     },
     {
       "id": "katies_room",
-      "icon": "mdi:bed",
+      "icon": "mdi:rodent",
       "name": "Katie's room",
       "ceiling": ["light.katie_s_room_ceiling_light"]
     },
