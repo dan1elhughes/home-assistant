@@ -76,8 +76,10 @@
       ],
       "name": "Living room",
       "other_devices": ["switch.amplifier"],
-      "temperature_sensor": "sensor.living_room_sensor_temperature",
-      "humidity_sensor": "sensor.living_room_sensor_humidity"
+      "badges": [
+        "sensor.living_room_sensor_temperature",
+        "sensor.living_room_sensor_humidity"
+      ]
     },
     {
       "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
@@ -87,8 +89,10 @@
       "ceiling": ["light.bedroom_ceiling_light"],
       "name": "Bedroom",
       "other_devices": ["cover.curtains"],
-      "temperature_sensor": "sensor.bedroom_sensor_temperature",
-      "humidity_sensor": "sensor.bedroom_sensor_humidity"
+      "badges": [
+        "sensor.bedroom_sensor_temperature",
+        "sensor.bedroom_sensor_humidity"
+      ]
     },
     {
       "id": "katies_room",
@@ -111,31 +115,40 @@
       "ceiling": ["light.office_ceiling_light"],
       "name": "Office",
       "other_devices": ["climate.server_cabinet"],
-      "temperature_sensor": "sensor.office_sensor_temperature",
-      "humidity_sensor": "sensor.office_sensor_humidity"
+      "badges": [
+        "sensor.office_sensor_temperature",
+        "sensor.office_sensor_humidity",
+        "sensor.office_sensor_carbon_dioxide"
+      ]
     },
     {
       "id": "conservatory",
       "icon": "mdi:flower",
       "name": "Conservatory",
       "other_devices": ["humidifier.conservatory_dehumidifier"],
-      "temperature_sensor": "sensor.conservatory_sensor_temperature",
-      "humidity_sensor": "sensor.conservatory_sensor_humidity"
+      "badges": [
+        "sensor.conservatory_sensor_temperature",
+        "sensor.conservatory_sensor_humidity"
+      ]
     },
     {
       "id": "barn",
       "icon": "mdi:home",
       "name": "Barn",
-      "temperature_sensor": "sensor.barn_sensor_temperature",
-      "humidity_sensor": "sensor.barn_sensor_humidity"
+      "badges": [
+        "sensor.barn_sensor_temperature",
+        "sensor.barn_sensor_humidity"
+      ]
     },
     {
       "id": "garden",
       "icon": "mdi:pine-tree",
       "lights": "light.garden_lighting",
       "name": "Garden",
-      "temperature_sensor": "sensor.garden_sensor_temperature",
-      "humidity_sensor": "sensor.garden_sensor_humidity"
+      "badges": [
+        "sensor.garden_sensor_temperature",
+        "sensor.garden_sensor_humidity"
+      ]
     },
     {
       "id": "hallway",
@@ -143,7 +156,7 @@
       "name": "Hallway",
       "ceiling": ["light.hallway_ceiling_light"],
       "motion_sensor": "binary_sensor.hallway_motion_sensor_occupancy",
-      "temperature_sensor": "sensor.hallway_motion_sensor_temperature"
+      "badges": ["sensor.hallway_motion_sensor_temperature"]
     },
     {
       "id": "landing",
@@ -151,7 +164,7 @@
       "name": "Landing",
       "ceiling": ["light.landing_ceiling_light"],
       "motion_sensor": "binary_sensor.landing_motion_sensor_occupancy",
-      "temperature_sensor": "sensor.landing_motion_sensor_temperature"
+      "badges": ["sensor.landing_motion_sensor_temperature"]
     },
     {
       "id": "utility_room",

@@ -404,14 +404,10 @@ views:
     path: sub-{{ room.id }}
     subview: true
     badges:
-      {% if room.temperature_sensor %}
+      {% for id in room.badges %}
       - type: entity
-        entity: {{ room.temperature_sensor }}
-      {% endif %}
-      {% if room.humidity_sensor %}
-      - type: entity
-        entity: {{ room.humidity_sensor }}
-      {% endif %}
+        entity: {{ id }}
+      {% endfor %}
       {% if room.ceiling %}
       {% for light_id in room.ceiling %}
       - type: entity
