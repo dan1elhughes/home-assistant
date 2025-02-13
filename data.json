@@ -148,7 +148,8 @@
       "badges": [
         "sensor.garden_sensor_temperature",
         "sensor.garden_sensor_humidity"
-      ]
+      ],
+      "other_devices": ["timer.garden_lights"]
     },
     {
       "id": "hallway",
