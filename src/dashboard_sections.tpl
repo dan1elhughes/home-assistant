@@ -35,7 +35,7 @@ views:
             - type: vertical-stack
               cards:
                 - type: tile
-                  entity: climate.thermostat
+                  entity: climate.central_heating_thermostat
                   features:
                     - type: target-temperature
                 - type: custom:expander-card

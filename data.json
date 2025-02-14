@@ -77,7 +77,7 @@
       "name": "Living room",
       "other_devices": ["switch.amplifier"],
       "badges": [
-        "sensor.living_room_sensor_temperature",
+        "climate.central_heating_thermostat",
         "sensor.living_room_sensor_humidity"
       ]
     },
