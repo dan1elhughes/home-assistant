@@ -1,3 +1,5 @@
+{% import './macros/lights.tpl' as lights with context %}
+
 # PRESENCE
 presence_home:
   name: "People"
@@ -16,3 +18,7 @@ ceiling_lights:
     {% endfor -%}
     {% endfor %}
 
+room_lights:
+  name: "Room lights"
+  entities:
+    {{- lights.ids() | indent(4) }}
