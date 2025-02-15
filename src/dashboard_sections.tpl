@@ -1,3 +1,5 @@
+{% import './macros/lights.tpl' as lights with context %}
+
 views:
   - title: Home
     path: home
@@ -23,38 +25,49 @@ views:
                 name: Glass
 
           - type: horizontal-stack
+            cards:
+              - type: weather-forecast
+                show_current: true
+                show_forecast: false
+                entity: weather.home
+                forecast_type: daily
+                name: Kingsclere
+
+              - type: tile
+                entity: climate.central_heating_thermostat
+                features:
+                  - type: target-temperature
+
+          - type: custom:expander-card
             grid_options:
               columns: full
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title-card:
+              type: tile
+              entity: group.ceiling_lights
             cards:
-            - type: weather-forecast
-              show_current: true
-              show_forecast: false
-              entity: weather.home
-              forecast_type: daily
-              name: Kingsclere
-            - type: vertical-stack
-              cards:
-                - type: tile
-                  entity: climate.central_heating_thermostat
-                  features:
-                    - type: target-temperature
-                - type: custom:expander-card
-                  grid_options:
-                    columns: full
-                  gap: '0'
-                  padding: '0'
-                  child-padding: '0'
-                  title-card:
-                    type: tile
-                    entity: group.ceiling_lights
-                  cards:
-                    - type: entities
-                      entities:
-                        {% for room in rooms %}
-                        {% for light_id in room.ceiling %}
-                        - entity: {{ light_id }}
-                        {% endfor %}
-                        {% endfor %}
+              - type: entities
+                entities:
+                  {% for room in rooms %}
+                  {% for light_id in room.ceiling %}
+                  - entity: {{ light_id }}
+                  {% endfor %}
+                  {% endfor %}
+          - type: custom:expander-card
+            grid_options:
+              columns: full
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title-card:
+              type: tile
+              entity: group.room_lights
+            cards:
+              - type: entities
+                entities:
+                  {{- lights.ids() | indent(18) }}
 
           - type: custom:atomic-calendar-revive
             name: Calendar
