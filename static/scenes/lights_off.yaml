@@ -1,7 +1,0 @@
-name: Lights off
-icon: mdi:ceiling-light-multiple-outline
-entities:
-  light.living_room_lights: "off"
-  light.office_lights: "off"
-  light.bedroom_lights: "off"
-  light.garden_lighting: "off"
