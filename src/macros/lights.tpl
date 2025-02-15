@@ -6,5 +6,5 @@
 - {{ id }}
 {% endfor -%}
 {% endif -%}
-{% endfor %}
+{% endfor -%}
 {% endmacro %}

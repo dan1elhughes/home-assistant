@@ -10,8 +10,9 @@ presence_home:
 ceiling_lights:
   name: "Ceiling lights"
   entities:
-    {% for room in rooms %}
-    {% for light_id in room.ceiling %}
+    {% for room in rooms -%}
+    {% for light_id in room.ceiling -%}
     - {{ light_id }}
+    {% endfor -%}
     {% endfor %}
-    {% endfor %}
+
