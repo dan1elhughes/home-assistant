@@ -2,14 +2,6 @@
   "buttons": [
     {
       "actions": {
-        "on": "scene.everything_on",
-        "on_hold": "scene.lights_off"
-      },
-      "ieee": "00:17:88:01:08:96:ad:82",
-      "name": "Front door button"
-    },
-    {
-      "actions": {
         "on": "scene.bedtime",
         "on_double_press": "scene.lights_off",
         "on_hold": "scene.bedtime_left_off"
