@@ -6,10 +6,6 @@
     - platform: state
       entity_id: input_select.active_room
       to: "{{ room.id }}"
-  condition:
-    - condition: state
-      entity_id: sensor.one_room_mode
-      state: "True"
   action:
     {% if room.lights -%}
     - service: light.turn_on
