@@ -169,7 +169,6 @@
   "savingSessionDevices": [
     "switch.robot_vacuum",
     "switch.sinkhole",
-    "switch.homelab",
     "humidifier.conservatory_dehumidifier"
   ],
   "toggles": [
