@@ -1,4 +1,4 @@
-- alias: "Close curtains at sunset"
+- alias: "Sunset actions"
   mode: single
   triggers:
     - trigger: sun
@@ -9,3 +9,6 @@
     - service: cover.close_cover
       target:
         entity_id: cover.curtains
+    - service: light.turn_on
+      target:
+        entity_id: light.front_door_light
