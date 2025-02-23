@@ -37,12 +37,7 @@
       "name": "Kitchen lights"
     },
     "light.living_room_lights": {
-      "entities": [
-        "light.living_room_side_light",
-        "light.tv_light",
-        "light.side_table",
-        "light.living_room_lamp"
-      ],
+      "entities": ["light.side_table"],
       "name": "Living room lights"
     },
     "light.office_lights": {
