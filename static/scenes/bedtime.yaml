@@ -1,8 +1,0 @@
-name: Bedtime
-icon: mdi:bed-outline
-entities:
-  light.bedroom_lights:
-    state: "on"
-    brightness: 2
-  light.living_room_lights: "off"
-  light.office_lights: "off"

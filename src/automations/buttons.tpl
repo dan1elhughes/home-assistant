@@ -9,17 +9,25 @@
         device_ieee: {{ button.ieee }}
   action:
     - choose:
-        {% for command, scene in button.actions %}
-        - conditions: "{% raw %}{{{% endraw %} trigger.event.data.command == '{{ command }}' {% raw %}}}{% endraw %}"
-          alias: "{{ command }} -> {{ scene }}"
+        - conditions: "{% raw %}{{{% endraw %} trigger.event.data.command == 'on' {% raw %}}}{% endraw %}"
+          alias: "on"
           sequence:
-            - scene: {{ scene }}
+            - action: light.turn_on
+              entity_id: {{ button.light }}
+              data:
+                brightness_pct: 1
 
-        {% if command == 'on' %}
-        - conditions: "{% raw %}{{ trigger.event.data.command == 'off_with_effect' }}{% endraw %}"
-          alias: "off_with_effect -> {{ scene }}"
+        - conditions: "{% raw %}{{{% endraw %} trigger.event.data.command == 'off_with_effect' {% raw %}}}{% endraw %}"
+          alias: "off_with_effect"
           sequence:
-            - scene: {{ scene }}
-        {% endif %}
-        {% endfor %}
+            - action: light.turn_on
+              entity_id: {{ button.light }}
+              data:
+                brightness_pct: 1
+
+        - conditions: "{% raw %}{{{% endraw %} trigger.event.data.command == 'on_hold' {% raw %}}}{% endraw %}"
+          alias: "on_hold"
+          sequence:
+            - action: light.turn_off
+              entity_id: {{ button.light }}
 {% endfor %}
