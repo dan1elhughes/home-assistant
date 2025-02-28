@@ -198,58 +198,34 @@ views:
     sections:
       - type: grid
         cards:
-          - type: heading
-            heading: ID3
-            heading_style: title
-            icon: mdi:car
-            badges:
-              - type: entity
-                entity: sensor.id3_battery_level
-          - type: tile
-            entity: sensor.id3_electric_range
-            name: Range
-            show_entity_picture: false
-            vertical: false
-            hide_state: false
-          - type: tile
-            entity: sensor.id3_charging_time_left
-            name: Remaining charge time
-            visibility:
-              - condition: state
-                entity: switch.id3_charging
-                state: 'on'
-          - type: map
-            entities:
-              - entity: device_tracker.id3_position
-                name: ID3
-            theme_mode: auto
+          - title: ID.3
+            type: custom:ultra-vehicle-card
+            battery_level_entity: sensor.id3_battery_level
+            battery_range_entity: sensor.id3_electric_range
+            car_state_entity: binary_sensor.id3_charging_cable_connected
+            charge_limit_entity: sensor.id3_battery_target_charge_level
+            charging_status_entity: switch.id3_charging
+            image_url: https://media.auto.works/630/6fa4a1cb68db20cb6e34bc95410b3afd:4da638c3bbdd90ff4873cbfb366c064f
+            location_entity: device_tracker.id3_position
+            mileage_entity: sensor.id3_odometer
+            unit_type: mi
+            useFormattedEntities: true
+            vehicle_type: EV
       - type: grid
         cards:
-          - type: heading
-            heading: Zoe
-            heading_style: title
-            icon: mdi:car
-            badges:
-              - type: entity
-                show_state: true
-                show_icon: true
-                entity: sensor.wp22lxc_battery
-          - type: tile
-            entity: sensor.wp22lxc_battery_autonomy
-            name: Range
-            icon: mdi:car-electric
-          - type: tile
-            entity: sensor.wp22lxc_charging_remaining_time
-            name: Remaining charge time
-            visibility:
-              - condition: state
-                entity: binary_sensor.wp22lxc_charging
-                state: 'on'
-          - type: map
-            entities:
-              - entity: device_tracker.wp22lxc_location
-                name: Zoe
-            theme_mode: auto
+          - title: Zoe
+            type: custom:ultra-vehicle-card
+            battery_level_entity: sensor.wp22lxc_battery
+            battery_range_entity: sensor.wp22lxc_battery_autonomy
+            car_state_entity: sensor.wp22lxc_plug_state
+            charging_status_entity: sensor.wp22lxc_charge_state
+            image_url: https://www.electrifying.com/files/M_pU36nKtVpxY7Xc/RenaultZoe.png
+            location_entity: device_tracker.wp22lxc_location
+            mileage_entity: sensor.wp22lxc_mileage
+            unit_type: km
+            useFormattedEntities: true
+            vehicle_type: EV
+
 
   - type: sections
     title: Printer
