@@ -17,27 +17,6 @@
           tag: ups
           notification_icon: "mdi:battery-clock"
 
-- alias: UPS - restore power when battery is below 10%
-  mode: single
-  trigger:
-    - platform: numeric_state
-      entity_id: sensor.homelab_ups_battery_charge
-      below: 10
-  condition:
-    - condition: template
-      value_template: >
-        {{ states('sensor.homelab_ups_battery_charge') not in ['unknown', 'unavailable'] }}
-    - condition: state
-      entity_id: sensor.homelab_ups_status_data
-      state: "OB DISCHRG"
-    - condition: state
-      entity_id: switch.homelab
-      state: "off"
-  action:
-    - service: switch.turn_on
-      target:
-        entity_id: switch.homelab
-
 - alias: UPS - notify when online
   mode: single
   trigger:
