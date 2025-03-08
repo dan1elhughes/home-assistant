@@ -1,9 +1,0 @@
-- alias: "Turn off front door light at midnight"
-  mode: single
-  triggers:
-    - trigger: time
-      at: "00:00:00"
-  actions:
-    - action: light.turn_off
-      target:
-        entity_id: light.front_door_light
