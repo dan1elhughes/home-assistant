@@ -88,8 +88,17 @@ views:
             tap_action:
               action: navigate
               navigation_path: /home-page/sub-{{ room.id }}
+            {% if room.lights %}
+            entity: {{ room.lights }}
+            hold_action:
+              action: perform-action
+              perform_action: light.toggle
+              target:
+                entity_id: {{ room.lights }}
+            {% else %}
             hold_action:
               action: none
+            {% endif %}
             grid_options:
               columns: 3
               rows: 2
