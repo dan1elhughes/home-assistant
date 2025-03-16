@@ -4,11 +4,14 @@
     - trigger: state
       entity_id: sensor.a1_print_progress
       from: null
+    - trigger: state
+      entity_id: sensor.a1_current_stage
+      from: null
   action:
     - service: notify.dan
       data:
         title: "{{ states('sensor.a1_print_progress') }}% complete"
-        message: "{{ states('sensor.a1_task_name')}}"
+        message: "{{ states('sensor.a1_current_stage')}}"
         data:
           channel: "printer"
           tag: printer
