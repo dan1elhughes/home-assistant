@@ -59,10 +59,7 @@
         "light.living_room_rear_ceiling_light"
       ],
       "name": "Living room",
-      "badges": [
-        "climate.central_heating_thermostat",
-        "sensor.living_room_sensor_humidity"
-      ]
+      "badges": ["climate.central_heating_thermostat"]
     },
     {
       "dimmer_ieee": "00:17:88:01:09:a5:5a:4f",
