@@ -19,8 +19,8 @@
           sequence:
             - service: notify.dan
               data:
-                title: "{{ states('sensor.a1_print_progress') }}% complete"
-                message: "End Time: {{ states('sensor.a1_end_time') }}"
+                title: "Print finishes at {{ as_timestamp(states('sensor.a1_end_time')) | timestamp_custom('%H:%M') }}"
+                message: "{{ states('sensor.a1_print_progress') }}% complete"
                 data:
                   channel: "printer"
                   tag: printer
