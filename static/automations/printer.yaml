@@ -26,6 +26,24 @@
                   tag: printer
                   notification_icon: "mdi:printer-3d"
                   image: /api/image_proxy/image.a1_cover_image
+                  progress: "{{ states('sensor.a1_print_progress') }}"
+                  progress_max: 100
+        - conditions:
+            - condition: state
+              entity_id: sensor.a1_current_stage
+              state: "idle"
+          sequence:
+            - service: notify.dan
+              data:
+                title: "Printer idle"
+                # https://companion.home-assistant.io/docs/notifications/notifications-basic/#clearing
+                message: "clear_notification"
+                data:
+                  channel: "printer"
+                  tag: printer
+                  notification_icon: "mdi:printer-3d"
+                  progress: -1
+                  progress_max: 100
       default:
         - service: notify.dan
           data:
