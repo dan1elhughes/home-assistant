@@ -59,7 +59,6 @@
         "light.living_room_rear_ceiling_light"
       ],
       "name": "Living room",
-      "other_devices": ["switch.amplifier"],
       "badges": [
         "climate.central_heating_thermostat",
         "sensor.living_room_sensor_humidity"
