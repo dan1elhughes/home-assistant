@@ -7,6 +7,10 @@
       state: >
         {{ states('sensor.occupant_count') | int <= 1 }}
 
+    - name: Restart required
+      state: >
+        {{ states.update | selectattr('attributes.release_summary','eq','<ha-alert alert-type=\'error\'>Restart of Home Assistant required</ha-alert>') | list | count > 0 }}
+
     - name: Next saving session
       state: >
         {{ state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'next_joined_event_start') }}
