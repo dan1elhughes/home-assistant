@@ -220,6 +220,20 @@ views:
             unit_type: mi
             useFormattedEntities: true
             vehicle_type: EV
+            car_colors: &car_colors
+              carStateTextColor: var(--primary-text-color)
+              rangeTextColor: var(--primary-text-color)
+              percentageTextColor: var(--primary-text-color)
+              iconActiveColor: var(--primary-color)
+              iconInactiveColor: var(--primary-text-color)
+              cardTitleColor: var(--primary-text-color)
+              cardBackgroundColor: "var(--ha-card-background, var(--card-background-color, #fff))"
+              barBackgroundColor: var(--secondary-text-color)
+              barBorderColor: "var(--ha-card-background, var(--card-background-color, #fff))"
+              barFillColor: var(--primary-color)
+              limitIndicatorColor: var(--primary-text-color)
+              infoTextColor: var(--secondary-text-color)
+            <<: *car_colors
       - type: grid
         cards:
           - title: Zoe
@@ -234,7 +248,7 @@ views:
             unit_type: km
             useFormattedEntities: true
             vehicle_type: EV
-
+            <<: *car_colors
 
   - type: sections
     title: Printer
