@@ -327,6 +327,9 @@ views:
               state_content:
                 - state
                 - last-changed
+            - type: tile
+              entity: light.front_door_light
+              name: Porch light
       - type: grid
         cards:
           - type: custom:expander-card
