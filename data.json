@@ -24,8 +24,12 @@
       "entities": ["light.garden_lights", "light.patio_light"],
       "name": "Garden lighting"
     },
-    "light.kitchen_lights": {
+    "light.dining_room_lights": {
       "entities": ["light.kitchen_counter", "light.dining_table_light"],
+      "name": "Dining room lights"
+    },
+    "light.kitchen_lights": {
+      "entities": ["light.kitchen_worklights"],
       "name": "Kitchen lights"
     },
     "light.living_room_lights": {
@@ -84,7 +88,15 @@
       "id": "kitchen",
       "icon": "mdi:fridge",
       "lights": "light.kitchen_lights",
+      "ceiling": ["light.kitchen_ceiling_lights"],
       "name": "Kitchen"
+    },
+    {
+      "id": "dining_room",
+      "icon": "mdi:table-furniture",
+      "lights": "light.dining_room_lights",
+      "ceiling": ["light.dining_room_ceiling_lights"],
+      "name": "Dining room"
     },
     {
       "button_ieee": "00:12:4b:00:29:0f:e9:c1",
