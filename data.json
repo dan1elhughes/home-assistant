@@ -55,6 +55,7 @@
     {
       "button_ieee": "00:12:4b:00:22:cf:67:01",
       "dimmer_ieee": "00:17:88:01:09:a6:b8:90",
+      "custom_scene": "scene.downstairs_on",
       "id": "living_room",
       "icon": "mdi:sofa",
       "lights": "light.living_room_lights",

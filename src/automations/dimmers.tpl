@@ -10,7 +10,7 @@
         device_ieee: "{{ room.dimmer_ieee }}"
   condition:
     - condition: template
-      value_template: "{% raw %}{{ trigger.event.data.command in ['on_press', 'up_hold', 'down_hold', 'off_press'] }}{% endraw %}"
+      value_template: "{% raw %}{{ trigger.event.data.command in ['on_press', 'on_hold', 'up_hold', 'down_hold', 'off_press'] }}{% endraw %}"
   action:
     - service: input_select.select_option
       target:
@@ -26,6 +26,15 @@
                 entity_id: "{{ room.lights }}"
               data:
                 brightness: 255
+
+        {% if room.custom_scene %}
+        - conditions: "{% raw %}{{ trigger.event.data.command == 'on_hold' }}{% endraw %}"
+          alias: "Scene"
+          sequence:
+            - service: scene.turn_on
+              target:
+                entity_id: "{{ room.custom_scene }}"
+        {% endif %}
 
         - conditions: "{% raw %}{{ trigger.event.data.command == 'up_hold' }}{% endraw %}"
           alias: "Up"

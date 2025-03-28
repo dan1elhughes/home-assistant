@@ -6,6 +6,8 @@ entities:
   light.office_lights: "off"
   light.kitchen_lights: "off"
   light.dining_room_lights: "off"
+  light.utility_room_ceiling_light: "off"
+  light.kitchen_ceiling_lights: "off"
 
   # Living room
   light.living_room_lamp: "off"
