@@ -464,35 +464,37 @@ views:
           {% endfor %}
           {% endif %}
 
-      {% if room.servers %}
-      {% for server in room.servers %}
-      - type: grid
-        cards:
-          - type: heading
-            heading: {{ server.name }}
-            heading_style: title
-            badges:
-              - type: entity
-                entity: binary_sensor.{{ server.internal_name }}
-          - type: horizontal-stack
+          {% if room.servers %}
+          {% for server in room.servers %}
+          - type: custom:expander-card
+            grid_options:
+              columns: full
+            gap: '0'
+            padding: '0'
+            child-padding: '0'
+            title-card:
+              type: tile
+              entity: binary_sensor.{{ server.internal_name }}
             cards:
-            - type: button
-              tap_action:
-                action: perform-action
-                perform_action: shell_command.wake_{{ server.internal_name }}
-                target: {}
-              entity: binary_sensor.{{ server.internal_name }}
-              name: Turn on
-              icon: mdi:power
-            - type: button
-              tap_action:
-                action: perform-action
-                perform_action: shell_command.shutdown_{{ server.internal_name }}
-                target: {}
-              entity: binary_sensor.{{ server.internal_name }}
-              name: Turn off
-              icon: mdi:power
-      {% endfor %}
-      {% endif %}
+              - type: horizontal-stack
+                cards:
+                - type: button
+                  tap_action:
+                    action: perform-action
+                    perform_action: shell_command.wake_{{ server.internal_name }}
+                    target: {}
+                  entity: binary_sensor.{{ server.internal_name }}
+                  name: Turn on
+                  icon: mdi:power
+                - type: button
+                  tap_action:
+                    action: perform-action
+                    perform_action: shell_command.shutdown_{{ server.internal_name }}
+                    target: {}
+                  entity: binary_sensor.{{ server.internal_name }}
+                  name: Turn off
+                  icon: mdi:power
+          {% endfor %}
+          {% endif %}
 
   {% endfor %}
