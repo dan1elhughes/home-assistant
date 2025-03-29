@@ -464,4 +464,35 @@ views:
           {% endfor %}
           {% endif %}
 
+      {% if room.servers %}
+      {% for server in room.servers %}
+      - type: grid
+        cards:
+          - type: heading
+            heading: {{ server.name }}
+            heading_style: title
+            badges:
+              - type: entity
+                entity: binary_sensor.{{ server.internal_name }}
+          - type: horizontal-stack
+            cards:
+            - type: button
+              tap_action:
+                action: perform-action
+                perform_action: shell_command.wake_{{ server.internal_name }}
+                target: {}
+              entity: binary_sensor.{{ server.internal_name }}
+              name: Turn on
+              icon: mdi:power
+            - type: button
+              tap_action:
+                action: perform-action
+                perform_action: shell_command.shutdown_{{ server.internal_name }}
+                target: {}
+              entity: binary_sensor.{{ server.internal_name }}
+              name: Turn off
+              icon: mdi:power
+      {% endfor %}
+      {% endif %}
+
   {% endfor %}
