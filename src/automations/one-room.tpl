@@ -33,8 +33,8 @@
       not_to: "{{ room.id }}"
   condition:
     - condition: state
-      entity_id: sensor.one_room_mode
-      state: "True"
+      entity_id: binary_sensor.one_room_mode
+      state: "on"
   action:
     {% if room.lights -%}
     - service: light.turn_off
