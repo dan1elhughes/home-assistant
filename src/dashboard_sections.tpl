@@ -24,19 +24,12 @@ views:
               - entity: sensor.kingsclere_glass
                 name: Glass
 
-          - type: horizontal-stack
-            cards:
-              - type: weather-forecast
-                show_current: true
-                show_forecast: false
-                entity: weather.home
-                forecast_type: daily
-                name: Kingsclere
-
-              - type: tile
-                entity: climate.central_heating_thermostat
-                features:
-                  - type: target-temperature
+          - type: weather-forecast
+            show_current: true
+            show_forecast: false
+            entity: weather.home
+            forecast_type: hourly
+            name: Kingsclere
 
           - type: custom:expander-card
             grid_options:
