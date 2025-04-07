@@ -62,15 +62,11 @@ views:
                 entities:
                   {{- lights.ids() | indent(18) }}
 
-          - type: custom:atomic-calendar-revive
-            name: Calendar
+          - type: custom:calendar-card-pro
             entities:
-              - entity: calendar.k_d
-                name: K&D
-            maxDaysToShow: 5
-            showDate: true
-            grid_options:
-              columns: full
+              - calendar.k_d
+            days_to_show: 5
+            show_location: true
 
       - type: grid
         cards:
