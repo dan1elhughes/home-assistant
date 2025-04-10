@@ -107,7 +107,7 @@
       "lights": "light.office_lights",
       "ceiling": ["light.office_ceiling_light"],
       "name": "Office",
-      "other_devices": ["climate.server_cabinet"],
+      "other_devices": ["climate.server_cabinet", "fan.tower_fan"],
       "badges": [
         "sensor.office_sensor_temperature",
         "sensor.office_sensor_humidity",
