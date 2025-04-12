@@ -230,7 +230,7 @@ views:
             battery_level_entity: sensor.wp22lxc_battery
             battery_range_entity: sensor.wp22lxc_battery_autonomy
             car_state_entity: sensor.wp22lxc_plug_state
-            charging_status_entity: sensor.wp22lxc_charge_state
+            charging_status_entity: binary_sensor.wp22lxc_charging
             image_url: https://www.electrifying.com/files/M_pU36nKtVpxY7Xc/RenaultZoe.png
             location_entity: device_tracker.wp22lxc_location
             mileage_entity: sensor.wp22lxc_mileage
