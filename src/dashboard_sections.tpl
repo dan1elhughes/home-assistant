@@ -31,6 +31,36 @@ views:
             forecast_type: hourly
             name: Kingsclere
 
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.washer_dryer_operation_state
+                state_not: inactive
+            card:
+              type: horizontal-stack
+              cards:
+                - type: tile
+                  entity: sensor.washer_dryer_operation_state
+                  name: Washing machine
+                - type: tile
+                  entity: sensor.washer_dryer_remaining_program_time
+                  name: Finish time
+
+          - type: conditional
+            conditions:
+              - condition: state
+                entity: sensor.dishwasher_operation_state
+                state_not: ready
+            card:
+              type: horizontal-stack
+              cards:
+                - type: tile
+                  entity: sensor.dishwasher_operation_state
+                  name: Dishwasher
+                - type: tile
+                  entity: sensor.dishwasher_remaining_program_time
+                  name: Finish time
+
           - type: custom:expander-card
             grid_options:
               columns: full
