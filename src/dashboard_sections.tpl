@@ -270,41 +270,6 @@ views:
             <<: *car_colors
 
   - type: sections
-    title: Printer
-    path: printer
-    icon: mdi:printer-3d
-    sections:
-      - type: grid
-        cards:
-          - type: heading
-            heading: Bambu Lab A1
-          - type: tile
-            entity: sensor.a1_task_name
-            grid_options:
-              columns: full
-            name: Now printing
-          - type: tile
-            entity: sensor.a1_print_progress
-            name: Progress
-          - type: tile
-            entity: sensor.a1_end_time
-            name: Completes at
-          - type: picture
-            image_entity: image.a1_cover_image
-            grid_options:
-              columns: 6
-              rows: auto
-          - show_state: true
-            show_name: true
-            camera_view: auto
-            type: picture-entity
-            entity: camera.a1_camera
-            name: Camera
-            grid_options:
-              columns: 6
-              rows: auto
-
-  - type: sections
     max_columns: 4
     title: Devices
     path: devices
