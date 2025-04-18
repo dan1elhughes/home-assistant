@@ -1,4 +1,5 @@
 {% for room in rooms %}
+{% if room.lights %}
 ### {{ room.name }} ###
 - alias: "{{ room.name }}: One-room mode (activate)"
   mode: single
@@ -7,23 +8,10 @@
       entity_id: input_select.active_room
       to: "{{ room.id }}"
   action:
-    {% if room.lights -%}
     - service: light.turn_on
       target:
         entity_id:
           - {{ room.lights }}
-    {%- endif -%}
-    {%- if room.fan %}
-    - alias: "Automate fans"
-      if:
-      - condition: state
-        entity_id: input_boolean.automatic_fans
-        state: "on"
-      then:
-        - service: fan.turn_on
-          target:
-            entity_id: {{ room.fan }}
-    {%- endif %}
 
 - alias: "{{ room.name }}: One-room mode (deactivate)"
   mode: single
@@ -36,15 +24,9 @@
       entity_id: binary_sensor.one_room_mode
       state: "on"
   action:
-    {% if room.lights -%}
     - service: light.turn_off
       target:
         entity_id:
           - {{ room.lights }}
-    {%- endif -%}
-    {%- if room.fan %}
-    - service: fan.turn_off
-      target:
-        entity_id: {{ room.fan }}
-    {%- endif %}
+{%- endif -%}
 {% endfor %}
