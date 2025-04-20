@@ -63,15 +63,17 @@
         - conditions:
             - condition: state
               entity_id: sensor.a1_print_status
-              state: "printing"
+              state: "running"
           sequence:
-            - service: fan.turn_on
+            - service: fan.set_preset_mode
               target:
                 entity_id: fan.tower_fan
+              data:
+                preset_mode: sleep
         - conditions:
             - condition: state
               entity_id: sensor.a1_print_status
-              state: "idle"
+              state: "finish"
           sequence:
             - service: fan.turn_off
               target:
