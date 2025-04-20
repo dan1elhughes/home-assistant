@@ -226,48 +226,48 @@ views:
     sections:
       - type: grid
         cards:
-          - title: ID.3
-            type: custom:ultra-vehicle-card
-            battery_level_entity: sensor.id3_battery_level
-            battery_range_entity: sensor.id3_electric_range
-            car_state_entity: binary_sensor.id3_charging_cable_connected
-            charge_limit_entity: sensor.id3_battery_target_charge_level
-            charging_status_entity: switch.id3_charging
-            image_url: https://media.auto.works/630/6fa4a1cb68db20cb6e34bc95410b3afd:4da638c3bbdd90ff4873cbfb366c064f
+          - type: custom:ultra-vehicle-card
+            bars:
+              - animation_entity: switch.id3_charging
+                animation_state: "on"
+                animation_type: charging-lines
+                background_color: "var(--card-background-color, #121212)"
+                bar_radius: rounded-square
+                entity: sensor.id3_battery_level
+                left_entity: sensor.id3_battery_level
+                left_title: Charge
+                limit_entity: sensor.id3_battery_target_charge_level
+                right_entity: binary_sensor.id3_charging_cable_connected
+                right_title: Plugged in
+            formatted_entities: true
             location_entity: device_tracker.id3_position
             mileage_entity: sensor.id3_odometer
-            unit_type: mi
-            useFormattedEntities: true
-            vehicle_type: EV
-            car_colors: &car_colors
-              carStateTextColor: var(--primary-text-color)
-              rangeTextColor: var(--primary-text-color)
-              percentageTextColor: var(--primary-text-color)
-              iconActiveColor: var(--primary-color)
-              iconInactiveColor: var(--primary-text-color)
-              cardTitleColor: var(--primary-text-color)
-              cardBackgroundColor: "var(--ha-card-background, var(--card-background-color, #fff))"
-              barBackgroundColor: var(--secondary-text-color)
-              barBorderColor: "var(--ha-card-background, var(--card-background-color, #fff))"
-              barFillColor: var(--primary-color)
-              limitIndicatorColor: var(--primary-text-color)
-              infoTextColor: var(--secondary-text-color)
-            <<: *car_colors
+            title: ID.3
+            vehicle_image: >-
+              https://media.auto.works/630/6fa4a1cb68db20cb6e34bc95410b3afd:4da638c3bbdd90ff4873cbfb366c064f
+
+
       - type: grid
         cards:
-          - title: Zoe
-            type: custom:ultra-vehicle-card
-            battery_level_entity: sensor.wp22lxc_battery
-            battery_range_entity: sensor.wp22lxc_battery_autonomy
-            car_state_entity: sensor.wp22lxc_plug_state
-            charging_status_entity: binary_sensor.wp22lxc_charging
-            image_url: https://www.electrifying.com/files/M_pU36nKtVpxY7Xc/RenaultZoe.png
+          - type: custom:ultra-vehicle-card
+            bars:
+              - animation_entity: binary_sensor.wp22lxc_charging
+                animation_state: "on"
+                animation_type: charging-lines
+                background_color: "var(--card-background-color, #121212)"
+                bar_radius: rounded-square
+                entity: sensor.wp22lxc_battery
+                left_entity: sensor.wp22lxc_battery
+                left_title: Charge
+                right_entity: sensor.wp22lxc_plug_state
+                right_title: Plugged in
+            formatted_entities: true
             location_entity: device_tracker.wp22lxc_location
             mileage_entity: sensor.wp22lxc_mileage
-            unit_type: km
-            useFormattedEntities: true
-            vehicle_type: EV
-            <<: *car_colors
+            title: Zoe
+            vehicle_image: >-
+              https://www.electrifying.com/files/M_pU36nKtVpxY7Xc/RenaultZoe.png
+
 
   - type: sections
     max_columns: 4
