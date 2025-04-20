@@ -48,3 +48,32 @@
               tag: printer
               notification_icon: "mdi:printer-3d"
               image: /api/image_proxy/image.a1_cover_image
+
+- alias: Printer fan
+  # Turn on fan.tower_fan when sensor.a1_print_status is "printing"
+  # and turn off when sensor.a1_print_status is "idle"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.a1_print_status
+      from: null
+      to: null
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: sensor.a1_print_status
+              state: "printing"
+          sequence:
+            - service: fan.turn_on
+              target:
+                entity_id: fan.tower_fan
+        - conditions:
+            - condition: state
+              entity_id: sensor.a1_print_status
+              state: "idle"
+          sequence:
+            - service: fan.turn_off
+              target:
+                entity_id: fan.tower_fan
+      default: []
