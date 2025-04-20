@@ -4,12 +4,6 @@
     - trigger: state
       entity_id: sensor.a1_print_progress
       from: null
-    - trigger: state
-      entity_id: sensor.a1_current_stage
-      from: null
-    - trigger: state
-      entity_id: sensor.a1_end_time
-      from: null
   action:
     - choose:
         - conditions:
