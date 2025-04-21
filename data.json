@@ -97,7 +97,8 @@
       "icon": "mdi:table-furniture",
       "lights": "light.dining_room_lights",
       "ceiling": ["light.dining_room_ceiling_lights"],
-      "name": "Dining room"
+      "name": "Dining room",
+      "other_devices": ["vacuum.robovac_x10_pro_omni"]
     },
     {
       "button_ieee": "00:12:4b:00:29:0f:e9:c1",
