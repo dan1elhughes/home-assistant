@@ -18,3 +18,7 @@ wake_up_dan_enabled:
 wake_up_katie_enabled:
   name: Wake up Katie enabled
   icon: mdi:alarm
+
+motion_sensors_enabled:
+  name: Motion sensors enabled
+  icon: mdi:motion-sensor

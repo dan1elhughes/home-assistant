@@ -7,6 +7,10 @@
     - platform: state
       entity_id: "{{ room.motion_sensor }}"
       to: "on"
+  condition:
+    - condition: state
+      entity_id: input_boolean.motion_sensors_enabled
+      state: "on"
   actions:
     - action: light.turn_on
       entity_id:
