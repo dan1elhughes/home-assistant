@@ -1,5 +1,6 @@
 - alias: Printer progress
   mode: single
+  max_exceeded: silent # Do not warn if the automation is triggered again before it finishes
   triggers:
     - trigger: state
       entity_id: sensor.a1_print_progress
@@ -48,6 +49,7 @@
               tag: printer
               notification_icon: "mdi:printer-3d"
               image: /api/image_proxy/image.a1_cover_image
+    - delay: 60 # Wait for 60 seconds to avoid spamming the notification
 
 - alias: Printer fan
   # Turn on fan.tower_fan when sensor.a1_print_status is "printing"
