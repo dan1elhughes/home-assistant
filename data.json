@@ -209,5 +209,10 @@
   "devices": [
     { "name": "Dan", "prefix": "sensor.pixel_8" },
     { "name": "Katie", "prefix": "sensor.pixel_7a" }
+  ],
+  "disabled_dimmers": [
+    "light.kitchen_worklights",
+    "light.patio_light",
+    "light.front_door_light"
   ]
 }
