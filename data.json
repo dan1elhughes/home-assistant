@@ -185,6 +185,21 @@
       "icon": "mdi:toolbox",
       "name": "Utility room",
       "ceiling": ["light.utility_room_ceiling_light"]
+    },
+    {
+      "id": "garage",
+      "icon": "mdi:car",
+      "name": "Garage",
+      "badges": [
+        "sensor.garage_sensor_temperature",
+        "sensor.garage_sensor_humidity"
+      ],
+      "other_entities": [
+        "select.myenergi_zappi_charge_mode",
+        "switch.id3_intelligent_smart_charge",
+        "binary_sensor.id3_charging_cable_connected",
+        "switch.id3_charging"
+      ]
     }
   ],
   "savingSessionDevices": [
