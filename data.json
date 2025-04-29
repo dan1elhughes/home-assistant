@@ -73,7 +73,7 @@
       "lights": "light.bedroom_lights",
       "ceiling": ["light.bedroom_ceiling_light"],
       "name": "Bedroom",
-      "other_devices": ["cover.curtains"],
+      "other_entities": ["cover.curtains"],
       "badges": [
         "sensor.bedroom_sensor_temperature",
         "sensor.bedroom_sensor_humidity"
@@ -102,7 +102,7 @@
       "lights": "light.dining_room_lights",
       "ceiling": ["light.dining_room_ceiling_lights"],
       "name": "Dining room",
-      "other_devices": ["vacuum.robovac_x10_pro_omni"]
+      "other_entities": ["vacuum.robovac_x10_pro_omni"]
     },
     {
       "button_ieee": "00:12:4b:00:29:0f:e9:c1",
@@ -112,7 +112,7 @@
       "lights": "light.office_lights",
       "ceiling": ["light.office_ceiling_light"],
       "name": "Office",
-      "other_devices": [
+      "other_entities": [
         "climate.server_cabinet",
         "fan.tower_fan",
         "sensor.a1_end_time"
@@ -139,7 +139,7 @@
       "id": "conservatory",
       "icon": "mdi:flower",
       "name": "Conservatory",
-      "other_devices": ["humidifier.conservatory_dehumidifier"],
+      "other_entities": ["humidifier.conservatory_dehumidifier"],
       "badges": [
         "sensor.conservatory_sensor_temperature",
         "sensor.conservatory_sensor_humidity"

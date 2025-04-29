@@ -441,8 +441,8 @@ views:
                   {% endfor %}
           {% endif %}
 
-          {% if room.other_devices %}
-          {% for device in room.other_devices %}
+          {% if room.other_entities %}
+          {% for device in room.other_entities %}
           - type: tile
             grid_options:
               columns: full
