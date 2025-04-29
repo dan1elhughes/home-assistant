@@ -21,7 +21,6 @@ schedule: !include schedules.yaml
 script: !include scripts.yaml
 switch: !include switch.yaml
 template: !include template.yaml
-timer: !include timer.yaml
 
 command_line:
   - sensor:

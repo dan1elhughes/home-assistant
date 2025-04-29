@@ -1,46 +1,25 @@
-- alias: "Start timer when back door opens, or arrive home"
+- alias: "Garden lights on"
   mode: single
   conditions:
     - condition: state
       entity_id: sun.sun
       state: "below_horizon"
   triggers:
-    - trigger: event
-      event_type: zha_event
-      event_data:
-        device_ieee: 00:12:4b:00:22:cf:67:01
-        command: toggle
-    - trigger: state
-      entity_id: group.presence_home
-      from: not_home
-      to: home
     - trigger: state
       entity_id: binary_sensor.back_door_opening
       to: "on"
-  actions:
-    - action: timer.start
-      target:
-        entity_id: timer.garden_lights
-
-- alias: "Turn garden lights on when timer starts"
-  mode: single
-  triggers:
-    - trigger: event
-      event_type: timer.started
-      event_data:
-        entity_id: timer.garden_lights
   actions:
     - action: light.turn_on
       target:
         entity_id: light.garden_lighting
 
-- alias: "Turn garden lights off when timer ends"
-  mode: single
+- alias: "Garden lights off"
   triggers:
-    - trigger: event
-      event_type: timer.finished
-      event_data:
-        entity_id: timer.garden_lights
+    - trigger: state
+      entity_id: binary_sensor.back_door_opening
+      to: "off"
+      for:
+        minutes: 5
   actions:
     - action: light.turn_off
       target:
