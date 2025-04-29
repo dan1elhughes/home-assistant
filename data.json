@@ -83,7 +83,11 @@
       "id": "katies_room",
       "icon": "mdi:rodent",
       "name": "Katie's room",
-      "ceiling": ["light.katie_s_room_ceiling_light"]
+      "ceiling": ["light.katie_s_room_ceiling_light"],
+      "badges": [
+        "sensor.katie_s_room_sensor_temperature",
+        "sensor.katie_s_room_sensor_humidity"
+      ]
     },
     {
       "id": "kitchen",
@@ -158,8 +162,7 @@
       "badges": [
         "sensor.garden_sensor_temperature",
         "sensor.garden_sensor_humidity"
-      ],
-      "other_devices": ["timer.garden_lights"]
+      ]
     },
     {
       "id": "hallway",
