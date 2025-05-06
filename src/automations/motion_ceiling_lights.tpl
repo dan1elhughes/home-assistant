@@ -27,6 +27,10 @@
       to: "off"
       for:
         minutes: 1
+  condition:
+    - condition: state
+      entity_id: input_boolean.motion_sensors_enabled
+      state: "on"
   actions:
     - action: light.turn_off
       entity_id:
