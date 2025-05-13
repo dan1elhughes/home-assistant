@@ -73,7 +73,7 @@
       "lights": "light.bedroom_lights",
       "ceiling": ["light.bedroom_ceiling_light"],
       "name": "Bedroom",
-      "other_entities": ["cover.curtains"],
+      "other_entities": ["cover.curtains", "fan.bedroom_fan"],
       "badges": [
         "sensor.bedroom_sensor_temperature",
         "sensor.bedroom_sensor_humidity"
