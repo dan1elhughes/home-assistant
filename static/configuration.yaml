@@ -19,7 +19,6 @@ scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
 schedule: !include schedules.yaml
 script: !include scripts.yaml
-switch: !include switch.yaml
 template: !include template.yaml
 timer: !include timer.yaml
 
@@ -40,12 +39,6 @@ lovelace:
 
 recorder:
   purge_keep_days: 60
-
-shell_command:
-  wake_sinkhole: "curl 'https://wol.danhughes.dev/wake' -H 'Content-Type: application/x-www-form-urlencoded' --data-raw 'name=Sinkhole'"
-  wake_eden: "curl 'https://wol.danhughes.dev/wake' -H 'Content-Type: application/x-www-form-urlencoded' --data-raw 'name=Eden'"
-  shutdown_sinkhole: 'ssh dan@10.10.10.50 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'
-  shutdown_eden: 'ssh dan@10.10.10.51 -i /config/.ssh/id_rsa -o StrictHostKeyChecking=no "sudo poweroff"'
 
 # Text to speech
 tts:

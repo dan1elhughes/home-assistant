@@ -124,18 +124,6 @@
         "sensor.office_sensor_temperature",
         "sensor.office_sensor_humidity",
         "sensor.office_sensor_carbon_dioxide"
-      ],
-      "servers": [
-        {
-          "name": "Sinkhole",
-          "internal_name": "sinkhole",
-          "ip": "10.10.10.50"
-        },
-        {
-          "name": "Eden",
-          "internal_name": "eden",
-          "ip": "10.10.10.51"
-        }
       ]
     },
     {
@@ -208,7 +196,6 @@
   ],
   "savingSessionDevices": [
     "switch.robot_vacuum",
-    "switch.sinkhole",
     "humidifier.conservatory_dehumidifier"
   ],
   "toggles": [
