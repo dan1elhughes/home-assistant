@@ -427,18 +427,21 @@ views:
 
           {% if room.lights %}
           - type: custom:expander-card
-            gap: '0'
             padding: '0'
-            child-padding: '0'
             title-card:
               type: tile
               entity: {{ room.lights }}
+              features_position: inline
+              features:
+                - type: light-brightness
             cards:
-              - type: entities
-                entities:
-                  {% for id in groups[room.lights].entities %}
-                  - entity: {{ id }}
-                  {% endfor %}
+              {% for id in groups[room.lights].entities %}
+              - type: tile
+                entity: {{ id }}
+                features_position: inline
+                features:
+                  - type: light-brightness
+              {% endfor %}
           {% endif %}
 
           {% if room.other_entities %}
