@@ -117,7 +117,7 @@
       "name": "Office",
       "other_entities": [
         "climate.server_cabinet",
-        "fan.tower_fan",
+        "fan.office_fan",
         "sensor.a1_end_time"
       ],
       "badges": [
