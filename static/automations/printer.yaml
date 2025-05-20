@@ -51,3 +51,28 @@
               image: /api/image_proxy/image.a1_cover_image
     - delay: 60 # Wait for 60 seconds to avoid spamming the notification
 
+- alias: Printer fan
+  mode: single
+  triggers:
+    - platform: state
+      entity_id: sensor.a1_print_status
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: sensor.a1_print_status
+              state: "running"
+          sequence:
+            - service: fan.set_percentage
+              target:
+                entity_id: fan.office_fan
+              data:
+                percentage: 25
+        - conditions:
+            - condition: state
+              entity_id: sensor.a1_print_status
+              state: "finish"
+          sequence:
+            - service: fan.turn_off
+              target:
+                entity_id: fan.office_fan
