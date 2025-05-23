@@ -144,7 +144,7 @@
         "sensor.barn_sensor_temperature",
         "sensor.barn_sensor_humidity"
       ],
-      "other_entities": ["switch.barn_fan"]
+      "other_entities": ["climate.barn"]
     },
     {
       "id": "garden",

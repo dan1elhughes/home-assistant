@@ -4,3 +4,9 @@
   target_sensor: sensor.servers_sensor_temperature
   ac_mode: true
   initial_hvac_mode: "cool"
+
+- platform: generic_thermostat
+  name: "Barn"
+  heater: switch.barn_fan
+  target_sensor: sensor.barn_sensor_temperature
+  ac_mode: true
