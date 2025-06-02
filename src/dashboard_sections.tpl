@@ -219,36 +219,6 @@ views:
             entity: sensor.myenergi_myenergi_hub_generated_today
             graph: none
 
-  - title: Cars
-    path: cars
-    icon: mdi:car
-    type: sections
-    sections:
-      - type: grid
-        cards:
-          - type: heading
-            icon: mdi:car
-            heading: ID3
-            heading_style: title
-          - type: sensor
-            entity: sensor.id3_battery_level
-            graph: line
-            detail: 2
-            grid_options:
-              columns: full
-      - type: grid
-        cards:
-          - type: heading
-            icon: mdi:car
-            heading: Zoe
-            heading_style: title
-          - type: sensor
-            entity: sensor.wp22lxc_battery
-            graph: line
-            detail: 2
-            grid_options:
-              columns: full
-
   - type: sections
     max_columns: 4
     title: Devices
