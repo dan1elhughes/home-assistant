@@ -226,48 +226,28 @@ views:
     sections:
       - type: grid
         cards:
-          - type: custom:ultra-vehicle-card
-            bars:
-              - animation_entity: switch.id3_charging
-                animation_state: "on"
-                animation_type: charging-lines
-                background_color: "var(--card-background-color, #121212)"
-                bar_radius: rounded-square
-                entity: sensor.id3_battery_level
-                left_entity: sensor.id3_battery_level
-                left_title: Charge
-                limit_entity: sensor.id3_battery_target_charge_level
-                right_entity: binary_sensor.id3_charging_cable_connected
-                right_title: Plugged in
-            formatted_entities: true
-            location_entity: device_tracker.id3_position
-            mileage_entity: sensor.id3_odometer
-            title: ID.3
-            vehicle_image: >-
-              https://media.auto.works/630/6fa4a1cb68db20cb6e34bc95410b3afd:4da638c3bbdd90ff4873cbfb366c064f
-
-
+          - type: heading
+            icon: mdi:car
+            heading: ID3
+            heading_style: title
+          - type: sensor
+            entity: sensor.id3_battery_level
+            graph: line
+            detail: 2
+            grid_options:
+              columns: full
       - type: grid
         cards:
-          - type: custom:ultra-vehicle-card
-            bars:
-              - animation_entity: binary_sensor.wp22lxc_charging
-                animation_state: "on"
-                animation_type: charging-lines
-                background_color: "var(--card-background-color, #121212)"
-                bar_radius: rounded-square
-                entity: sensor.wp22lxc_battery
-                left_entity: sensor.wp22lxc_battery
-                left_title: Charge
-                right_entity: sensor.wp22lxc_plug_state
-                right_title: Plugged in
-            formatted_entities: true
-            location_entity: device_tracker.wp22lxc_location
-            mileage_entity: sensor.wp22lxc_mileage
-            title: Zoe
-            vehicle_image: >-
-              https://www.electrifying.com/files/M_pU36nKtVpxY7Xc/RenaultZoe.png
-
+          - type: heading
+            icon: mdi:car
+            heading: Zoe
+            heading_style: title
+          - type: sensor
+            entity: sensor.wp22lxc_battery
+            graph: line
+            detail: 2
+            grid_options:
+              columns: full
 
   - type: sections
     max_columns: 4
