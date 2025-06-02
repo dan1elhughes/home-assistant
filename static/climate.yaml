@@ -14,6 +14,6 @@
 - platform: generic_thermostat
   name: "Router"
   heater: light.homelab_power_router_fan
-  target_sensor: sensor.ucg_max_cpu_temperature
+  target_sensor: sensor.ucg_max_ucg_max_cpu_temperature
   ac_mode: true
   max_temp: 100
