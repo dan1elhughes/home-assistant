@@ -1,0 +1,6 @@
+- platform: filter
+  name: "Filtered UCG Max temperature"
+  entity_id: sensor.ucg_max_ucg_max_cpu_temperature
+  filters:
+    - filter: time_throttle
+      window_size: "00:01"

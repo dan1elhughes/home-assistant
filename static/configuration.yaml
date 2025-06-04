@@ -19,6 +19,7 @@ scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
 schedule: !include schedules.yaml
 script: !include scripts.yaml
+sensor: !include sensor.yaml
 template: !include template.yaml
 timer: !include timer.yaml
 
