@@ -71,6 +71,14 @@
         - conditions:
             - condition: state
               entity_id: sensor.a1_print_status
+              state: "pause"
+          sequence:
+            - service: fan.turn_off
+              target:
+                entity_id: fan.office_fan
+        - conditions:
+            - condition: state
+              entity_id: sensor.a1_print_status
               state: "finish"
           sequence:
             - service: fan.turn_off
