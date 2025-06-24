@@ -118,7 +118,7 @@
       "other_entities": [
         "climate.server_cabinet",
         "climate.router",
-        "fan.office_fan",
+        "climate.office_ac",
         "sensor.a1_end_time"
       ],
       "badges": [
@@ -145,7 +145,7 @@
         "sensor.barn_sensor_temperature",
         "sensor.barn_sensor_humidity"
       ],
-      "other_entities": ["climate.barn"]
+      "other_entities": ["climate.barn_ac"]
     },
     {
       "id": "garden",

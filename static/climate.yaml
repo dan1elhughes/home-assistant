@@ -8,14 +8,6 @@
     minutes: 5
 
 - platform: generic_thermostat
-  name: "Barn"
-  heater: switch.barn_fan
-  target_sensor: sensor.barn_sensor_temperature
-  ac_mode: true
-  min_cycle_duration:
-    minutes: 5
-
-- platform: generic_thermostat
   name: "Router"
   heater: light.homelab_power_router_fan
   target_sensor: sensor.filtered_ucg_max_temperature
