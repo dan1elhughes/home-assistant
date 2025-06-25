@@ -147,13 +147,15 @@ views:
               - type: entity
                 entity: sensor.accumulative_electricity_cost_without_standing_charge
                 show_icon: false
-          - type: vertical-stack
-            cards:
-            - type: sensor
-              icon: mdi:transmission-tower
-              name: Consumption now
-              entity: sensor.myenergi_myenergi_hub_home_consumption
-              graph: none
+          - type: sensor
+            icon: mdi:home-import-outline
+            name: Consumption now
+            entity: sensor.myenergi_myenergi_hub_home_consumption
+            graph: none
+          - type: sensor
+            name: Stored energy
+            entity: sensor.envoy_122322027694_available_battery_energy
+            graph: none
           - type: sensor
             icon: mdi:transmission-tower-import
             name: Import now
