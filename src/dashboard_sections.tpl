@@ -150,7 +150,7 @@ views:
           - type: sensor
             icon: mdi:home-import-outline
             name: Consumption now
-            entity: sensor.myenergi_myenergi_hub_home_consumption
+            entity: sensor.envoy_122322027694_current_power_consumption
             graph: none
           - type: sensor
             name: Stored energy
