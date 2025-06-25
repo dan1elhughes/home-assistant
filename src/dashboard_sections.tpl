@@ -267,7 +267,12 @@ views:
               entity: light.front_door_light
               name: Porch light
             - type: tile
+              name: Hallway motion sensors
               entity: input_boolean.motion_sensors_enabled
+            - type: tile
+              name: Front door motion sensor
+              entity: switch.front_door_motion_detection
+
       - type: grid
         cards:
           - type: custom:expander-card
