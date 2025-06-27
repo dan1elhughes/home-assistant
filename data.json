@@ -191,9 +191,8 @@
         "select.myenergi_zappi_charge_mode",
         "sensor.id3_battery_level",
         "switch.id3_intelligent_smart_charge",
-        "binary_sensor.id3_charging_cable_connected",
-        "switch.id3_charging",
-        "sensor.wp22lxc_battery"
+        "sensor.wp22lxc_battery",
+        "input_number.zoe_charge_limit"
       ]
     }
   ],

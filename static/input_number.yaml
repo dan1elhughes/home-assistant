@@ -32,3 +32,11 @@ dehumidifier_offpeak:
   min: 0
   max: 100
   step: 1
+
+zoe_charge_limit:
+  name: Zoe charge limit
+  unit_of_measurement: "%"
+  min: 0
+  max: 100
+  step: 1
+  initial: 80

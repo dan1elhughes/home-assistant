@@ -1,0 +1,39 @@
+# If Zoe is at home, and on charge, and battery is above the number input helper limit, then turn off the zappi
+- alias: "Zoe charge limit - turn off zappi when battery above limit"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.wp22lxc_battery
+      to: null
+  condition:
+    - alias: "Zoe at home"
+      condition: state
+      entity_id: device_tracker.wp22lxc_location
+      state: "home"
+    - alias: "Zoe charging"
+      condition: state
+      entity_id: binary_sensor.wp22lxc_charging
+      state: "on"
+    - alias: "Battery above limit"
+      condition: template
+      value_template: "{{ states('sensor.wp22lxc_battery') | float > states('input_number.zoe_charge_limit') | float }}"
+  action:
+    - service: select.select_option
+      target:
+        entity_id: select.myenergi_zappi_charge_mode
+      data:
+        option: "Stopped"
+
+- alias: "Zoe unplugged - set zappi to fast"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.wp22lxc_plug_state
+      from: "plugged"
+      to: "unplugged"
+  action:
+    - service: select.select_option
+      target:
+        entity_id: select.myenergi_zappi_charge_mode
+      data:
+        option: "Fast"
