@@ -196,10 +196,6 @@
       ]
     }
   ],
-  "savingSessionDevices": [
-    "switch.robot_vacuum",
-    "humidifier.conservatory_dehumidifier"
-  ],
   "toggles": [
     {
       "ieee": "00:12:4b:00:29:0f:e9:89",
