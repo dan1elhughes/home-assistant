@@ -1,16 +1,16 @@
-- alias: "Close curtains at sunset"
+- alias: "Curtains partially closed at sunset"
   mode: single
   triggers:
     - trigger: sun
       event: sunset
-      # 30 minutes after sunset
-      offset: "00:30:00"
   action:
-    - service: cover.close_cover
+    - service: cover.set_cover_position
       target:
         entity_id: cover.curtains
+      data:
+        position: 60
 
-- alias: "Slow close curtains at sunrise"
+- alias: "Curtains fully closed at sunrise"
   mode: single
   triggers:
     - trigger: sun
