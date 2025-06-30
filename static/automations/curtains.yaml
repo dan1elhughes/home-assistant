@@ -9,3 +9,25 @@
     - service: cover.close_cover
       target:
         entity_id: cover.curtains
+
+- alias: "Slow close curtains at sunrise"
+  mode: single
+  triggers:
+    - trigger: sun
+      event: sunrise
+  condition:
+    - alias: "Home"
+      condition: state
+      entity_id: group.presence_home
+      state: home
+    - alias: "Automations enabled"
+      condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+  action:
+    - alias: "Slowly close curtains"
+      service: v6_quietdrift.set_switchbot_curtain_position
+      data:
+        position: 0
+        entity_id: cover.curtains
+        speed: 1
