@@ -1,0 +1,22 @@
+# Automation to put Zappi in fast mode when battery energy is below export threshold
+- alias: "Zappi to fast mode battery below export threshold"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.envoy_122322027694_available_battery_energy
+        - select.myenergi_zappi_charge_mode
+  condition:
+    - alias: "Battery energy below threshold"
+      condition: template
+      value_template: "{{ states('sensor.envoy_122322027694_available_battery_energy') | float < states('input_number.battery_energy_zappi_threshold') | float }}"
+    - alias: "Zappi currently stopped"
+      condition: state
+      entity_id: select.myenergi_zappi_charge_mode
+      state: "Stopped"
+  action:
+    - service: select.select_option
+      target:
+        entity_id: select.myenergi_zappi_charge_mode
+      data:
+        option: "Fast"
