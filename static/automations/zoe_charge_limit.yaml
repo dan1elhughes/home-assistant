@@ -18,8 +18,6 @@
       condition: template
       value_template: "{{ states('sensor.wp22lxc_battery') | float > states('input_number.zoe_charge_limit') | float }}"
   action:
-    - service: select.select_option
+    - service: button.press
       target:
-        entity_id: select.myenergi_zappi_charge_mode
-      data:
-        option: "Stopped"
+        entity_id: button.wp22lxc_stop_charge
