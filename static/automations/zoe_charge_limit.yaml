@@ -23,17 +23,3 @@
         entity_id: select.myenergi_zappi_charge_mode
       data:
         option: "Stopped"
-
-- alias: "Zoe unplugged - set zappi to fast"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: sensor.wp22lxc_plug_state
-      from: "plugged"
-      to: "unplugged"
-  action:
-    - service: select.select_option
-      target:
-        entity_id: select.myenergi_zappi_charge_mode
-      data:
-        option: "Fast"
