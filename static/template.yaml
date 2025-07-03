@@ -34,6 +34,11 @@
       state: >
         {{ (states('sensor.myenergi_myenergi_hub_generated_today') | float * states('input_number.fit_generation_per_kwh') | float) | round(2) }}
 
+    - name: "Export paid"
+      unit_of_measurement: "£"
+      state: >
+        {{ (states('sensor.myenergi_myenergi_hub_grid_export_today') | float * states('sensor.octopus_energy_electricity_15p0706167_2000060833200_export_current_rate') | float) | round(2) }}
+
     - name: "Garden sensor temperature"
       unit_of_measurement: "°C"
       icon: mdi:thermometer

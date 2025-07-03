@@ -130,32 +130,30 @@ views:
     sections:
       - type: grid
         cards:
-          - type: tile
-            entity: sensor.next_saving_session
-            hide_state: false
-            vertical: false
-            visibility:
-              - condition: state
-                entity: sensor.next_saving_session
-                state_not: unknown
-
           - type: heading
-            heading: Electricity
+            heading: Battery
             heading_style: title
-            icon: mdi:transmission-tower
-            badges:
-              - type: entity
-                entity: sensor.accumulative_electricity_cost_without_standing_charge
-                show_icon: false
+            icon: mdi:home-battery
           - type: sensor
-            icon: mdi:home-import-outline
-            name: Consumption now
-            entity: sensor.envoy_122322027694_current_power_consumption
-            graph: none
+            name: Battery level
+            entity: sensor.envoy_122322027694_battery
+            graph: line
+            detail: 2
           - type: sensor
             name: Stored energy
             entity: sensor.envoy_122322027694_available_battery_energy
             graph: none
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Import
+            heading_style: title
+            icon: mdi:transmission-tower-import
+            badges:
+              - type: entity
+                entity: sensor.accumulative_electricity_cost_without_standing_charge
+                show_icon: false
           - type: sensor
             icon: mdi:transmission-tower-import
             name: Import now
@@ -167,6 +165,17 @@ views:
             name: Import today
             entity: sensor.myenergi_myenergi_hub_grid_import_today
             graph: none
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Export
+            heading_style: title
+            icon: mdi:transmission-tower-export
+            badges:
+              - type: entity
+                entity: sensor.export_paid
+                show_icon: false
           - type: sensor
             name: Export now
             entity: sensor.myenergi_myenergi_hub_power_export
@@ -178,27 +187,7 @@ views:
             entity: sensor.myenergi_myenergi_hub_grid_export_today
             icon: mdi:transmission-tower-export
             graph: none
-      - type: grid
-        cards:
-          - type: heading
-            heading: Gas
-            heading_style: title
-            icon: mdi:fire
-            badges:
-              - type: entity
-                entity: sensor.accumulative_gas_cost_without_standing_charge
-                show_icon: false
-          - type: sensor
-            name: Import now
-            icon: mdi:gas-burner
-            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_consumption
-            graph: line
-            detail: 2
-          - type: sensor
-            name: Import today
-            icon: mdi:gas-burner
-            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
-            graph: none
+
       - type: grid
         cards:
           - type: heading
@@ -219,6 +208,28 @@ views:
             name: Generation today
             icon: mdi:solar-power-variant
             entity: sensor.myenergi_myenergi_hub_generated_today
+            graph: none
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Gas
+            heading_style: title
+            icon: mdi:fire
+            badges:
+              - type: entity
+                entity: sensor.accumulative_gas_cost_without_standing_charge
+                show_icon: false
+          - type: sensor
+            name: Import now
+            icon: mdi:gas-burner
+            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_consumption
+            graph: line
+            detail: 2
+          - type: sensor
+            name: Import today
+            icon: mdi:gas-burner
+            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
             graph: none
 
   - type: sections
