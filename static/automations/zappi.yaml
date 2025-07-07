@@ -20,3 +20,17 @@
         entity_id: select.myenergi_zappi_charge_mode
       data:
         option: "Fast"
+
+# Automation to stop Zappi when off-peak period ends
+- alias: "Zappi stop when off-peak ends"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+      to: "off"
+  action:
+    - service: select.select_option
+      target:
+        entity_id: select.myenergi_zappi_charge_mode
+      data:
+        option: "Stopped"
