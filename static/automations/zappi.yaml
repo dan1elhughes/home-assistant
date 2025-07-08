@@ -1,36 +1,51 @@
-# Automation to put Zappi in fast mode when battery energy is below export threshold
-- alias: "Zappi to fast mode battery below export threshold"
+- alias: "Zappi Control: Start on Low Battery, Stop on End of Off-Peak"
   mode: single
   trigger:
     - platform: state
       entity_id:
         - sensor.envoy_122322027694_available_battery_energy
+        - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
         - select.myenergi_zappi_charge_mode
-  condition:
-    - alias: "Battery energy below threshold"
-      condition: template
-      value_template: "{{ states('sensor.envoy_122322027694_available_battery_energy') | float < states('input_number.battery_energy_zappi_threshold') | float }}"
-    - alias: "Zappi currently stopped"
-      condition: state
-      entity_id: select.myenergi_zappi_charge_mode
-      state: "Stopped"
-  action:
-    - service: select.select_option
-      target:
-        entity_id: select.myenergi_zappi_charge_mode
-      data:
-        option: "Fast"
 
-# Automation to stop Zappi when off-peak period ends
-- alias: "Zappi stop when off-peak ends"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
-      to: "off"
   action:
-    - service: select.select_option
-      target:
-        entity_id: select.myenergi_zappi_charge_mode
-      data:
-        option: "Stopped"
+    - choose:
+        - alias: "Start Zappi if battery is low and off-peak"
+          conditions:
+            - alias: "Battery energy below threshold"
+              condition: template
+              value_template: >
+                {{ states('sensor.envoy_122322027694_available_battery_energy') | float <
+                   states('input_number.battery_energy_zappi_threshold') | float }}
+            - alias: "Currently off-peak"
+              condition: state
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              state: "on"
+            - alias: "Zappi currently stopped"
+              condition: state
+              entity_id: select.myenergi_zappi_charge_mode
+              state: "Stopped"
+          sequence:
+            - alias: "Set Zappi to Fast"
+              service: select.select_option
+              target:
+                entity_id: select.myenergi_zappi_charge_mode
+              data:
+                option: "Fast"
+
+        - alias: "Stop Zappi when off-peak ends"
+          conditions:
+            - alias: "Now peak time"
+              condition: state
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              state: "off"
+            - alias: "Zappi currently fast"
+              condition: state
+              entity_id: select.myenergi_zappi_charge_mode
+              state: "Fast"
+          sequence:
+            - alias: "Set Zappi to Stopped"
+              service: select.select_option
+              target:
+                entity_id: select.myenergi_zappi_charge_mode
+              data:
+                option: "Stopped"
