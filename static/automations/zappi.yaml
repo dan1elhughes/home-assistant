@@ -6,7 +6,10 @@
         - sensor.envoy_122322027694_available_battery_energy
         - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
         - select.myenergi_zappi_charge_mode
-
+  conditions:
+    - condition: state
+      entity_id: input_boolean.zappi_automation_enabled
+      state: "on"
   action:
     - choose:
         - alias: "Start Zappi if battery is low and off-peak"
