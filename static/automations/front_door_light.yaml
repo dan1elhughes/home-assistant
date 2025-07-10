@@ -1,12 +1,24 @@
-- alias: "Front door on at sunset or motion detected"
+- alias: "Front door on when motion detected"
   mode: single
   triggers:
-    - trigger: sun
-      event: sunset
     - trigger: state
       entity_id: binary_sensor.front_door_motion
       from: "off"
       to: "on"
+  action:
+    - service: light.turn_on
+      target:
+        entity_id: light.front_door_light
+
+- alias: "Front door on at sunset if nobody home"
+  mode: single
+  conditions:
+    - condition: state
+      entity_id: group.presence_home
+      state: "away"
+  triggers:
+    - trigger: sun
+      event: sunset
   action:
     - service: light.turn_on
       target:
