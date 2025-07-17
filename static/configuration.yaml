@@ -49,7 +49,7 @@ notify:
   - platform: group
     name: dan
     services:
-      - service: mobile_app_pixel_8
+      - service: mobile_app_pixel_9
 
 wake_on_lan:
 

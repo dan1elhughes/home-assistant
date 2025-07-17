@@ -216,7 +216,7 @@
     }
   ],
   "devices": [
-    { "name": "Dan", "prefix": "sensor.pixel_8" },
+    { "name": "Dan", "prefix": "sensor.pixel_9" },
     { "name": "Katie", "prefix": "sensor.pixel_7a" }
   ],
   "disabled_dimmers": [

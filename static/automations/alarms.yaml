@@ -3,12 +3,12 @@
   triggers:
     - trigger: state
       entity_id:
-        - sensor.pixel_8_next_alarm
+        - sensor.pixel_9_next_alarm
   actions:
     - action: input_datetime.set_datetime
       entity_id: input_datetime.wake_up_dan
       data:
-        time: "{{ strptime(state_attr('sensor.pixel_8_next_alarm', 'Local Time'), '%a %b %d %H:%M:%S %Z%z %Y').strftime('%H:%M:%S') }}"
+        time: "{{ strptime(state_attr('sensor.pixel_9_next_alarm', 'Local Time'), '%a %b %d %H:%M:%S %Z%z %Y').strftime('%H:%M:%S') }}"
 
 - alias: "Alarm - Katie"
   mode: single
