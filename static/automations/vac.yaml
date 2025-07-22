@@ -12,27 +12,3 @@
         entity_id: timer.robot_vacuum_drying
       data:
         duration: "02:00:00"
-
-- alias: "Vacuum drying progress notification"
-  description: "Sends periodic progress notifications during the drying timer"
-  mode: single
-  trigger:
-    - platform: time_pattern
-      minutes: "/10" # Every 10 minutes
-  condition:
-    - condition: state
-      entity_id: timer.robot_vacuum_drying
-      state: active
-  action:
-    - service: notify.dan
-      data:
-        title: "Vacuum drying in progress"
-        message: "Finishes at {{ as_timestamp(state_attr('timer.robot_vacuum_drying', 'finishes_at')) | timestamp_custom('%H:%M:%S') }}"
-        data:
-          tag: "vacuum_drying"
-          progress_max: 7200 # 2 hours in seconds
-          progress: >
-            {% set end_time = as_timestamp(state_attr('timer.robot_vacuum_drying', 'finishes_at')) %}
-            {% set now_time = as_timestamp(now()) %}
-            {{ 7200 - (end_time - now_time) | int }}
-          channel: "vacuum_status"
