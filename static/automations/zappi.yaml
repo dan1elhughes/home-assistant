@@ -14,14 +14,9 @@
     - choose:
         - alias: "Start Zappi if battery is low and off-peak"
           conditions:
-            - alias: "Battery energy below threshold"
-              condition: template
-              value_template: >
-                {{ states('sensor.envoy_122322027694_available_battery_energy') | float <
-                   states('input_number.battery_energy_zappi_threshold') | float }}
-            - alias: "Currently off-peak"
+            - alias: "Battery idle and offpeak"
               condition: state
-              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              entity_id: binary_sensor.battery_idle_off_peak
               state: "on"
             - alias: "Zappi currently stopped"
               condition: state
@@ -37,9 +32,9 @@
 
         - alias: "Stop Zappi when off-peak ends"
           conditions:
-            - alias: "Now peak time"
+            - alias: "No longer battery idle off peak"
               condition: state
-              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              entity_id: binary_sensor.battery_idle_off_peak
               state: "off"
             - alias: "Zappi currently fast"
               condition: state

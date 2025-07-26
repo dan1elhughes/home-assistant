@@ -63,3 +63,13 @@
           | list
           | count > 0
         }}
+
+    - name: Battery idle off peak
+      state: >
+        {{
+          states('sensor.envoy_122322027694_available_battery_energy') | float <
+          states('input_number.battery_idle_threshold') | float
+          and
+          is_state('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'on')
+        }}
+      device_class: power

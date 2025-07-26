@@ -41,8 +41,8 @@ zoe_charge_limit:
   step: 1
   initial: 80
 
-battery_energy_zappi_threshold:
-  name: Battery energy threshold for Zappi
+battery_idle_threshold:
+  name: Battery idle threshold
   unit_of_measurement: "Wh"
   min: 0
   max: 15000
