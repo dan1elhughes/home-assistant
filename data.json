@@ -119,7 +119,9 @@
         "climate.server_cabinet",
         "climate.router",
         "climate.office_ac",
-        "sensor.a1_end_time"
+        "sensor.a1_end_time",
+        "switch.office",
+        "sensor.river_2_max_battery_level"
       ],
       "badges": [
         "sensor.office_sensor_temperature",
@@ -223,5 +225,11 @@
     "light.kitchen_worklights",
     "light.patio_light",
     "light.front_door_light"
+  ],
+  "power_when_battery_idle": [
+    {
+      "name": "River 2 Max",
+      "entity": "switch.office"
+    }
   ]
 }
