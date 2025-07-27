@@ -2,3 +2,4 @@
 /dist
 /.vscode
 /static/secrets.yaml
+/enphase.json
