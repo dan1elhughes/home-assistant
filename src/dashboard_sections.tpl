@@ -143,6 +143,10 @@ views:
             name: Stored energy
             entity: sensor.envoy_122322027694_available_battery_energy
             graph: none
+          - type: vertical-stack
+            cards:
+              - type: tile
+                entity: input_boolean.charge_on_cheap_rate
 
       - type: grid
         cards:

@@ -73,3 +73,8 @@
           is_state('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'on')
         }}
       device_class: power
+
+    - name: Octopus cheap rate
+      state: >
+        {% set rate = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float(1) %}
+        {{ rate < 0.10 }}
