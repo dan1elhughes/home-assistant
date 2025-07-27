@@ -40,3 +40,12 @@ battery_idle_threshold:
   max: 15000
   step: 100
   initial: 1000
+
+octopus_cheap_threshold:
+  name: Cheap electricity threshold
+  min: 0
+  max: 50
+  step: 1
+  unit_of_measurement: "p"
+  icon: mdi:flash
+  initial: 20
