@@ -195,8 +195,7 @@
         "input_boolean.zappi_automation_enabled",
         "sensor.id3_battery_level",
         "switch.id3_intelligent_smart_charge",
-        "sensor.wp22lxc_battery",
-        "input_number.zoe_charge_limit"
+        "sensor.wp22lxc_battery"
       ]
     }
   ],
