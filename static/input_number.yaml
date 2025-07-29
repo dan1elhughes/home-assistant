@@ -33,13 +33,13 @@ dehumidifier_offpeak:
   max: 100
   step: 1
 
-battery_idle_threshold:
-  name: Battery idle threshold
+battery_export_threshold:
+  name: Battery export threshold
   unit_of_measurement: "Wh"
-  min: 0
-  max: 15000
-  step: 100
-  initial: 1000
+  min: -10000
+  max: 0
+  step: 1000
+  initial: -5000
 
 octopus_cheap_threshold:
   name: Cheap electricity threshold

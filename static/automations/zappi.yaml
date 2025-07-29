@@ -3,8 +3,8 @@
   trigger:
     - platform: state
       entity_id:
-        - sensor.envoy_122322027694_available_battery_energy
         - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+        - binary_sensor.battery_exporting
         - select.myenergi_zappi_charge_mode
   conditions:
     - condition: state
@@ -12,11 +12,15 @@
       state: "on"
   action:
     - choose:
-        - alias: "Start Zappi if battery is low and off-peak"
+        - alias: "Start"
           conditions:
-            - alias: "Battery idle and offpeak"
+            - alias: "Battery not exporting"
               condition: state
-              entity_id: binary_sensor.battery_idle_off_peak
+              entity_id: binary_sensor.battery_exporting
+              state: "off"
+            - alias: "Off-peak"
+              condition: state
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "on"
             - alias: "Zappi currently stopped"
               condition: state
@@ -30,11 +34,11 @@
               data:
                 option: "Fast"
 
-        - alias: "Stop Zappi when off-peak ends"
+        - alias: "Stop"
           conditions:
-            - alias: "No longer battery idle off peak"
+            - alias: "Not off-peak"
               condition: state
-              entity_id: binary_sensor.battery_idle_off_peak
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "off"
             - alias: "Zappi currently fast"
               condition: state

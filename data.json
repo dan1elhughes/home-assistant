@@ -191,7 +191,6 @@
       ],
       "other_entities": [
         "select.myenergi_zappi_charge_mode",
-        "input_number.battery_idle_threshold",
         "input_boolean.zappi_automation_enabled",
         "sensor.id3_battery_level",
         "switch.id3_intelligent_smart_charge",
