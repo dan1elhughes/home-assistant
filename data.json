@@ -224,11 +224,5 @@
     "light.kitchen_worklights",
     "light.patio_light",
     "light.front_door_light"
-  ],
-  "power_when_battery_idle": [
-    {
-      "name": "River 2 Max",
-      "entity": "switch.office"
-    }
   ]
 }
