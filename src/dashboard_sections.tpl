@@ -134,19 +134,19 @@ views:
             heading: Battery
             heading_style: title
             icon: mdi:home-battery
+            badges:
+              - type: entity
+                entity: sensor.envoy_122322027694_battery
+                show_icon: false
           - type: sensor
-            name: Battery level
-            entity: sensor.envoy_122322027694_battery
+            name: Power consumption
+            entity: sensor.envoy_122322027694_current_power_consumption
             graph: line
             detail: 2
           - type: sensor
             name: Stored energy
             entity: sensor.envoy_122322027694_available_battery_energy
             graph: none
-          - type: vertical-stack
-            cards:
-              - type: tile
-                entity: input_boolean.charge_on_cheap_rate
 
       - type: grid
         cards:
