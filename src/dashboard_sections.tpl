@@ -236,6 +236,37 @@ views:
             entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
             graph: none
 
+      - type: grid
+        visibility:
+          - condition: state
+            entity: switch.id3_intelligent_smart_charge
+            state: "on"
+        cards:
+          - type: heading
+            heading: Smart charge
+            heading_style: title
+            icon: mdi:ev-station
+            badges:
+              - type: entity
+                entity: number.id3_intelligent_charge_target
+                show_icon: false
+              - type: entity
+                entity: select.id3_intelligent_target_time
+                show_icon: false
+          - type: markdown
+            content: >+
+              {% raw %}
+              {% set dispatches = state_attr('binary_sensor.id3_intelligent_dispatching', 'planned_dispatches') %}
+              {% if dispatches %}
+              {% for dispatch in dispatches %}
+              - {{ as_local(dispatch.start).strftime('%H:%M') }} to {{ as_local(dispatch.end).strftime('%H:%M') }}
+
+              {% endfor %}
+              {% else %}
+              No planned dispatches.
+              {% endif %}
+              {% endraw %}
+
   - type: sections
     max_columns: 4
     title: Devices
