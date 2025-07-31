@@ -23,9 +23,5 @@ motion_sensors_enabled:
   name: Motion sensors enabled
   icon: mdi:motion-sensor
 
-zappi_automation_enabled:
-  name: Zappi automation enabled
-  icon: mdi:ev-plug-type2
-
 charge_on_cheap_rate:
   name: Charge house battery on cheap rate

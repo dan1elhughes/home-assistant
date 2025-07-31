@@ -191,7 +191,7 @@
       ],
       "other_entities": [
         "select.myenergi_zappi_charge_mode",
-        "input_boolean.zappi_automation_enabled",
+        "automation.zappi_control",
         "sensor.id3_battery_level",
         "switch.id3_intelligent_smart_charge",
         "sensor.wp22lxc_battery"
