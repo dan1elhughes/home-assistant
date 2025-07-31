@@ -258,12 +258,33 @@ views:
               {% raw %}
               {% set dispatches = state_attr('binary_sensor.id3_intelligent_dispatching', 'planned_dispatches') %}
               {% if dispatches %}
-              {% for dispatch in dispatches %}
-              - {{ as_local(dispatch.start).strftime('%H:%M') }} to {{ as_local(dispatch.end).strftime('%H:%M') }}
+              {% set ns = namespace(merged=[], current_start=none, current_end=none) %}
+
+              {% for d in dispatches %}
+              {% set start = as_local(d.start) %}
+              {% set end = as_local(d.end) %}
+
+              {% if ns.current_start == none %}
+              {% set ns.current_start = start %}
+              {% set ns.current_end = end %}
+              {% elif start == ns.current_end %}
+              {% set ns.current_end = end %}
+              {% else %}
+              {% set ns.merged = ns.merged + [(ns.current_start, ns.current_end)] %}
+              {% set ns.current_start = start %}
+              {% set ns.current_end = end %}
+              {% endif %}
+              {% endfor %}
+
+              {# Append the last interval #}
+              {% set ns.merged = ns.merged + [(ns.current_start, ns.current_end)] %}
+
+              {% for start, end in ns.merged %}
+              - {{ start.strftime('%H:%M') }} to {{ end.strftime('%H:%M') }}
 
               {% endfor %}
               {% else %}
-              No planned dispatches.
+              Dispatches not yet scheduled.
               {% endif %}
               {% endraw %}
 
