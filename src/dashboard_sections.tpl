@@ -138,15 +138,19 @@ views:
               - type: entity
                 entity: sensor.envoy_122322027694_battery
                 show_icon: false
-          - type: sensor
-            name: Power consumption
-            entity: sensor.envoy_122322027694_current_power_consumption
-            graph: line
-            detail: 2
-          - type: sensor
-            name: Stored energy
-            entity: sensor.envoy_122322027694_available_battery_energy
-            graph: none
+          - type: horizontal-stack
+            cards:
+              - type: vertical-stack
+                cards:
+                  - type: tile
+                    entity: input_select.battery_mode
+                  - type: tile
+                    name: Rate
+                    entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate
+              - type: sensor
+                name: Stored energy
+                entity: sensor.envoy_122322027694_available_battery_energy
+                graph: none
 
       - type: grid
         cards:
@@ -235,6 +239,13 @@ views:
             icon: mdi:gas-burner
             entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
             graph: none
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Battery schedule
+          - type: tile
+            entity: schedule.battery
 
       - type: grid
         visibility:

@@ -39,10 +39,10 @@ tasmota_provide_reset_sequence:
         entity_id: "{{ device }}"
 
 toggle_enphase_charge_from_grid:
+  mode: single
   alias: Toggle Enphase Charge from Grid
-  description: Enable or disable Charge from Grid mode
   fields:
-    charge:
+    enabled:
       description: true to enable, false to disable
       example: true
   sequence:
@@ -53,16 +53,15 @@ toggle_enphase_charge_from_grid:
     - delay: "00:00:01"
     - service: rest_command.enphase_battery_charge_from_grid
       data:
-        charge: "{{ charge }}"
+        charge: "{{ enabled }}"
         battery_id: 5886607
         user_id: 5185058
-  mode: single
 
 toggle_enphase_discharge_to_grid:
+  mode: single
   alias: Toggle Enphase Discharge to Grid
-  description: Enable or disable Discharge to Grid mode
   fields:
-    discharge:
+    enabled:
       description: true to enable, false to disable
       example: true
   sequence:
@@ -73,7 +72,6 @@ toggle_enphase_discharge_to_grid:
     - delay: "00:00:01"
     - service: rest_command.enphase_battery_discharge_to_grid
       data:
-        discharge: "{{ discharge }}"
+        discharge: "{{ enabled }}"
         battery_id: 5886607
         user_id: 5185058
-  mode: single

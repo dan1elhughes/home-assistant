@@ -1,5 +1,4 @@
-- alias: "Charge on cheap power"
-  description: "Activate home battery charging based on cheap rate"
+- alias: "Charge on peaktime cheap rate power"
   trigger:
     - platform: state
       entity_id: binary_sensor.octopus_cheap_rate
@@ -10,6 +9,9 @@
     - condition: state
       entity_id: input_boolean.charge_on_cheap_rate
       state: "on"
+    - condition: state
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+      state: "off"
   action:
     - choose:
         - conditions:
@@ -17,14 +19,18 @@
               entity_id: binary_sensor.octopus_cheap_rate
               state: "on"
           sequence:
-            - service: script.toggle_enphase_charge_from_grid
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.battery_mode
               data:
-                charge: "true"
+                option: "Charge"
         - conditions:
             - condition: state
               entity_id: binary_sensor.octopus_cheap_rate
               state: "off"
           sequence:
-            - service: script.toggle_enphase_charge_from_grid
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.battery_mode
               data:
-                charge: "false"
+                option: "Idle"

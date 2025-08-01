@@ -1,0 +1,11 @@
+- alias: Battery schedule
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: schedule.battery
+  action:
+    - service: input_select.select_option
+      target:
+        entity_id: input_select.battery_mode
+      data:
+        option: "{{ state_attr('schedule.battery', 'state') }}"

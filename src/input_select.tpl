@@ -6,3 +6,11 @@ active_room:
     - {{ room.id }}
     {% endfor %}
     - out
+
+battery_mode:
+  name: Battery mode
+  icon: mdi:home-battery
+  options:
+    - Idle
+    - Charge
+    - Discharge
