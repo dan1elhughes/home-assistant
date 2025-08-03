@@ -73,11 +73,11 @@
       state: >
         {% set current = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
         {% set capacity = states('sensor.envoy_122322027694_battery_capacity') | float(0) %}
+        {% set rate_kw = states('input_number.battery_power_rate_kw') | float(0) %}
+        {% set rate_w = rate_kw * 1000 %}
         {% set remaining = capacity - current %}
-        {% set charge_rate = 9600 %}
-        {% if remaining > 0 and charge_rate > 0 %}
-          {% set minutes = (remaining / charge_rate) * 60 %}
-          {{ minutes | round(0) }}
+        {% if remaining > 0 and rate_w > 0 %}
+          {{ ((remaining / rate_w) * 60) | round(0) }}
         {% else %}
           0
         {% endif %}
@@ -86,10 +86,10 @@
       unit_of_measurement: "minutes"
       state: >
         {% set current = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
-        {% set discharge_rate = 9600 %}
-        {% if current > 0 and discharge_rate > 0 %}
-          {% set minutes = (current / discharge_rate) * 60 %}
-          {{ minutes | round(0) }}
+        {% set rate_kw = states('input_number.battery_power_rate_kw') | float(0) %}
+        {% set rate_w = rate_kw * 1000 %}
+        {% if current > 0 and rate_w > 0 %}
+          {{ ((current / rate_w) * 60) | round(0) }}
         {% else %}
           0
         {% endif %}
