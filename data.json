@@ -228,6 +228,10 @@
     {
       "source": "light.kitchen_worklights",
       "targets": ["light.kitchen_sink"]
+    },
+    {
+      "source": "light.patio_light",
+      "targets": ["light.garden_lights"]
     }
   ]
 }
