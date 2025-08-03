@@ -223,5 +223,11 @@
     "light.kitchen_worklights",
     "light.patio_light",
     "light.front_door_light"
+  ],
+  "light_sync": [
+    {
+      "source": "light.kitchen_worklights",
+      "targets": ["light.kitchen_sink"]
+    }
   ]
 }
