@@ -51,6 +51,49 @@
       state: >
         {{ state_attr('weather.home', 'humidity') }}
 
+    - name: "Time until next rate"
+      unit_of_measurement: "minutes"
+      state: >
+        {% set start_time = state_attr('sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate', 'start') %}
+        {% if start_time %}
+          {% set start_dt = as_datetime(start_time) %}
+          {% set now_dt = now() %}
+          {% set delta = (start_dt - now_dt).total_seconds() / 60 %}
+          {% if delta > 0 %}
+            {{ delta | round(0) }}
+          {% else %}
+            0
+          {% endif %}
+        {% else %}
+          unknown
+        {% endif %}
+
+    - name: "Time to fully charge"
+      unit_of_measurement: "minutes"
+      state: >
+        {% set current = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
+        {% set capacity = states('sensor.envoy_122322027694_battery_capacity') | float(0) %}
+        {% set remaining = capacity - current %}
+        {% set charge_rate = 9600 %}
+        {% if remaining > 0 and charge_rate > 0 %}
+          {% set minutes = (remaining / charge_rate) * 60 %}
+          {{ minutes | round(0) }}
+        {% else %}
+          0
+        {% endif %}
+
+    - name: "Time to fully discharge"
+      unit_of_measurement: "minutes"
+      state: >
+        {% set current = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
+        {% set discharge_rate = 9600 %}
+        {% if current > 0 and discharge_rate > 0 %}
+          {% set minutes = (current / discharge_rate) * 60 %}
+          {{ minutes | round(0) }}
+        {% else %}
+          0
+        {% endif %}
+
 - binary_sensor:
     - name: One-room mode
       state: >
