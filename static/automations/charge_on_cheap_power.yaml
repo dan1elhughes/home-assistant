@@ -5,6 +5,11 @@
       to:
         - "on"
         - "off"
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+      to:
+        - "on"
+        - "off"
   condition:
     - condition: state
       entity_id: input_boolean.charge_on_cheap_rate
@@ -26,7 +31,20 @@
                 option: "Charge"
         - conditions:
             - condition: state
+              entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+              state: "on"
+          sequence:
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.battery_mode
+              data:
+                option: "Charge"
+        - conditions:
+            - condition: state
               entity_id: binary_sensor.octopus_cheap_rate
+              state: "off"
+            - condition: state
+              entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
               state: "off"
           sequence:
             - service: input_select.select_option
