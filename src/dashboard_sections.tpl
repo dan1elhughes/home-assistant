@@ -61,36 +61,10 @@ views:
                   entity: sensor.dishwasher_remaining_program_time
                   name: Finish time
 
-          - type: custom:expander-card
-            grid_options:
-              columns: full
-            gap: '0'
-            padding: '0'
-            child-padding: '0'
-            title-card:
-              type: tile
-              entity: group.ceiling_lights
-            cards:
-              - type: entities
-                entities:
-                  {% for room in rooms %}
-                  {% for light_id in room.ceiling %}
-                  - entity: {{ light_id }}
-                  {% endfor %}
-                  {% endfor %}
-          - type: custom:expander-card
-            grid_options:
-              columns: full
-            gap: '0'
-            padding: '0'
-            child-padding: '0'
-            title-card:
-              type: tile
-              entity: group.room_lights
-            cards:
-              - type: entities
-                entities:
-                  {{- lights.ids() | indent(18) }}
+          - type: tile
+            entity: group.ceiling_lights
+          - type: tile
+            entity: group.room_lights
 
           - type: custom:calendar-card-pro
             entities:
@@ -461,22 +435,11 @@ views:
             heading: {{ room.name }}
 
           {% if room.lights %}
-          - type: custom:expander-card
-            padding: '0'
-            title-card:
-              type: tile
-              entity: {{ room.lights }}
-              features_position: inline
-              features:
-                - type: light-brightness
-            cards:
-              {% for id in groups[room.lights].entities %}
-              - type: tile
-                entity: {{ id }}
-                features_position: inline
-                features:
-                  - type: light-brightness
-              {% endfor %}
+          - type: tile
+            entity: {{ room.lights }}
+            features_position: inline
+            features:
+              - type: light-brightness
           {% endif %}
 
           {% if room.other_entities %}
