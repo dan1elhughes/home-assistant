@@ -12,11 +12,6 @@
     - condition: template
       value_template: "{% raw %}{{ trigger.event.data.command in ['on_press', 'on_hold', 'up_hold', 'down_hold', 'off_press'] }}{% endraw %}"
   action:
-    - service: input_select.select_option
-      target:
-        entity_id: input_select.active_room
-      data:
-        option: "{{ room.id }}"
     - choose:
         - conditions: "{% raw %}{{ trigger.event.data.command == 'on_press' }}{% endraw %}"
           alias: "On (press)"
@@ -26,6 +21,17 @@
                 entity_id: "{{ room.lights }}"
               data:
                 brightness: 255
+            - choose:
+                - conditions:
+                    - condition: state
+                      entity_id: binary_sensor.one_room_mode
+                      state: "on"
+                  sequence:
+                    - service: input_select.select_option
+                      target:
+                        entity_id: input_select.active_room
+                      data:
+                        option: "{{ room.id }}"
 
         {% if room.custom_scene %}
         - conditions: "{% raw %}{{ trigger.event.data.command == 'on_hold' }}{% endraw %}"
