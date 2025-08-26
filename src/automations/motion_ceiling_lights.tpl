@@ -12,13 +12,27 @@
       entity_id: input_boolean.motion_sensors_enabled
       state: "on"
   actions:
-    - action: light.turn_on
-      entity_id:
-      {% for light_id in room.ceiling %}
-        - {{ light_id }}
-      {% endfor %}
-      data:
-          brightness_pct: 5
+    - choose:
+        - conditions:
+            - condition: sun
+              after: sunrise
+              before: sunset
+          sequence:
+            - action: light.turn_on
+              entity_id:
+              {% for light_id in room.ceiling %}
+                - {{ light_id }}
+              {% endfor %}
+              data:
+                  brightness_pct: 100
+      default:
+        - action: light.turn_on
+          entity_id:
+          {% for light_id in room.ceiling %}
+            - {{ light_id }}
+          {% endfor %}
+          data:
+              brightness_pct: 5
 - alias: "{{ room.name }}: Motion off"
   mode: single
   trigger:
