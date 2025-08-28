@@ -231,13 +231,12 @@ views:
             heading: Smart charge
             heading_style: title
             icon: mdi:ev-station
-            badges:
-              - type: entity
-                entity: number.id3_intelligent_charge_target
-                show_icon: false
-              - type: entity
-                entity: select.id3_intelligent_target_time
-                show_icon: false
+          - type: tile
+            entity: number.id3_intelligent_charge_target
+            name: Target
+          - type: tile
+            entity: select.id3_intelligent_target_time
+            name: Time
           - type: markdown
             content: >+
               {% raw %}
