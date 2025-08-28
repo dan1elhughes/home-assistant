@@ -2,6 +2,8 @@
   trigger:
     - platform: state
       entity_id: input_select.battery_mode
+    - platform: time_pattern
+      minutes: "/10"
   action:
     - choose:
         - conditions:
