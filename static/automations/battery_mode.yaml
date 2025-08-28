@@ -44,3 +44,48 @@
             - service: script.toggle_enphase_discharge_to_grid
               data:
                 enabled: "true"
+
+- alias: Battery control v2
+  mode: single
+  trigger:
+    - platform: state
+      entity_id:
+        - sensor.time_until_offpeak_rate
+        - sensor.time_until_peak_rate
+        - sensor.time_to_fully_charge
+        - sensor.time_to_fully_discharge
+  action:
+    - choose:
+        - alias: "Discharge before off-peak"
+          conditions:
+            - condition: template
+              value_template: >
+                {{ (states('sensor.time_to_fully_discharge') | float(9999))
+                  >= (states('sensor.time_until_offpeak_rate') | float(9999)) }}
+          sequence:
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.battery_mode_v2
+              data:
+                option: "Discharge"
+
+        - alias: "Charge before peak"
+          conditions:
+            - condition: template
+              value_template: >
+                {{ (states('sensor.time_to_fully_charge') | float(9999))
+                  >= (states('sensor.time_until_peak_rate') | float(9999)) }}
+          sequence:
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.battery_mode_v2
+              data:
+                option: "Charge"
+
+      default:
+        - alias: "Otherwise idle"
+          service: input_select.select_option
+          target:
+            entity_id: input_select.battery_mode_v2
+          data:
+            option: "Idle"

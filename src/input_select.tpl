@@ -14,3 +14,11 @@ battery_mode:
     - Idle
     - Charge
     - Discharge
+
+battery_mode_v2:
+  name: Battery mode V2
+  icon: mdi:home-battery
+  options:
+    - Idle
+    - Charge
+    - Discharge
