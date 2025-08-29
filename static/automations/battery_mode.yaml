@@ -60,8 +60,9 @@
           conditions:
             - condition: template
               value_template: >
-                {{ (states('sensor.time_to_fully_discharge') | float(9999))
-                  >= (states('sensor.time_until_offpeak_rate') | float(9999)) }}
+                {% set ttd = states('sensor.time_to_fully_discharge') | float(9999) %}
+                {% set tuo = states('sensor.time_until_offpeak_rate') | float(9999) %}
+                {{ ttd >= tuo and tuo > 0 }}
           sequence:
             - service: input_select.select_option
               target:
@@ -73,8 +74,9 @@
           conditions:
             - condition: template
               value_template: >
-                {{ (states('sensor.time_to_fully_charge') | float(9999))
-                  >= (states('sensor.time_until_peak_rate') | float(9999)) }}
+                {% set ttc = states('sensor.time_to_fully_charge') | float(9999) %}
+                {% set tup = states('sensor.time_until_peak_rate') | float(9999) %}
+                {{ ttc >= tup and tup > 0 }}
           sequence:
             - service: input_select.select_option
               target:
