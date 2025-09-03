@@ -117,11 +117,8 @@
       "name": "Office",
       "other_entities": [
         "climate.server_cabinet",
-        "climate.router",
         "climate.office_ac",
-        "sensor.a1_end_time",
-        "switch.office",
-        "sensor.river_2_max_battery_level"
+        "light.elgato_keylight_air"
       ],
       "badges": [
         "sensor.office_sensor_temperature",
