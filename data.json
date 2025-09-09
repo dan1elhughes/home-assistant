@@ -78,6 +78,12 @@
       "badges": [
         "sensor.bedroom_sensor_temperature",
         "sensor.bedroom_sensor_humidity"
+      ],
+      "plants": [
+        {
+          "entity": "plant.bedroom_calathea_orbifolia",
+          "indicator": "light.apollo_plt_1_f755b8_rgb_light"
+        }
       ]
     },
     {
