@@ -191,20 +191,6 @@ views:
           - type: tile
             entity: schedule.battery
 
-      - type: grid
-        cards:
-          - type: heading
-            heading: Battery v2
-          - type: tile
-            entity: sensor.time_until_offpeak_rate
-          - type: tile
-            entity: sensor.time_to_fully_discharge
-          - type: tile
-            entity: sensor.time_until_peak_rate
-          - type: tile
-            entity: sensor.time_to_fully_charge
-          - type: tile
-            entity: input_select.battery_mode_v2
 
       - type: grid
         visibility:
