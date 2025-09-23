@@ -36,6 +36,15 @@ views:
           - type: tile
             entity: group.room_lights
 
+          - type: tile
+            entity: sensor.dishwasher_remaining_program_time
+            name: Dishwasher
+            icon: mdi:dishwasher
+          - type: tile
+            entity: sensor.washer_dryer_remaining_program_time
+            name: Washing machine
+            icon: mdi:washing-machine
+
           - type: custom:calendar-card-pro
             entities:
               - calendar.k_d
