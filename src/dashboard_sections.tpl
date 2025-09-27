@@ -367,23 +367,6 @@ views:
             gap: '0'
             padding: '0'
             child-padding: '0'
-            title: Dehumidifier
-            cards:
-              - type: entity
-                entity: input_number.dehumidifier_peak
-                name: Peak
-                secondary_info: none
-              - type: entity
-                entity: input_number.dehumidifier_offpeak
-                name: Off peak
-                secondary_info: none
-
-      - type: grid
-        cards:
-          - type: custom:expander-card
-            gap: '0'
-            padding: '0'
-            child-padding: '0'
             title: Batteries
             cards:
             - type: custom:auto-entities

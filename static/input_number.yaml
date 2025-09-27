@@ -19,20 +19,6 @@ thermostat_low:
   max: 18
   step: 0.5
 
-dehumidifier_peak:
-  name: Dehumidifier peak humidity
-  unit_of_measurement: "%"
-  min: 0
-  max: 100
-  step: 1
-
-dehumidifier_offpeak:
-  name: Dehumidifier off-peak humidity
-  unit_of_measurement: "%"
-  min: 0
-  max: 100
-  step: 1
-
 battery_export_threshold:
   name: Battery export threshold
   unit_of_measurement: "Wh"

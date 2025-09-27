@@ -138,7 +138,6 @@
       "id": "conservatory",
       "icon": "mdi:flower",
       "name": "Conservatory",
-      "other_entities": ["humidifier.conservatory_dehumidifier"],
       "badges": [
         "sensor.conservatory_sensor_temperature",
         "sensor.conservatory_sensor_humidity"
@@ -207,13 +206,6 @@
         "switch.id3_intelligent_smart_charge",
         "sensor.wp22lxc_battery"
       ]
-    }
-  ],
-  "toggles": [
-    {
-      "ieee": "00:12:4b:00:29:0f:e9:89",
-      "name": "Dehumidifier",
-      "target": "switch.dehumidifier"
     }
   ],
   "leak_sensors": [
