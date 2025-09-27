@@ -244,5 +244,25 @@
       "source": "light.patio_light",
       "targets": ["light.garden_lights"]
     }
+  ],
+  "multiLightDimmers": [
+    {
+      "id": "dan_bedroom_dimmer",
+      "name": "Dan bedroom dimmer",
+      "sr5br_device": "914fcb86c13b87455e78286bfd0f077c",
+      "light_1": "light.bedroom_lamp_left",
+      "light_2": "light.bedroom_lamp_right",
+      "light_3": "light.bedroom_cupboard_light",
+      "light_4": "light.bedroom_ceiling_light"
+    },
+    {
+      "id": "katie_bedroom_dimmer",
+      "name": "Katie bedroom dimmer",
+      "sr5br_device": "22a8a807f800b25663a23024b121a4a6",
+      "light_1": "light.bedroom_lamp_left",
+      "light_2": "light.bedroom_lamp_right",
+      "light_3": "light.bedroom_cupboard_light",
+      "light_4": "light.bedroom_ceiling_light"
+    }
   ]
 }

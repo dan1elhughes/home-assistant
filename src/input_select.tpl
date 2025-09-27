@@ -22,3 +22,14 @@ battery_mode_v2:
     - Idle
     - Charge
     - Discharge
+
+{% for x in multiLightDimmers %}
+{{ x.id }}:
+  name: {{ x.name }}
+  icon: mdi:lightbulb-multiple
+  options:
+    - 1
+    - 2
+    - 3
+    - 4
+{% endfor %}
