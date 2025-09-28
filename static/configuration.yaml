@@ -73,3 +73,6 @@ http:
 
 # https://github.com/v6ak/v6-quietdrift
 v6_quietdrift:
+
+zha:
+  custom_quirks_path: /config/zha_quirks/
