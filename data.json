@@ -77,7 +77,8 @@
       "other_entities": ["cover.curtains", "fan.bedroom_fan"],
       "badges": [
         "sensor.bedroom_sensor_temperature",
-        "sensor.bedroom_sensor_humidity"
+        "sensor.bedroom_sensor_humidity",
+        "climate.bedroom_heater_heater"
       ],
       "plants": [
         {
