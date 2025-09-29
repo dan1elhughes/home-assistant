@@ -1,0 +1,15 @@
+- alias: "Empty dust bin daily"
+  mode: single
+  trigger:
+    - platform: time
+      at: "09:00:00"
+  condition:
+    - alias: "Automations enabled"
+      condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+  action:
+    - alias: "Press empty dust bin button"
+      service: button.press
+      target:
+        entity_id: button.empty_dust_bin
