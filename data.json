@@ -74,7 +74,11 @@
       "lights": "light.bedroom_lights",
       "ceiling": ["light.bedroom_ceiling_light"],
       "name": "Bedroom",
-      "other_entities": ["cover.curtains", "fan.bedroom_fan", "climate.bedroom_heater_heater"],
+      "other_entities": [
+        "cover.curtains",
+        "fan.bedroom_fan",
+        "climate.bedroom_heater_heater"
+      ],
       "badges": [
         "sensor.bedroom_sensor_temperature",
         "sensor.bedroom_sensor_humidity"
@@ -147,7 +151,8 @@
           "entity": "plant.conservatory_monstera_deliciosa",
           "indicator": "light.apollo_plt_1_f59ec0_rgb_light"
         }
-      ]
+      ],
+      "other_entities": ["climate.conservatory_heater_heater"]
     },
     {
       "id": "barn",
