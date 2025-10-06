@@ -81,7 +81,8 @@
       ],
       "badges": [
         "sensor.bedroom_sensor_temperature",
-        "sensor.bedroom_sensor_humidity"
+        "sensor.bedroom_sensor_humidity",
+        "sensor.aranet_sensor_carbon_dioxide"
       ],
       "plants": [
         {
@@ -133,9 +134,8 @@
         "light.elgato_keylight_air"
       ],
       "badges": [
-        "sensor.office_sensor_temperature",
-        "sensor.office_sensor_humidity",
-        "sensor.office_sensor_carbon_dioxide"
+        "sensor.office_ac_temperature",
+        "sensor.apollo_msr_2_1517ac_co2"
       ]
     },
     {
