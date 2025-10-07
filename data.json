@@ -152,7 +152,10 @@
           "indicator": "light.apollo_plt_1_f59ec0_rgb_light"
         }
       ],
-      "other_entities": ["climate.conservatory_heater_heater"]
+      "other_entities": [
+        "climate.conservatory_heater_heater",
+        "switch.dehumidifier"
+      ]
     },
     {
       "id": "barn",
