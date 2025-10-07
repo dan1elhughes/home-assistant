@@ -416,6 +416,10 @@ views:
       - type: entity
         entity: {{ id }}
       {% endfor %}
+      {% if room.co2_sensor %}
+      - type: entity
+        entity: sensor.{{ room.co2_sensor }}_co2
+      {% endif %}
       {% if room.ceiling %}
       {% for light_id in room.ceiling %}
       - type: entity
