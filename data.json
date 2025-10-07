@@ -265,5 +265,6 @@
       "light_3": "light.bedroom_cupboard_light",
       "light_4": "light.bedroom_ceiling_light"
     }
-  ]
+  ],
+  "co2_sensors": ["apollo_msr_2_1517ac", "apollo_msr_2_15c4e4"]
 }

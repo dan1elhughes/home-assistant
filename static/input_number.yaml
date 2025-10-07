@@ -43,3 +43,19 @@ battery_power_rate_kw:
   step: 0.1
   initial: 9.6
   unit_of_measurement: "kW"
+
+co2_yellow_threshold:
+  name: CO2 yellow threshold
+  min: 0
+  max: 10000
+  step: 50
+  initial: 1000
+  unit_of_measurement: "ppm"
+
+co2_red_threshold:
+  name: CO2 red threshold
+  min: 0
+  max: 10000
+  step: 50
+  initial: 2000
+  unit_of_measurement: "ppm"
