@@ -265,5 +265,6 @@
       "light_3": "light.bedroom_cupboard_light",
       "light_4": "light.bedroom_ceiling_light"
     }
-  ]
+  ],
+  "autoOnAtOffpeak": ["switch.dehumidifier", "switch.heated_airer"]
 }
