@@ -57,5 +57,5 @@ co2_red_threshold:
   min: 0
   max: 10000
   step: 50
-  initial: 2000
+  initial: 1400
   unit_of_measurement: "ppm"
