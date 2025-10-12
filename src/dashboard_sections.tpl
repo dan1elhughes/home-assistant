@@ -92,34 +92,6 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: Next Saving Session
-            heading_style: title
-            icon: mdi:lightning-bolt
-            badges:
-              - type: entity
-                entity: sensor.next_saving_session
-                show_icon: false
-        visibility:
-          - condition: state
-            entity: sensor.next_saving_session
-            state_not: unknown
-      - type: grid
-        cards:
-          - type: heading
-            heading: Next Free Electricity
-            heading_style: title
-            icon: mdi:flash
-            badges:
-              - type: entity
-                entity: sensor.next_free_electricity
-                show_icon: false
-        visibility:
-          - condition: state
-            entity: sensor.next_free_electricity
-            state_not: unknown
-      - type: grid
-        cards:
-          - type: heading
             heading: Battery
             heading_style: title
             icon: mdi:home-battery

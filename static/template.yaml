@@ -3,14 +3,6 @@
       state: >
         {{ states.person | selectattr('state', 'equalto', 'home') | list | count }}
 
-    - name: Next saving session
-      state: >
-        {{ state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'next_joined_event_start') }}
-
-    - name: Next free electricity
-      state: >
-        {{ state_attr('binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session', 'next_event_start') }}
-
     - name: Accumulative electricity cost without standing charge
       icon: mdi:currency-gbp
       unit_of_measurement: "£"
