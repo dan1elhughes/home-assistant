@@ -60,12 +60,6 @@
           | count > 0
         }}
 
-    - name: Octopus cheap rate
-      state: >
-        {% set rate = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float %}
-        {% set threshold = states('input_number.octopus_cheap_threshold') | float / 100 %}
-        {{ rate < threshold }}
-
     - name: Battery exporting
       state: >
         {{ states('sensor.envoy_122322027694_current_power_consumption') | float * 1000 < states('input_number.battery_export_threshold') | float }}

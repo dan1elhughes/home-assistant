@@ -27,15 +27,6 @@ battery_export_threshold:
   step: 1000
   initial: -5000
 
-octopus_cheap_threshold:
-  name: Cheap electricity threshold
-  min: 0
-  max: 50
-  step: 1
-  unit_of_measurement: "p"
-  icon: mdi:flash
-  initial: 20
-
 battery_power_rate_kw:
   name: Battery power rate
   min: 0

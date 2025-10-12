@@ -3,7 +3,7 @@
   trigger:
     - platform: state
       entity_id:
-        - binary_sensor.octopus_cheap_rate
+        - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
         - binary_sensor.battery_exporting
         - select.myenergi_zappi_charge_mode
   action:
@@ -14,9 +14,9 @@
               condition: state
               entity_id: binary_sensor.battery_exporting
               state: "off"
-            - alias: "Cheap rate"
+            - alias: "Off peak"
               condition: state
-              entity_id: binary_sensor.octopus_cheap_rate
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "on"
             - alias: "Zappi currently stopped"
               condition: state
@@ -32,9 +32,9 @@
 
         - alias: "Stop"
           conditions:
-            - alias: "Not cheap rate"
+            - alias: "Not off peak"
               condition: state
-              entity_id: binary_sensor.octopus_cheap_rate
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "off"
             - alias: "Zappi currently fast"
               condition: state

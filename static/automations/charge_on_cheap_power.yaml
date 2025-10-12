@@ -1,7 +1,7 @@
-- alias: "Charge on peaktime cheap rate power"
+- alias: "Charge on off peak power"
   trigger:
     - platform: state
-      entity_id: binary_sensor.octopus_cheap_rate
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
       to:
         - "on"
         - "off"
@@ -18,7 +18,7 @@
     - choose:
         - conditions:
             - condition: state
-              entity_id: binary_sensor.octopus_cheap_rate
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "on"
           sequence:
             - service: input_select.select_option
@@ -38,7 +38,7 @@
                 option: "Charge"
         - conditions:
             - condition: state
-              entity_id: binary_sensor.octopus_cheap_rate
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "off"
             - condition: state
               entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
