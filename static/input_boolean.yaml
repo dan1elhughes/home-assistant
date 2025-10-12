@@ -22,6 +22,3 @@ wake_up_katie_enabled:
 motion_sensors_enabled:
   name: Motion sensors enabled
   icon: mdi:motion-sensor
-
-charge_on_cheap_rate:
-  name: Charge house battery on cheap rate

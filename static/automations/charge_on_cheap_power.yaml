@@ -12,9 +12,6 @@
         - "off"
   condition:
     - condition: state
-      entity_id: input_boolean.charge_on_cheap_rate
-      state: "on"
-    - condition: state
       entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
       state: "off"
   action:
