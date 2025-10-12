@@ -23,6 +23,8 @@ views:
                 name: Garden
               - entity: sensor.kingsclere_glass
                 name: Glass
+              - entity: sensor.kingsclere_food
+                name: Food
 
           - type: weather-forecast
             show_current: true
