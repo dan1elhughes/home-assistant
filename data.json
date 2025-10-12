@@ -211,9 +211,9 @@
         "select.myenergi_zappi_charge_mode",
         "automation.zappi_control",
         "sensor.id3_battery_level",
-        "switch.id3_intelligent_smart_charge",
-        "sensor.wp22lxc_battery",
         "switch.dehumidifier"
+        "switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge",
+        "sensor.wp22lxc_battery"
       ]
     }
   ],

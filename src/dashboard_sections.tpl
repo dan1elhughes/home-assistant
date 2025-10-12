@@ -214,7 +214,7 @@ views:
       - type: grid
         visibility:
           - condition: state
-            entity: switch.id3_intelligent_smart_charge
+            entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
             state: "on"
         cards:
           - type: heading
@@ -222,15 +222,15 @@ views:
             heading_style: title
             icon: mdi:ev-station
           - type: tile
-            entity: number.id3_intelligent_charge_target
+            entity: number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target
             name: Target
           - type: tile
-            entity: select.id3_intelligent_target_time
+            entity: select.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_target_time
             name: Time
           - type: markdown
             content: >+
               {% raw %}
-              {% set dispatches = state_attr('binary_sensor.id3_intelligent_dispatching', 'planned_dispatches') %}
+              {% set dispatches = state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'planned_dispatches') %}
               {% if dispatches %}
               {% set ns = namespace(merged=[], current_start=none, current_end=none) %}
 
