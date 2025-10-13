@@ -265,5 +265,5 @@
       "light_4": "light.bedroom_ceiling_light"
     }
   ],
-  "autoOnAtOffpeak": ["switch.dehumidifier", "switch.heated_airer"]
+  "offpeak": ["switch.dehumidifier", "switch.heated_airer"]
 }
