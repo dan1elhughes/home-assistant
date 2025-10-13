@@ -15,3 +15,11 @@
   max_temp: 100
   min_cycle_duration:
     minutes: 5
+
+- platform: generic_thermostat
+  name: "Virtual central heating"
+  heater: input_boolean.central_heating_intended_state
+  target_sensor: sensor.living_room_sensor_temperature
+  min_temp: 10
+  max_temp: 25
+  precision: 0.5

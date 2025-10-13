@@ -1,0 +1,17 @@
+- alias: Central heating
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_boolean.central_heating_intended_state
+    - platform: state
+      entity_id: sensor.central_heating_hvac_action
+  condition:
+    - condition: template
+      value_template: >-
+        {% set intended = 'heating' if is_state('input_boolean.central_heating_intended_state','on') else 'off' %}
+        {% set action = states('sensor.central_heating_hvac_action') %}
+        {{ action in ['off','heating'] and action != intended }}
+  action:
+    - service: switch.toggle
+      target:
+        entity_id: switch.central_heating_control
