@@ -17,7 +17,7 @@
         temperature: >
           {{ states("input_number.thermostat_high") | float }}
       target:
-        entity_id: climate.central_heating_thermostat
+        entity_id: climate.virtual_central_heating
 
 - alias: "Heating schedule: Low"
   mode: single
@@ -35,4 +35,4 @@
         temperature: >
           {{ states("input_number.thermostat_low") | float }}
       target:
-        entity_id: climate.central_heating_thermostat
+        entity_id: climate.virtual_central_heating
