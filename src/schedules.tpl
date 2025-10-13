@@ -14,5 +14,5 @@ heating:
   {% for day in daysOfTheWeek %}
   {{ day }}:
     - from: "06:00:00"
-      to: "19:00:00"
+      to: "20:00:00"
   {% endfor %}
