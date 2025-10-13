@@ -65,7 +65,7 @@
         "light.living_room_rear_ceiling_light"
       ],
       "name": "Living room",
-      "badges": ["climate.central_heating_thermostat"],
+      "badges": ["sensor.living_room_sensor_humidity"],
       "co2_sensor": "apollo_msr_2_15c4e4"
     },
     {
