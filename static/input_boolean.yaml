@@ -26,3 +26,7 @@ central_heating_intended_state:
 notify_on_battery_schedule_changed:
   name: Notify on battery schedule changed
   icon: mdi:bell
+
+smart_charge_tonight:
+  name: Smart charge tonight
+  icon: mdi:car-electric

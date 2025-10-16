@@ -1,0 +1,24 @@
+- alias: "Smart charge tonight"
+  mode: single
+  trigger:
+    - platform: time
+      at: "23:00:00"
+  condition:
+    - alias: "Smart charge tonight enabled"
+      condition: state
+      entity_id: input_boolean.smart_charge_tonight
+      state: "on"
+  action:
+    - alias: "Enable smart charge"
+      service: switch.turn_on
+      target:
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - alias: "Notify user"
+      service: notify.dan
+      data:
+        title: "Smart charge enabled"
+        message: "Smart charge has been enabled for tonight"
+        data:
+          notification_icon: "mdi:car-electric"
+          channel: "smart_charge"
+          tag: smart_charge_tonight
