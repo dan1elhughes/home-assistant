@@ -30,10 +30,11 @@ command_line:
   - sensor:
       name: "Enphase JWT"
       command: "/config/scripts/get-enphase-token.sh"
-      scan_interval: 43200 # every 12 hours
+      scan_interval: 900 # every 15 minutes
       value_template: "{{ value_json.status }}"
       json_attributes:
         - token
+        - xsrf
 
 lovelace:
   mode: storage
