@@ -1,8 +1,14 @@
 name: "Downstairs on"
 entities:
-  light.kitchen_lights: "on"
-  light.dining_room_lights: "on"
-  light.living_room_lights: "on"
+  light.kitchen_lights:
+    state: "on"
+    brightness: 255
+  light.dining_room_lights:
+    state: "on"
+    brightness: 255
+  light.living_room_lights:
+    state: "on"
+    brightness: 255
   light.utility_room_ceiling_light:
     state: "on"
     brightness: 50

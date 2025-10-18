@@ -64,6 +64,7 @@
         "light.living_room_front_ceiling_light",
         "light.living_room_rear_ceiling_light"
       ],
+      "other_entities": ["scene.downstairs_on", "scene.movie_mode"],
       "name": "Living room",
       "badges": ["climate.virtual_central_heating"],
       "co2_sensor": "apollo_msr_2_15c4e4"

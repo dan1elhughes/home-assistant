@@ -4,10 +4,25 @@
     - platform: state
       entity_id: media_player.shield_android_tv
       attribute: app_name
-      to: "com.plexapp.android"
+      to: "org.jellyfin.androidtv"
   condition:
     - condition: state
       entity_id: input_boolean.automations
       state: "on"
   action:
     - scene: scene.movie_mode
+
+- alias: "Movie mode - deactivate"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: media_player.shield_android_tv
+      attribute: app_name
+      from: "org.jellyfin.androidtv"
+      to: "com.google.android.tvlauncher"
+  condition:
+    - condition: state
+      entity_id: input_boolean.automations
+      state: "on"
+  action:
+    - scene: scene.downstairs_on

@@ -9,12 +9,14 @@ entities:
   light.kitchen_ceiling_lights: "off"
 
   # Living room
-  light.living_room_lamp: "off"
   light.side_table: "off"
 
   light.tv_light:
     state: "on"
-    brightness: 191 # 75%
+    brightness: 168 # 66%
   light.living_room_side_light:
     state: "on"
-    brightness: 191 # 75%
+    brightness: 168 # 66%
+  light.living_room_lamp:
+    state: "on"
+    brightness: 168 # 66%
