@@ -1,15 +1,15 @@
 - alias: Battery control
   trigger:
     - platform: state
-      entity_id: input_select.battery_mode
+      entity_id: input_boolean.battery_charge
     - platform: time_pattern
       minutes: "/10"
   action:
     - choose:
         - conditions:
             - condition: state
-              entity_id: input_select.battery_mode
-              state: "Idle"
+              entity_id: input_boolean.battery_charge
+              state: off
           sequence:
             - service: script.toggle_enphase_charge_from_grid
               data:
@@ -17,8 +17,8 @@
 
         - conditions:
             - condition: state
-              entity_id: input_select.battery_mode
-              state: "Charge"
+              entity_id: input_boolean.battery_charge
+              state: on
           sequence:
             - service: script.toggle_enphase_charge_from_grid
               data:

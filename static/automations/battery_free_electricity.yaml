@@ -10,18 +10,14 @@
               entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
               state: "on"
           sequence:
-            - service: input_select.select_option
+            - service: switch.turn_on
               target:
-                entity_id: input_select.battery_mode
-              data:
-                option: "Charge"
+                entity_id: input_boolean.battery_charge
         - conditions:
             - condition: state
               entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
               state: "off"
           sequence:
-            - service: input_select.select_option
+            - service: switch.turn_off
               target:
-                entity_id: input_select.battery_mode
-              data:
-                option: "Idle"
+                entity_id: input_boolean.battery_charge

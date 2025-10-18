@@ -7,20 +7,6 @@ active_room:
     {% endfor %}
     - out
 
-battery_mode:
-  name: Battery mode
-  icon: mdi:home-battery
-  options:
-    - Idle
-    - Charge
-
-battery_mode_v2:
-  name: Battery mode V2
-  icon: mdi:home-battery
-  options:
-    - Idle
-    - Charge
-
 {% for x in multiLightDimmers %}
 {{ x.id }}:
   name: {{ x.name }}
