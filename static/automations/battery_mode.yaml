@@ -14,10 +14,6 @@
             - service: script.toggle_enphase_charge_from_grid
               data:
                 enabled: "false"
-            - delay: "00:00:01"
-            - service: script.toggle_enphase_discharge_to_grid
-              data:
-                enabled: "false"
 
         - conditions:
             - condition: state
@@ -25,22 +21,5 @@
               state: "Charge"
           sequence:
             - service: script.toggle_enphase_charge_from_grid
-              data:
-                enabled: "true"
-            - delay: "00:00:01"
-            - service: script.toggle_enphase_discharge_to_grid
-              data:
-                enabled: "false"
-
-        - conditions:
-            - condition: state
-              entity_id: input_select.battery_mode
-              state: "Discharge"
-          sequence:
-            - service: script.toggle_enphase_charge_from_grid
-              data:
-                enabled: "false"
-            - delay: "00:00:01"
-            - service: script.toggle_enphase_discharge_to_grid
               data:
                 enabled: "true"

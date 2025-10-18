@@ -13,7 +13,6 @@ battery_mode:
   options:
     - Idle
     - Charge
-    - Discharge
 
 battery_mode_v2:
   name: Battery mode V2
@@ -21,7 +20,6 @@ battery_mode_v2:
   options:
     - Idle
     - Charge
-    - Discharge
 
 {% for x in multiLightDimmers %}
 {{ x.id }}:

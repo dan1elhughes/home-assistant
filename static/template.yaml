@@ -75,6 +75,7 @@
       state: "{{ this.state | int(0) + ([0, (trigger.to_state.state | int(0) - trigger.from_state.state | int(0))] | max) }}"
       device_class: energy
       state_class: total_increasing
+
     - name: "Battery discharge"
       unique_id: calculated_envoy_battery_discharge
       unit_of_measurement: "Wh"
