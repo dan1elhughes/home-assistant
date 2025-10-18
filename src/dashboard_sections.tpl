@@ -204,14 +204,6 @@ views:
             graph: none
 
       - type: grid
-        cards:
-          - type: heading
-            heading: Battery schedule
-          - type: tile
-            entity: schedule.battery
-
-
-      - type: grid
         visibility:
           - condition: state
             entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
