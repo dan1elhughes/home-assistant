@@ -9,7 +9,7 @@
         - conditions:
             - condition: state
               entity_id: input_boolean.battery_charge
-              state: off
+              state: "off"
           sequence:
             - service: script.toggle_enphase_charge_from_grid
               data:
@@ -18,7 +18,7 @@
         - conditions:
             - condition: state
               entity_id: input_boolean.battery_charge
-              state: on
+              state: "on"
           sequence:
             - service: script.toggle_enphase_charge_from_grid
               data:
