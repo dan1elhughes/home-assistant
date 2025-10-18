@@ -52,14 +52,6 @@
       state: >
         {{ states('sensor.occupant_count') | int <= 1 }}
 
-    - name: Restart required
-      state: >
-        {{  states.update
-          | selectattr('attributes.release_summary','eq','<ha-alert alert-type=\'error\'>Restart of Home Assistant required</ha-alert>')
-          | list
-          | count > 0
-        }}
-
     - name: Battery exporting
       state: >
         {{ states('sensor.envoy_122322027694_current_power_consumption') | float * 1000 < states('input_number.battery_export_threshold') | float }}
