@@ -24,10 +24,6 @@ timer: !include timer.yaml
 
 command_line:
   - sensor:
-      name: BBC news
-      command: curl -s https://www.bbc.co.uk/programmes/p002vsn1/episodes/player | grep '"@type":"RadioSeries"' | jq -r '.episode[0].url' | xargs curl -s | grep 'audio-nondrm-download/' | sed -n 's/.*href="\/\/\([^"]*\)".*/https:\/\/\1/p'
-
-  - sensor:
       name: "Enphase JWT"
       command: "/config/scripts/get-enphase-token.sh"
       scan_interval: 900 # every 15 minutes
