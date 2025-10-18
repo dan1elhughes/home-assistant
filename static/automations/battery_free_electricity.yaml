@@ -1,0 +1,27 @@
+- alias: "Battery: free electricity sessions"
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+      to: null
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+              state: "on"
+          sequence:
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.battery_mode
+              data:
+                option: "Charge"
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+              state: "off"
+          sequence:
+            - service: input_select.select_option
+              target:
+                entity_id: input_select.battery_mode
+              data:
+                option: "Idle"
