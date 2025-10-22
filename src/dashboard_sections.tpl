@@ -254,6 +254,13 @@ views:
               {% endif %}
               {% endraw %}
 
+      - type: grid
+        cards:
+          - type: custom:calendar-card-pro
+            entities:
+              - calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions
+              - calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+
   - type: sections
     max_columns: 4
     title: Devices
