@@ -22,4 +22,3 @@
   target_sensor: sensor.living_room_sensor_temperature
   min_temp: 10
   max_temp: 25
-  precision: 0.5
