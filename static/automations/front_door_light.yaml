@@ -1,39 +1,13 @@
-- alias: "Front door on when motion detected"
-  mode: single
-  triggers:
-    - trigger: state
-      entity_id: binary_sensor.front_door_motion
-      from: "off"
-      to: "on"
+- alias: Front Door Light Motion
+  mode: restart
+  trigger:
+    - platform: event
+      event_type: front_door_motion
   action:
     - service: light.turn_on
       target:
         entity_id: light.front_door_light
-
-- alias: "Front door on at sunset if nobody home"
-  mode: single
-  conditions:
-    - condition: state
-      entity_id: group.presence_home
-      state: "away"
-  triggers:
-    - trigger: sun
-      event: sunset
-  action:
-    - service: light.turn_on
-      target:
-        entity_id: light.front_door_light
-
-- alias: "Front door off at midnight or motion cleared"
-  mode: single
-  triggers:
-    - trigger: time
-      at: "00:00:00"
-    - trigger: state
-      entity_id: binary_sensor.front_door_motion
-      from: "on"
-      to: "off"
-  action:
+    - delay: "00:05:00"
     - service: light.turn_off
       target:
         entity_id: light.front_door_light
