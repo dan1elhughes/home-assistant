@@ -32,6 +32,20 @@ command_line:
         - token
         - xsrf
 
+  - sensor:
+      name: "Enphase Schedules"
+      command: >
+        /bin/bash -c 'ENPHASE_AUTH="{{ state_attr("sensor.enphase_jwt", "token") }}"
+        ENPHASE_XSRF="{{ state_attr("sensor.enphase_jwt", "xsrf") }}"
+        /config/scripts/get_enphase_schedules_json.sh'
+      scan_interval: 30
+      value_template: "OK"
+      json_attributes:
+        - cfg
+        - dtg
+        - rbd
+        - other
+
 lovelace:
   mode: storage
   dashboards:
