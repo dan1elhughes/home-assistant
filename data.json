@@ -82,8 +82,8 @@
         "climate.bedroom_heater_heater"
       ],
       "badges": [
-        "sensor.bedroom_sensor_temperature",
-        "sensor.bedroom_sensor_humidity",
+        "sensor.aranet_sensor_temperature",
+        "sensor.aranet_sensor_humidity",
         "sensor.aranet_sensor_carbon_dioxide"
       ],
       "plants": [
