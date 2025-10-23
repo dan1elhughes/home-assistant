@@ -45,8 +45,7 @@
       "entities": [
         "light.office_lamp",
         "light.desk_light",
-        "light.office_leds_light",
-        "light.elgato_keylight_air"
+        "light.office_leds_light"
       ],
       "name": "Office lights"
     }
