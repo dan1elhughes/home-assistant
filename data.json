@@ -253,7 +253,8 @@
       "light_1": "light.bedroom_lamp_left",
       "light_2": "light.bedroom_lamp_right",
       "light_3": "light.bedroom_cupboard_light",
-      "light_4": "light.bedroom_ceiling_light"
+      "light_4": "light.bedroom_ceiling_light",
+      "light_group": "light.bedroom_lights"
     },
     {
       "id": "katie_bedroom_dimmer",
@@ -262,7 +263,8 @@
       "light_1": "light.bedroom_lamp_left",
       "light_2": "light.bedroom_lamp_right",
       "light_3": "light.bedroom_cupboard_light",
-      "light_4": "light.bedroom_ceiling_light"
+      "light_4": "light.bedroom_ceiling_light",
+      "light_group": "light.bedroom_lights"
     }
   ],
   "offpeak": ["switch.dehumidifier", "switch.heated_airer"]
