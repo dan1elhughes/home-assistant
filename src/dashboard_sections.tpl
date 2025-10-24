@@ -106,6 +106,7 @@ views:
               - type: vertical-stack
                 cards:
                   - type: tile
+                    name: Intent
                     entity: sensor.current_energy_intent
                   - type: tile
                     name: Rate
