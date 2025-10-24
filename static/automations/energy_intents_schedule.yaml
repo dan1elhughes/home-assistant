@@ -12,19 +12,21 @@
     - variables:
         simplified_events: >
           {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
-          {% for event in events %}
-            {% if event.start and event.end %}
-              {% set start_dt = as_datetime(event.start) %}
-              {% set end_dt = as_datetime(event.end) %}
-              {
-                'start_time': '{{ start_dt.strftime('%H:%M') }}',
-                'end_time': '{{ end_dt.strftime('%H:%M') }}',
-                'weekday': {{ start_dt.weekday() + 1 }},
-                'schedule_type': '{{ 'CFG' if event.intent == 'Charge' else 'DTG' }}',
-                'limit': {{ 100 if event.intent == 'Charge' else 6 }}
-              }{{ ',' if not loop.last }}
-            {% endif %}
-          {% endfor %}
+          [
+            {% for event in events %}
+              {% if event.start and event.end %}
+                {% set start_dt = as_datetime(event.start) %}
+                {% set end_dt = as_datetime(event.end) %}
+                {
+                  'start_time': '{{ start_dt.strftime('%H:%M') }}',
+                  'end_time': '{{ end_dt.strftime('%H:%M') }}',
+                  'weekday': {{ start_dt.weekday() + 1 }},
+                  'schedule_type': '{{ 'CFG' if event.intent == 'Charge' else 'DTG' }}',
+                  'limit': {{ 100 if event.intent == 'Charge' else 6 }}
+                }{% if not loop.last %},{% endif %}
+              {% endif %}
+            {% endfor %}
+          ]
     - repeat:
         for_each: "{{ simplified_events }}"
         sequence:
