@@ -1,0 +1,58 @@
+- alias: "Update Enphase Schedule on Energy Intents Change"
+  description: "Triggers when sensor.energy_intents changes and updates the Enphase schedule."
+  trigger:
+    - platform: state
+      entity_id: sensor.energy_intents
+  condition: []
+  action:
+    - service: script.enphase_delete_schedule
+      data:
+        schedule_type: "all"
+    - delay: "00:00:02"
+    - variables:
+        simplified_events: >
+          {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
+          {% for event in events %}
+            {% if event.start and event.end %}
+              {% set start_dt = as_datetime(event.start) %}
+              {% set end_dt = as_datetime(event.end) %}
+              {
+                'start_time': '{{ start_dt.strftime('%H:%M') }}',
+                'end_time': '{{ end_dt.strftime('%H:%M') }}',
+                'weekday': {{ start_dt.weekday() + 1 }},
+                'schedule_type': '{{ 'CFG' if event.intent == 'Charge' else 'DTG' }}',
+                'limit': {{ 100 if event.intent == 'Charge' else 6 }}
+              }{{ ',' if not loop.last }}
+            {% endif %}
+          {% endfor %}
+    - repeat:
+        for_each: "{{ simplified_events }}"
+        sequence:
+          - service: script.enphase_add_schedule
+            data:
+              start_time: "{{ repeat.item.start_time }}"
+              end_time: "{{ repeat.item.end_time }}"
+              schedule_type: "{{ repeat.item.schedule_type }}"
+              days: "{{ [repeat.item.weekday] | string }}"
+              limit: "{{ repeat.item.limit }}"
+          - delay: "00:00:01"
+    - service: notify.dan
+      data:
+        title: "Enphase Schedule Updated"
+        message: >
+          {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
+          {% if events %}
+            Energy Intents Schedule Updated:
+            {% for event in events %}
+              {% if event.start and event.end %}
+                {% set start_dt = as_datetime(event.start) %}
+                {% set end_dt = as_datetime(event.end) %}
+                {% set day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][start_dt.weekday()] %}
+                • {{ day_name }} {{ start_dt.strftime('%H:%M') }}-{{ end_dt.strftime('%H:%M') }}: {{ event.intent }}
+              {% endif %}
+            {% endfor %}
+          {% else %}
+            No energy intents events found.
+          {% endif %}
+
+  mode: single

@@ -122,7 +122,16 @@
             {% endif %}
           {% endfor %}
 
-          {{ ns.events | sort(attribute='start') }}
+          {% set ns_json = namespace(json_events=[]) %}
+          {% for event in ns.events | sort(attribute='start') %}
+            {% set ns_json.json_events = ns_json.json_events + [{
+              'start': event.start.isoformat(),
+              'end': event.end.isoformat(),
+              'title': event.title,
+              'intent': event.intent
+            }] %}
+          {% endfor %}
+          {{ ns_json.json_events | to_json }}
 
 - binary_sensor:
     - name: One-room mode
