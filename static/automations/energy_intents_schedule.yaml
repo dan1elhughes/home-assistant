@@ -40,11 +40,14 @@
           - delay: "00:00:01"
     - service: notify.dan
       data:
-        title: "Enphase Schedule Updated"
+        title: "Energy schedule updated"
+        data:
+          notification_icon: "mdi:calendar-sync"
+          channel: "energy_intents_schedule"
+          tag: energy_intents_schedule
         message: >
           {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
           {% if events %}
-            Energy Intents Schedule Updated:
             {% for event in events %}
               {% if event.start and event.end %}
                 {% set start_dt = as_datetime(event.start) %}
