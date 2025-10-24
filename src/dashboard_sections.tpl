@@ -39,21 +39,21 @@ views:
             entity: group.room_lights
 
           - type: tile
-            entity: sensor.dishwasher_remaining_program_time
+            entity: sensor.dishwasher_operation_state
             name: Dishwasher
             icon: mdi:dishwasher
             visibility:
               - condition: state
-                entity: sensor.dishwasher_remaining_program_time
-                state_not: unavailable
+                entity: sensor.dishwasher_operation_state
+                state_not: ready
           - type: tile
-            entity: sensor.washer_dryer_remaining_program_time
+            entity: sensor.washer_dryer_operation_state
             name: Washing machine
             icon: mdi:washing-machine
             visibility:
               - condition: state
-                entity: sensor.washer_dryer_remaining_program_time
-                state_not: unavailable
+                entity: sensor.washer_dryer_operation_state
+                state_not: inactive
 
           - type: custom:calendar-card-pro
             entities:
