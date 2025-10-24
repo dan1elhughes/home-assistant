@@ -47,6 +47,7 @@
       state: >
         {{ state_attr('weather.home', 'humidity') }}
 
+
 - binary_sensor:
     - name: One-room mode
       state: >
@@ -55,22 +56,3 @@
     - name: Battery exporting
       state: >
         {{ states('sensor.envoy_122322027694_current_power_consumption') | float * 1000 < states('input_number.battery_export_threshold') | float }}
-
-- trigger:
-    - platform: state
-      entity_id: sensor.envoy_122322027694_available_battery_energy
-
-  sensor:
-    - name: "Battery charge"
-      unique_id: calculated_envoy_battery_charge
-      unit_of_measurement: "Wh"
-      state: "{{ this.state | int(0) + ([0, (trigger.to_state.state | int(0) - trigger.from_state.state | int(0))] | max) }}"
-      device_class: energy
-      state_class: total_increasing
-
-    - name: "Battery discharge"
-      unique_id: calculated_envoy_battery_discharge
-      unit_of_measurement: "Wh"
-      state: "{{ this.state | int(0) - ([0, (trigger.to_state.state | int(0) - trigger.from_state.state | int(0))] | min) }}"
-      device_class: energy
-      state_class: total_increasing
