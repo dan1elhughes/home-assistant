@@ -74,6 +74,9 @@ enphase_add_schedule:
         user_id: 5185058
         battery_id: 5886607
         limit: "{{ limit }}"
+    - service: homeassistant.update_entity
+      target:
+        entity_id: sensor.enphase_schedules
   fields:
     start_time:
       description: "Start time (e.g. '02:00')"
