@@ -3,35 +3,21 @@
   trigger:
     - platform: state
       entity_id:
-        - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
-        - binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
-        - binary_sensor.battery_exporting
+        - sensor.current_energy_intent
         - select.myenergi_zappi_charge_mode
         - switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+        - binary_sensor.id3_charging_cable_connected
   action:
     - choose:
-        - alias: "Smart"
+        - alias: "ID3 Smart Charge"
           conditions:
-            - alias: "Smart charging enabled"
+            - alias: "ID3 smart charge enabled"
               condition: state
               entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
               state: "on"
-            - alias: "Zappi currently stopped"
+            - alias: "ID3 cable connected"
               condition: state
-              entity_id: select.myenergi_zappi_charge_mode
-              state: "Stopped"
-          sequence:
-            - alias: "Set Zappi to Fast"
-              service: select.select_option
-              target:
-                entity_id: select.myenergi_zappi_charge_mode
-              data:
-                option: "Fast"
-        - alias: "Free"
-          conditions:
-            - alias: "Free electricity session"
-              condition: state
-              entity_id: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+              entity_id: binary_sensor.id3_charging_cable_connected
               state: "on"
             - alias: "Zappi currently stopped"
               condition: state
@@ -44,16 +30,12 @@
                 entity_id: select.myenergi_zappi_charge_mode
               data:
                 option: "Fast"
-        - alias: "Start"
+        - alias: "Charge"
           conditions:
-            - alias: "Battery not exporting"
+            - alias: "Current energy intent is Charge"
               condition: state
-              entity_id: binary_sensor.battery_exporting
-              state: "off"
-            - alias: "Off peak"
-              condition: state
-              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
-              state: "on"
+              entity_id: sensor.current_energy_intent
+              state: "Charge"
             - alias: "Zappi currently stopped"
               condition: state
               entity_id: select.myenergi_zappi_charge_mode
@@ -65,13 +47,14 @@
                 entity_id: select.myenergi_zappi_charge_mode
               data:
                 option: "Fast"
-
         - alias: "Stop"
           conditions:
-            - alias: "Not off peak"
-              condition: state
-              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
-              state: "off"
+            - alias: "Current energy intent is not Charge"
+              condition: not
+              conditions:
+                - condition: state
+                  entity_id: sensor.current_energy_intent
+                  state: "Charge"
             - alias: "Zappi currently fast"
               condition: state
               entity_id: select.myenergi_zappi_charge_mode
