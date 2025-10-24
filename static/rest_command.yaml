@@ -58,3 +58,43 @@ enphase_battery_discharge_to_grid:
         "enabled": {{ discharge }}
       }
     }
+
+enphase_add_schedule:
+  url: "https://enlighten.enphaseenergy.com/service/batteryConfig/api/v1/battery/sites/{{ battery_id }}/schedules"
+  method: post
+  headers:
+    content-type: "application/json"
+    e-auth-token: "{{ state_attr('sensor.enphase_jwt', 'token') }}"
+    x-xsrf-token: "{{ state_attr('sensor.enphase_jwt', 'xsrf') }}"
+    username: "{{ user_id }}"
+    origin: "https://battery-profile-ui.enphaseenergy.com"
+    referer: "https://battery-profile-ui.enphaseenergy.com/"
+    cookie: "BP-XSRF-Token={{ state_attr('sensor.enphase_jwt', 'xsrf') }}"
+  payload: >
+    {
+      "timezone": "Europe/London",
+      "startTime": "{{ start_time[:5] }}",
+      "endTime": "{{ end_time[:5] }}",
+      "limit": {{ limit }},
+      "scheduleType": "{{ schedule_type }}",
+      "days": [ {% for d in days %}{{ d | int }}{% if not loop.last %}, {% endif %}{% endfor %} ]
+    }
+
+enphase_delete_schedule:
+  url: >-
+    https://enlighten.enphaseenergy.com/service/batteryConfig/api/v1/battery/sites/{{ battery_id }}/schedules/{{ schedule_id }}/delete
+  method: POST
+  headers:
+    Accept: "application/json, text/plain, */*"
+    Content-Type: "application/json"
+    Origin: "https://battery-profile-ui.enphaseenergy.com"
+    Referer: "https://battery-profile-ui.enphaseenergy.com/"
+    Username: "{{ user_id }}"
+    X-XSRF-Token: "{{ state_attr('sensor.enphase_jwt', 'xsrf') }}"
+    Cookie: "locale=en; BP-XSRF-Token={{ state_attr('sensor.enphase_jwt', 'xsrf') }};"
+    E-Auth-Token: "{{ state_attr('sensor.enphase_jwt', 'token') }}"
+    User-Agent: "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36"
+    Connection: "close"
+    TE: "trailers"
+  payload: "{}"
+  content_type: "application/json"

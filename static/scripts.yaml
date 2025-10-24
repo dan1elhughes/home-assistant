@@ -61,3 +61,106 @@ toggle_enphase_discharge_to_grid:
         battery_id: 5886607
         user_id: 5185058
   mode: single
+
+enphase_add_schedule:
+  alias: Add Enphase Battery Schedule
+  sequence:
+    - service: rest_command.enphase_add_schedule
+      data:
+        start_time: "{{ start_time }}"
+        end_time: "{{ end_time }}"
+        schedule_type: "{{ schedule_type }}"
+        days: "{{ days }}"
+        user_id: 5185058
+        battery_id: 5886607
+        limit: "{{ limit }}"
+  fields:
+    start_time:
+      description: "Start time (e.g. '02:00')"
+      example: "02:00"
+    end_time:
+      description: "End time (e.g. '03:00')"
+      example: "03:00"
+    schedule_type:
+      description: "Type of schedule: CFG (charge), DTG (discharge to grid), RBD (reserve battery discharge)"
+      selector:
+        select:
+          options:
+            - CFG
+            - DTG
+            - RBD
+    days:
+      description: "Select days to apply schedule (Mon=1 to Sun=7)"
+      selector:
+        select:
+          multiple: true
+          mode: list
+          options:
+            - label: Monday
+              value: "1"
+            - label: Tuesday
+              value: "2"
+            - label: Wednesday
+              value: "3"
+            - label: Thursday
+              value: "4"
+            - label: Friday
+              value: "5"
+            - label: Saturday
+              value: "6"
+            - label: Sunday
+              value: "7"
+    limit:
+      description: "Charge/Discharge limit"
+      selector:
+        number:
+          min: 6
+          max: 100
+          mode: box
+          step: 1
+      default: 100 #set 100 if charging or 6 if discharging
+  mode: single
+  icon: mdi:battery-clock
+
+enphase_delete_schedule:
+  alias: "Delete Enphase Schedules by Type"
+  mode: single
+  fields:
+    schedule_type:
+      name: "Schedule Type"
+      description: "Select which schedule(s) to delete"
+      required: true
+      selector:
+        select:
+          options:
+            - cfg
+            - dtg
+            - rbd
+            - all
+  sequence:
+    - variables:
+        schedules:
+          cfg: "{{ state_attr('sensor.enphase_schedules', 'cfg') or [] }}"
+          dtg: "{{ state_attr('sensor.enphase_schedules', 'dtg') or [] }}"
+          rbd: "{{ state_attr('sensor.enphase_schedules', 'rbd') or [] }}"
+        types_to_delete: >
+          {% if schedule_type == 'all' %}
+            ['cfg','dtg','rbd']
+          {% else %}
+            [schedule_type]
+          {% endif %}
+    - repeat:
+        for_each: "{{ types_to_delete }}"
+        sequence:
+          - repeat:
+              for_each: "{{ schedules[repeat.item] }}"
+              sequence:
+                - service: rest_command.enphase_delete_schedule
+                  data:
+                    battery_id: 5886607
+                    user_id: 5185058
+                    schedule_id: "{{ repeat.item }}"
+          - delay: "00:00:02"
+    - service: homeassistant.update_entity
+      target:
+        entity_id: sensor.enphase_schedules
