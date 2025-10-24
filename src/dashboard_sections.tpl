@@ -106,7 +106,7 @@ views:
               - type: vertical-stack
                 cards:
                   - type: tile
-                    entity: input_boolean.battery_charge
+                    entity: sensor.current_energy_intent
                   - type: tile
                     name: Rate
                     entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate

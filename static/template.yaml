@@ -47,6 +47,23 @@
       state: >
         {{ state_attr('weather.home', 'humidity') }}
 
+    - name: "Current energy intent"
+      icon: mdi:lightning-bolt
+      state: >
+        {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
+        {% set now_time = now() %}
+        {% set ns = namespace(current_intent='Idle') %}
+        {% for event in events %}
+          {% if event.start and event.end %}
+            {% set start_dt = as_datetime(event.start) %}
+            {% set end_dt = as_datetime(event.end) %}
+            {% if start_dt <= now_time <= end_dt %}
+              {% set ns.current_intent = event.intent %}
+            {% endif %}
+          {% endif %}
+        {% endfor %}
+        {{ ns.current_intent }}
+
     - name: "Energy intents"
       icon: mdi:calendar
       state: "off"
