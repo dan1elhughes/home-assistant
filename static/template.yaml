@@ -154,7 +154,3 @@
     - name: One-room mode
       state: >
         {{ states('sensor.occupant_count') | int <= 1 }}
-
-    - name: Battery exporting
-      state: >
-        {{ states('sensor.envoy_122322027694_current_power_consumption') | float * 1000 < states('input_number.battery_export_threshold') | float }}
