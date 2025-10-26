@@ -27,7 +27,7 @@ toggle_enphase_charge_from_grid:
   mode: single
   alias: Toggle Enphase Charge from Grid
   fields:
-    enabled:
+    charge:
       description: true to enable, false to disable
       example: true
   sequence:
@@ -38,7 +38,7 @@ toggle_enphase_charge_from_grid:
     - delay: "00:00:01"
     - service: rest_command.enphase_battery_charge_from_grid
       data:
-        charge: "{{ enabled }}"
+        charge: "{{ charge }}"
         battery_id: 5886607
         user_id: 5185058
 
@@ -57,7 +57,7 @@ toggle_enphase_discharge_to_grid:
     - delay: "00:00:01"
     - service: rest_command.enphase_battery_discharge_to_grid
       data:
-        discharge: "{{ enabled }}"
+        discharge: "{{ discharge }}"
         battery_id: 5886607
         user_id: 5185058
   mode: single
