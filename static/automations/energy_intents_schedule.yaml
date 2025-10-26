@@ -54,6 +54,29 @@
                 channel: "energy_intents_schedule"
                 tag: energy_intents_schedule
           - delay: "00:00:01"
+    - service: script.toggle_enphase_charge_from_grid
+      data:
+        charge: "true"
+    - service: notify.dan
+      data:
+        title: "Updating..."
+        message: "Enabled charge"
+        data:
+          notification_icon: "mdi:calendar-sync"
+          channel: "energy_intents_schedule"
+          tag: energy_intents_schedule
+    - delay: "00:00:01"
+    - service: script.toggle_enphase_discharge_to_grid
+      data:
+        discharge: "true"
+    - service: notify.dan
+      data:
+        title: "Updating..."
+        message: "Enabled discharge"
+        data:
+          notification_icon: "mdi:calendar-sync"
+          channel: "energy_intents_schedule"
+          tag: energy_intents_schedule
     - service: notify.dan
       data:
         title: "Energy schedule updated"
