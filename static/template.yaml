@@ -71,84 +71,78 @@
         events: >
           {% set ns = namespace(events=[]) %}
 
-          {# --- Add event --- #}
-          {% macro add_event(start, end, title, intent) %}
-            {% set ns.events = ns.events + [{
-              'start': start,
-              'end': end,
-              'title': title,
-              'intent': intent
-            }] %}
-          {% endmacro %}
-
-          {# --- Collect all input events first (calendar, dispatches, off-peak) --- #}
-
-          {# Calendar events ---#}
+          {# --- Collect calendar events ---#}
           {% for cal in [
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions',
             'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session'
           ] %}
             {% set start_raw = state_attr(cal, 'start_time') %}
             {% set end_raw = state_attr(cal, 'end_time') %}
-            {% set summary = state_attr(cal, 'message') %}
             {% if start_raw and end_raw %}
-              {% set start = as_datetime(start_raw) | as_local %}
-              {% set end = as_datetime(end_raw) | as_local %}
+              {% set start = as_datetime(start_raw) %}
+              {% set end = as_datetime(end_raw) %}
               {% if 'saving' in cal %}
-                {{ add_event(start, end, summary, 'Discharge') }}
+                {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
               {% elif 'free' in cal %}
-                {{ add_event(start, end, summary, 'Charge') }}
+                {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
               {% endif %}
             {% endif %}
           {% endfor %}
 
-          {# Planned dispatches ---#}
+          {# --- Planned dispatches ---#}
           {% for d in state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'planned_dispatches') | default([]) %}
-            {% set start = as_datetime(d.start) | as_local %}
-            {% set end = as_datetime(d.end) | as_local %}
-            {{ add_event(start, end, 'Planned Dispatch', 'Charge') }}
+            {% set start = as_datetime(d.start) %}
+            {% set end = as_datetime(d.end) %}
+            {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
           {% endfor %}
 
-          {# Off-peak sessions ---#}
+          {# --- Off-peak sessions ---#}
           {% for state_type in ['current', 'next'] %}
             {% set start_attr = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', state_type + '_start') %}
             {% set end_attr = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', state_type + '_end') %}
             {% if start_attr and end_attr %}
-              {% set start = as_datetime(start_attr) | as_local %}
-              {% set end = as_datetime(end_attr) | as_local %}
-              {{ add_event(start, end, 'Off Peak Electricity (' ~ state_type | capitalize ~ ')', 'Charge') }}
+              {% set start = as_datetime(start_attr) %}
+              {% set end = as_datetime(end_attr) %}
+              {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
             {% endif %}
           {% endfor %}
 
-          {# --- Add pre-charge discharge slots after all events ---#}
-          {% set all_events = ns.events | sort(attribute='start') %}
-          {% for e in all_events %}
-            {% if e.intent == 'Charge' %}
-              {% set discharge_start = e.start - timedelta(hours=1) %}
-              {% set discharge_end = e.start - timedelta(minutes=5) %}  {# Reduce end by 5 min #}
-              {# Only add if slot is free ---#}
-              {% set slot_free = true %}
-              {% for existing in all_events %}
-                {% if existing.start < discharge_end and existing.end > discharge_start %}
-                  {% set slot_free = false %}
-                {% endif %}
-              {% endfor %}
-              {% if slot_free %}
-                {{ add_event(discharge_start, discharge_end, 'Pre-Charge Discharge', 'Discharge') }}
+          {# --- Flatten overlapping events ---#}
+          {% set ns_flat = namespace(flattened=[]) %}
+          {% set sorted_events = ns.events | sort(attribute='start') %}
+
+          {% for event in sorted_events %}
+            {% if ns_flat.flattened | length == 0 %}
+              {% set ns_flat.flattened = ns_flat.flattened + [event] %}
+            {% else %}
+              {% set last = ns_flat.flattened[-1] %}
+              {% if event.start <= last.end %}
+                {% set new_end = event.end if event.end > last.end else last.end %}
+                {% set new_intent = 'Charge' if 'Charge' in [last.intent, event.intent] else 'Discharge' %}
+                {% set ns_flat.flattened = ns_flat.flattened[:-1] + [{'start': last.start, 'end': new_end, 'intent': new_intent}] %}
+              {% else %}
+                {% set ns_flat.flattened = ns_flat.flattened + [event] %}
               {% endif %}
             {% endif %}
           {% endfor %}
 
-          {% set ns_json = namespace(json_events=[]) %}
-          {% for event in ns.events | sort(attribute='start') %}
-            {% set ns_json.json_events = ns_json.json_events + [{
-              'start': event.start.isoformat(),
-              'end': event.end.isoformat(),
-              'title': event.title,
-              'intent': event.intent
-            }] %}
+          {# --- Add pre-charge discharge slots (-60m to -5m before Charge) ---#}
+          {% set ns_final = namespace(final=[]) %}
+          {% for e in ns_flat.flattened %}
+            {% if e.intent == 'Charge' %}
+              {% set pre_start = e.start - timedelta(minutes=60) %}
+              {% set pre_end = e.start - timedelta(minutes=5) %}
+              {% set ns_final.final = ns_final.final + [{'start': pre_start, 'end': pre_end, 'intent': 'Discharge'}] %}
+            {% endif %}
+            {% set ns_final.final = ns_final.final + [e] %}
           {% endfor %}
-          {{ ns_json.json_events | to_json }}
+
+          {# --- Output final JSON ---#}
+          {% set ns_json = namespace(output=[]) %}
+          {% for e in ns_final.final %}
+            {% set ns_json.output = ns_json.output + [{'start': e.start.isoformat(), 'end': e.end.isoformat(), 'intent': e.intent}] %}
+          {% endfor %}
+          {{ ns_json.output | to_json }}
 
 - binary_sensor:
     - name: One-room mode
