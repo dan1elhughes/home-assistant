@@ -8,6 +8,14 @@
     - service: script.enphase_delete_schedule
       data:
         schedule_type: "all"
+    - service: notify.dan
+      data:
+        title: "Updating..."
+        message: "Deleted existing schedules"
+        data:
+          notification_icon: "mdi:calendar-sync"
+          channel: "energy_intents_schedule"
+          tag: energy_intents_schedule
     - delay: "00:00:02"
     - variables:
         simplified_events: >
@@ -37,6 +45,14 @@
               schedule_type: "{{ repeat.item.schedule_type }}"
               days: "{{ [repeat.item.weekday] | string }}"
               limit: "{{ repeat.item.limit }}"
+          - service: notify.dan
+            data:
+              title: "Updating..."
+              message: Added schedule from {{ repeat.item.start_time }} to {{ repeat.item.end_time }}
+              data:
+                notification_icon: "mdi:calendar-sync"
+                channel: "energy_intents_schedule"
+                tag: energy_intents_schedule
           - delay: "00:00:01"
     - service: notify.dan
       data:
