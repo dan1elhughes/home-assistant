@@ -262,6 +262,13 @@ views:
               - calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions
               - calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
 
+      - type: grid
+        cards:
+          - type: custom:octopus-energy-greenness-forecast-card
+            title: Greener nights
+            currentEntity: sensor.octopus_energy_a_fad3b08a_greenness_forecast_current_index
+            highlightedEmoji: 🌟
+
   - type: sections
     max_columns: 4
     title: Devices
