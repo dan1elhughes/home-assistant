@@ -126,13 +126,28 @@
             {% endif %}
           {% endfor %}
 
-          {# --- Add pre-charge discharge slots (-60m to -5m before Charge) ---#}
+          {# --- Add pre-charge discharge slots (dynamic calculation with 10-min rounding) ---#}
           {% set ns_final = namespace(final=[]) %}
+
+          {# Battery and discharge parameters #}
+          {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
+          {% set battery_kwh = battery_wh / 1000 %}
+          {% set target_percent = 5 %}
+          {% set usable_kwh = battery_kwh * (1 - target_percent / 100) %}
+          {% set discharge_rate_kw = states('input_number.battery_power_rate_kw') | float(9.6) %}
+          {% set discharge_hours = (usable_kwh / discharge_rate_kw) | float(0) %}
+
           {% for e in ns_flat.flattened %}
             {% if e.intent == 'Charge' %}
-              {% set pre_start = e.start - timedelta(minutes=60) %}
               {% set pre_end = e.start - timedelta(minutes=5) %}
-              {% set ns_final.final = ns_final.final + [{'start': pre_start, 'end': pre_end, 'intent': 'Discharge'}] %}
+              {% set pre_start = e.start - timedelta(hours=discharge_hours) %}
+
+              {# Round pre_start down to nearest 10-minute boundary #}
+              {% set pre_start = pre_start.replace(minute=(pre_start.minute // 10) * 10, second=0, microsecond=0) %}
+
+              {% if pre_start < e.start %}
+                {% set ns_final.final = ns_final.final + [{'start': pre_start, 'end': pre_end, 'intent': 'Discharge'}] %}
+              {% endif %}
             {% endif %}
             {% set ns_final.final = ns_final.final + [e] %}
           {% endfor %}
