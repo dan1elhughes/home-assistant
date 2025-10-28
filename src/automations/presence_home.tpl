@@ -6,10 +6,6 @@
       from: home
       to: not_home
   condition:
-    - condition: state
-      entity_id: input_boolean.automations
-      state: "on"
-
     - not:
       - condition: state
         entity_id: person.dan
@@ -29,9 +25,6 @@
       from: not_home
       to: home
   condition:
-    - condition: state
-      entity_id: input_boolean.automations
-      state: "on"
   # Only run if we've not outpaced the automation and already set the active room
     - condition: state
       entity_id: input_select.active_room

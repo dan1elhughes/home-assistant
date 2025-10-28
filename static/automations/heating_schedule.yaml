@@ -6,9 +6,6 @@
       to: "on"
   condition:
     - condition: state
-      entity_id: input_boolean.automations
-      state: "on"
-    - condition: state
       entity_id: group.presence_home
       state: home
   action:
@@ -25,10 +22,6 @@
     - platform: state
       entity_id: schedule.heating
       to: "off"
-  condition:
-    - condition: state
-      entity_id: input_boolean.automations
-      state: "on"
   action:
     - service: climate.set_temperature
       data:

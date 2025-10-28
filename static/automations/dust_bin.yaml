@@ -3,11 +3,6 @@
   trigger:
     - platform: time
       at: "09:00:00"
-  condition:
-    - alias: "Automations enabled"
-      condition: state
-      entity_id: input_boolean.automations
-      state: "on"
   action:
     - alias: "Press empty dust bin button"
       service: button.press
