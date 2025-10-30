@@ -140,21 +140,59 @@
           {% for e in ns_flat.flattened %}
             {% if e.intent == 'Charge' %}
               {% set pre_end = e.start - timedelta(minutes=5) %}
-              {% set pre_start = e.start - timedelta(hours=discharge_hours) %}
+              {% set pre_start_raw = e.start - timedelta(hours=discharge_hours) %}
 
               {# Round pre_start down to nearest 10-minute boundary #}
-              {% set pre_start = pre_start.replace(minute=(pre_start.minute // 10) * 10, second=0, microsecond=0) %}
+              {% set pre_start_rounded = pre_start_raw.replace(minute=(pre_start_raw.minute // 10) * 10, second=0, microsecond=0) %}
 
-              {% if pre_start < e.start %}
-                {% set ns_final.final = ns_final.final + [{'start': pre_start, 'end': pre_end, 'intent': 'Discharge'}] %}
+              {# Prevent overlap with previous final slot, if any #}
+              {% set last_final = ns_final.final[-1] if ns_final.final | length > 0 else none %}
+              {% if last_final %}
+                {% set adjusted_start = [pre_start_rounded, last_final.end + timedelta(minutes=5)] | max %}
+              {% else %}
+                {% set adjusted_start = pre_start_rounded %}
+              {% endif %}
+
+              {# Only add if it results in a positive window strictly before the charge #}
+              {% if adjusted_start < pre_end %}
+                {% set ns_final.final = ns_final.final + [{'start': adjusted_start, 'end': pre_end, 'intent': 'Discharge'}] %}
               {% endif %}
             {% endif %}
             {% set ns_final.final = ns_final.final + [e] %}
           {% endfor %}
 
+          {# --- Enforce 5-minute buffer between intent changes, drop zero-length slots ---#}
+          {% set ns_buf = namespace(items=[]) %}
+          {% for e in ns_final.final %}
+            {% if ns_buf.items | length == 0 %}
+              {% set ns_buf.items = ns_buf.items + [e] %}
+            {% else %}
+              {% set last = ns_buf.items[-1] %}
+              {% if e.intent == last.intent %}
+                {# Merge same-intent overlaps/touching #}
+                {% if e.start <= last.end %}
+                  {% set merged = {'start': last.start, 'end': (e.end if e.end > last.end else last.end), 'intent': last.intent} %}
+                  {% set ns_buf.items = ns_buf.items[:-1] + [merged] %}
+                {% else %}
+                  {% set ns_buf.items = ns_buf.items + [e] %}
+                {% endif %}
+              {% else %}
+                {# Ensure at least 5 minutes gap on intent change by shifting later start #}
+                {% set required_start = last.end + timedelta(minutes=5) %}
+                {% set adjusted_start = e.start if e.start >= required_start else required_start %}
+                {% if adjusted_start < e.end %}
+                  {% set adjusted = {'start': adjusted_start, 'end': e.end, 'intent': e.intent} %}
+                  {% set ns_buf.items = ns_buf.items + [adjusted] %}
+                {% else %}
+                  {# Zero or negative duration after enforcing buffer; drop this slot #}
+                {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
           {# --- Output final JSON ---#}
           {% set ns_json = namespace(output=[]) %}
-          {% for e in ns_final.final %}
+          {% for e in ns_buf.items %}
             {% set ns_json.output = ns_json.output + [{'start': e.start.isoformat(), 'end': e.end.isoformat(), 'intent': e.intent}] %}
           {% endfor %}
           {{ ns_json.output | to_json }}
