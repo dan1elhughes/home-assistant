@@ -1,11 +1,41 @@
-- alias: "Office switch on when off peak starts"
+- alias: "Office switch control"
   mode: single
   trigger:
-    - trigger: state
-      entity_id:
-        - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
-      to: "on"
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+    - platform: state
+      entity_id: sensor.river_2_max_discharge_remaining_time
   action:
-    - service: switch.turn_on
-      target:
-        entity_id: switch.office
+    - choose:
+        # Turn on if battery is low and switch is off
+        - conditions:
+            - condition: numeric_state
+              entity_id: sensor.river_2_max_discharge_remaining_time
+              below: 10
+            - condition: state
+              entity_id: switch.office
+              state: "off"
+          sequence:
+            - service: switch.turn_on
+              target:
+                entity_id: switch.office
+
+        # Turn on if off peak starts
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              state: "on"
+          sequence:
+            - service: switch.turn_on
+              target:
+                entity_id: switch.office
+
+        # Turn off if off peak ends
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              state: "off"
+          sequence:
+            - service: switch.turn_off
+              target:
+                entity_id: switch.office
