@@ -4,13 +4,13 @@
     - platform: state
       entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
     - platform: state
-      entity_id: sensor.river_2_max_discharge_remaining_time
+      entity_id: sensor.river_2_max_battery_level
   action:
     - choose:
         # Turn on if battery is low and switch is off
         - conditions:
             - condition: numeric_state
-              entity_id: sensor.river_2_max_discharge_remaining_time
+              entity_id: sensor.river_2_max_battery_level
               below: 10
             - condition: state
               entity_id: switch.office
