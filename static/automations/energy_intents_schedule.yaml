@@ -3,7 +3,12 @@
   trigger:
     - platform: state
       entity_id: sensor.energy_intents
-  condition: []
+  condition:
+    - condition: not
+      conditions:
+        - condition: state
+          entity_id: sensor.envoy_122322027694_available_battery_energy
+          state: unavailable
   action:
     - service: script.enphase_delete_schedule
       data:
