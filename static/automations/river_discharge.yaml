@@ -7,20 +7,7 @@
       entity_id: sensor.river_2_max_battery_level
   action:
     - choose:
-        # Turn on if battery is low and switch is off
-        - conditions:
-            - condition: numeric_state
-              entity_id: sensor.river_2_max_battery_level
-              below: 10
-            - condition: state
-              entity_id: switch.office
-              state: "off"
-          sequence:
-            - service: switch.turn_on
-              target:
-                entity_id: switch.office
-
-        # Turn on if off peak starts
+        # Off-peak starts → turn on
         - conditions:
             - condition: state
               entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
@@ -30,11 +17,27 @@
               target:
                 entity_id: switch.office
 
-        # Turn off if off peak ends
+        # Peak hours & battery <10% → turn on
         - conditions:
             - condition: state
               entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "off"
+            - condition: numeric_state
+              entity_id: sensor.river_2_max_battery_level
+              below: 10
+          sequence:
+            - service: switch.turn_on
+              target:
+                entity_id: switch.office
+
+        # Peak hours & battery >20% → turn off
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              state: "off"
+            - condition: numeric_state
+              entity_id: sensor.river_2_max_battery_level
+              above: 20
           sequence:
             - service: switch.turn_off
               target:
