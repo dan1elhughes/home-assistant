@@ -81,10 +81,12 @@
             {% if start_raw and end_raw %}
               {% set start = as_datetime(start_raw) %}
               {% set end = as_datetime(end_raw) %}
-              {% if 'saving' in cal %}
-                {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
-              {% elif 'free' in cal %}
-                {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
+              {% if end >= now() %}  {# Exclude events wholly in the past #}
+                {% if 'saving' in cal %}
+                  {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
+                {% elif 'free' in cal %}
+                  {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
+                {% endif %}
               {% endif %}
             {% endif %}
           {% endfor %}
