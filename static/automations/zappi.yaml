@@ -6,7 +6,6 @@
         - sensor.current_energy_intent
         - select.myenergi_zappi_charge_mode
         - switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
-        - binary_sensor.id3_charging_cable_connected
   action:
     - choose:
         - alias: "ID3 Smart Charge"
@@ -14,10 +13,6 @@
             - alias: "ID3 smart charge enabled"
               condition: state
               entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
-              state: "on"
-            - alias: "ID3 cable connected"
-              condition: state
-              entity_id: binary_sensor.id3_charging_cable_connected
               state: "on"
             - alias: "Zappi currently stopped"
               condition: state
