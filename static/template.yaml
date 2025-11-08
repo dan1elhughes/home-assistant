@@ -95,7 +95,9 @@
           {% for d in state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'planned_dispatches') | default([]) %}
             {% set start = as_datetime(d.start) %}
             {% set end = as_datetime(d.end) %}
-            {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
+            {% if end >= now() %}
+              {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
+            {% endif %}
           {% endfor %}
 
           {# --- Off-peak sessions ---#}
@@ -105,7 +107,9 @@
             {% if start_attr and end_attr %}
               {% set start = as_datetime(start_attr) %}
               {% set end = as_datetime(end_attr) %}
-              {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
+              {% if end >= now() %}
+                {% set ns.events = ns.events + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
+              {% endif %}
             {% endif %}
           {% endfor %}
 
@@ -155,9 +159,12 @@
                 {% set adjusted_start = pre_start_rounded %}
               {% endif %}
 
-              {# Only add if it results in a positive window strictly before the charge #}
-              {% if adjusted_start < pre_end %}
-                {% set ns_final.final = ns_final.final + [{'start': adjusted_start, 'end': pre_end, 'intent': 'Discharge'}] %}
+              {# Only add if it results in a valid window and not wholly in the past #}
+              {% if adjusted_start < pre_end and pre_end >= now() %}
+                {% set effective_start = adjusted_start if adjusted_start >= now() else now() %}
+                {% if effective_start < pre_end %}
+                  {% set ns_final.final = ns_final.final + [{'start': effective_start, 'end': pre_end, 'intent': 'Discharge'}] %}
+                {% endif %}
               {% endif %}
             {% endif %}
             {% set ns_final.final = ns_final.final + [e] %}
@@ -185,8 +192,6 @@
                 {% if adjusted_start < e.end %}
                   {% set adjusted = {'start': adjusted_start, 'end': e.end, 'intent': e.intent} %}
                   {% set ns_buf.items = ns_buf.items + [adjusted] %}
-                {% else %}
-                  {# Zero or negative duration after enforcing buffer; drop this slot #}
                 {% endif %}
               {% endif %}
             {% endif %}
