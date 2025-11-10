@@ -192,6 +192,9 @@ views:
               - type: entity
                 entity: sensor.accumulative_gas_cost_without_standing_charge
                 show_icon: false
+              - type: entity
+                entity: sensor.central_heating_hvac_action
+                show_icon: false
           - type: sensor
             name: Import now
             icon: mdi:gas-burner
