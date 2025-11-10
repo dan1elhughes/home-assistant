@@ -1,0 +1,15 @@
+- alias: Central heating HVAC action unavailable >10m
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.central_heating_hvac_action
+      to: "unavailable"
+      for: "00:10:00"
+  action:
+    - service: notify.dan
+      data:
+        title: "Central heating sensor"
+        message: "sensor.central_heating_hvac_action has been unavailable for over 10 minutes."
+        data:
+          notification_icon: "mdi:radiator"
+          channel: "central-heating"
