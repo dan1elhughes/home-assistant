@@ -1,0 +1,12 @@
+- alias: "Conservatory dehumidifier - high humidity"
+  mode: single
+  trigger:
+    - platform: numeric_state
+      entity_id: sensor.conservatory_sensor_humidity
+      above: 95
+      for:
+        minutes: 10
+  action:
+    - service: switch.turn_on
+      target:
+        entity_id: switch.dehumidifier
