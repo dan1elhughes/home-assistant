@@ -267,5 +267,5 @@
       "light_group": "light.bedroom_lights"
     }
   ],
-  "offpeak": ["switch.dehumidifier", "switch.heated_airer"]
+  "offpeak": ["switch.heated_airer"]
 }

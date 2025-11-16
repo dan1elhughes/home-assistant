@@ -1,12 +1,44 @@
-- alias: "Conservatory dehumidifier - high humidity"
+- alias: Conservatory dehumidifier control
   mode: single
   trigger:
+    - platform: state
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+              state: "on"
+          sequence:
+            - service: humidifier.set_humidity
+              target:
+                entity_id: humidifier.conservatory_dehumidifier
+              data:
+                # Set to the Off-Peak value
+                humidity: "{{ states('input_number.dehumidifier_offpeak') | int }}"
+      default:
+        - service: humidifier.set_humidity
+          target:
+            entity_id: humidifier.conservatory_dehumidifier
+          data:
+            humidity: "{{ states('input_number.dehumidifier_peak') | int }}"
+
+- alias: Conservatory dehumidifier monitoring
+  trigger:
     - platform: numeric_state
-      entity_id: sensor.conservatory_sensor_humidity
-      above: 95
+      entity_id: sensor.dehumidifier_energy_power
+      below: 50
       for:
         minutes: 10
+  condition:
+    - condition: state
+      entity_id: switch.dehumidifier
+      state: "on"
   action:
-    - service: switch.turn_on
-      target:
-        entity_id: switch.dehumidifier
+    - service: notify.dan
+      data:
+        title: "Dehumidifier full"
+        message: "Power below 50W for 10 minutes"
+        data:
+          channel: "dehumidifier"
+          notification_icon: "mdi:water-alert"

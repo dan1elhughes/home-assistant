@@ -50,3 +50,17 @@ co2_red_threshold:
   step: 50
   initial: 1400
   unit_of_measurement: "ppm"
+
+dehumidifier_peak:
+  name: Dehumidifier peak humidity
+  unit_of_measurement: "%"
+  min: 0
+  max: 100
+  step: 1
+
+dehumidifier_offpeak:
+  name: Dehumidifier off-peak humidity
+  unit_of_measurement: "%"
+  min: 0
+  max: 100
+  step: 1

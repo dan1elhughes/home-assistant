@@ -1,0 +1,6 @@
+- name: Conservatory dehumidifier
+  humidifier: switch.dehumidifier
+  target_sensor: sensor.conservatory_sensor_humidity
+  device_class: dehumidifier
+  min_cycle_duration:
+    minutes: 5
