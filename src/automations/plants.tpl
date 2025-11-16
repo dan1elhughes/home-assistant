@@ -10,12 +10,16 @@
   action:
     - choose:
         - conditions:
-            - condition: time
-              after: "23:00:00"
+            - condition: template
+              value_template: '{% raw %}{{ state_attr("{% endraw %}{{ plant.entity }}{% raw %}","moisture_status") == "High" }}{% endraw %}'
           sequence:
-            - service: light.turn_off
+            - service: light.turn_on
               target:
                 entity_id: "{{ plant.indicator }}"
+              data:
+                effect: "None"
+                rgb_color: [0, 0, 255]
+                brightness_pct: 100
 
         - conditions:
             - condition: state
