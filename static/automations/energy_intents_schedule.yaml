@@ -18,7 +18,7 @@
         title: "Updating..."
         message: "Deleted existing schedules"
         data:
-          notification_icon: "mdi:calendar-sync"
+          notification_icon: "mdi:battery-sync"
           channel: "energy_intents_schedule"
           tag: energy_intents_schedule
     - delay: "00:00:02"
@@ -55,7 +55,7 @@
               title: "Updating..."
               message: Added schedule from {{ repeat.item.start_time }} to {{ repeat.item.end_time }}
               data:
-                notification_icon: "mdi:calendar-sync"
+                notification_icon: "mdi:battery-sync"
                 channel: "energy_intents_schedule"
                 tag: energy_intents_schedule
           - delay: "00:00:01"
@@ -67,7 +67,7 @@
         title: "Updating..."
         message: "Enabled charge"
         data:
-          notification_icon: "mdi:calendar-sync"
+          notification_icon: "mdi:battery-sync"
           channel: "energy_intents_schedule"
           tag: energy_intents_schedule
     - delay: "00:00:01"
@@ -79,14 +79,14 @@
         title: "Updating..."
         message: "Enabled discharge"
         data:
-          notification_icon: "mdi:calendar-sync"
+          notification_icon: "mdi:battery-sync"
           channel: "energy_intents_schedule"
           tag: energy_intents_schedule
     - service: notify.dan
       data:
         title: "Energy schedule updated"
         data:
-          notification_icon: "mdi:calendar-sync"
+          notification_icon: "mdi:battery-check"
           channel: "energy_intents_schedule"
           tag: energy_intents_schedule
         message: >
