@@ -22,3 +22,9 @@
   target_sensor: sensor.living_room_sensor_temperature
   min_temp: 10
   max_temp: 25
+
+- platform: generic_thermostat
+  name: Virtual barn heating
+  heater: switch.barn_ac_power
+  target_sensor: sensor.barn_ac_temperature
+  min_temp: 1
