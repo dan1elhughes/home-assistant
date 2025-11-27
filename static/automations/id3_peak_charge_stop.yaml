@@ -1,0 +1,29 @@
+- alias: "Stop ID3 charging during peak rate"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: switch.id3_charging
+      to: "on"
+  condition:
+    - alias: "Smart charge is enabled"
+      condition: state
+      entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+      state: "on"
+    - alias: "Currently peak rate"
+      condition: state
+      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+      state: "off"
+  action:
+    - alias: "Stop car charging"
+      service: switch.turn_off
+      target:
+        entity_id: switch.id3_charging
+    - alias: "Notify user"
+      service: notify.dan
+      data:
+        title: "Car charging stopped"
+        message: "Peak rate - charging stopped"
+        data:
+          notification_icon: "mdi:car-electric"
+          channel: "id3_charging"
+          tag: id3_peak_charge_stop
