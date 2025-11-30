@@ -266,6 +266,5 @@
       "light_4": "light.bedroom_ceiling_light",
       "light_group": "light.bedroom_lights"
     }
-  ],
-  "offpeak": ["switch.heated_airer"]
+  ]
 }
