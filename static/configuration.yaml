@@ -20,7 +20,6 @@ scene ui: !include scenes.yaml
 schedule: !include schedules.yaml
 script: !include scripts.yaml
 sensor: !include sensor.yaml
-switch: !include switch.yaml
 template: !include template.yaml
 timer: !include timer.yaml
 
