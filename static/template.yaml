@@ -16,6 +16,8 @@
         {{ state_attr('sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_cost', 'total_without_standing_charge') }}
 
     - name: "Solar power generation"
+      device_class: power
+      state_class: measurement
       unit_of_measurement: "W"
       state: >
         {% set update_threshold = now() - timedelta(minutes=5) %}
