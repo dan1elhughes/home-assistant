@@ -36,8 +36,8 @@
       "entities": [
         "light.living_room_side_light",
         "light.tv_light",
-        "light.side_table",
-        "light.living_room_lamp"
+        "light.living_room_lamp",
+        "light.christmas_tree"
       ],
       "name": "Living room lights"
     },
@@ -63,7 +63,11 @@
         "light.living_room_front_ceiling_light",
         "light.living_room_rear_ceiling_light"
       ],
-      "other_entities": ["scene.downstairs_on", "scene.movie_mode"],
+      "other_entities": [
+        "scene.downstairs_on",
+        "scene.movie_mode",
+        "light.side_table"
+      ],
       "name": "Living room",
       "badges": ["climate.virtual_central_heating"],
       "co2_sensor": "apollo_msr_2_15c4e4"
