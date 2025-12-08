@@ -184,7 +184,6 @@
       "icon": "mdi:door",
       "name": "Hallway",
       "ceiling": ["light.hallway_ceiling_light"],
-      "motion_sensor": "binary_sensor.hallway_motion_sensor_occupancy",
       "badges": ["sensor.hallway_motion_sensor_temperature"]
     },
     {
@@ -192,7 +191,6 @@
       "icon": "mdi:stairs",
       "name": "Landing",
       "ceiling": ["light.landing_ceiling_light"],
-      "motion_sensor": "binary_sensor.landing_motion_sensor_occupancy",
       "badges": ["sensor.landing_motion_sensor_temperature"]
     },
     {

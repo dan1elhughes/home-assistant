@@ -1,0 +1,50 @@
+- alias: "Hallway motion control"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.hallway_motion_sensors
+  condition:
+    - condition: state
+      entity_id: input_boolean.motion_sensors_enabled
+      state: "on"
+  action:
+    - choose:
+        # Motion detected & sun up → 100%
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.hallway_motion_sensors
+              state: "on"
+            - condition: sun
+              after: sunrise
+              before: sunset
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.hallway_lights
+              data:
+                brightness_pct: 100
+
+        # Motion detected & sun down → 5%
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.hallway_motion_sensors
+              state: "on"
+            - condition: sun
+              before: sunrise
+              after: sunset
+          sequence:
+            - service: light.turn_on
+              target:
+                entity_id: light.hallway_lights
+              data:
+                brightness_pct: 5
+
+        # Motion cleared → lights off
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.hallway_motion_sensors
+              state: "off"
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: light.hallway_lights
