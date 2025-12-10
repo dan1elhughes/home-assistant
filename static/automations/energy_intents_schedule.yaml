@@ -1,4 +1,5 @@
 - alias: "Update Enphase Schedule on Energy Intents Change"
+  mode: single
   description: "Triggers when sensor.energy_intents changes and updates the Enphase schedule."
   trigger:
     - platform: state
@@ -13,15 +14,23 @@
     - service: script.enphase_delete_schedule
       data:
         schedule_type: "all"
-    - service: notify.dan
-      data:
-        title: "Updating..."
-        message: "Deleted existing schedules"
-        data:
-          notification_icon: "mdi:battery-sync"
-          channel: "energy_intents_schedule"
-          tag: energy_intents_schedule
+
+    - if:
+        - condition: state
+          entity_id: input_boolean.notify_on_battery_schedule_changed
+          state: "on"
+      then:
+        - service: notify.dan
+          data:
+            title: "Updating..."
+            message: "Deleted existing schedules"
+            data:
+              notification_icon: "mdi:battery-sync"
+              channel: "energy_intents_schedule"
+              tag: energy_intents_schedule
+
     - delay: "00:00:02"
+
     - variables:
         simplified_events: >
           {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
@@ -40,6 +49,7 @@
               {% endif %}
             {% endfor %}
           ]
+
     - repeat:
         for_each: "{{ simplified_events }}"
         sequence:
@@ -50,58 +60,84 @@
               schedule_type: "{{ repeat.item.schedule_type }}"
               days: "{{ [repeat.item.weekday] | string }}"
               limit: "{{ repeat.item.limit }}"
-          - service: notify.dan
-            data:
-              title: "Updating..."
-              message: Added schedule from {{ repeat.item.start_time }} to {{ repeat.item.end_time }}
-              data:
-                notification_icon: "mdi:battery-sync"
-                channel: "energy_intents_schedule"
-                tag: energy_intents_schedule
+
+          - if:
+              - condition: state
+                entity_id: input_boolean.notify_on_battery_schedule_changed
+                state: "on"
+            then:
+              - service: notify.dan
+                data:
+                  title: "Updating..."
+                  message: "Added schedule from {{ repeat.item.start_time }} to {{ repeat.item.end_time }}"
+                  data:
+                    notification_icon: "mdi:battery-sync"
+                    channel: "energy_intents_schedule"
+                    tag: energy_intents_schedule
+
           - delay: "00:00:01"
+
     - service: script.toggle_enphase_charge_from_grid
       data:
         charge: "true"
-    - service: notify.dan
-      data:
-        title: "Updating..."
-        message: "Enabled charge"
-        data:
-          notification_icon: "mdi:battery-sync"
-          channel: "energy_intents_schedule"
-          tag: energy_intents_schedule
+
+    - if:
+        - condition: state
+          entity_id: input_boolean.notify_on_battery_schedule_changed
+          state: "on"
+      then:
+        - service: notify.dan
+          data:
+            title: "Updating..."
+            message: "Enabled charge"
+            data:
+              notification_icon: "mdi:battery-sync"
+              channel: "energy_intents_schedule"
+              tag: energy_intents_schedule
+
     - delay: "00:00:01"
+
     - service: script.toggle_enphase_discharge_to_grid
       data:
         discharge: "true"
-    - service: notify.dan
-      data:
-        title: "Updating..."
-        message: "Enabled discharge"
-        data:
-          notification_icon: "mdi:battery-sync"
-          channel: "energy_intents_schedule"
-          tag: energy_intents_schedule
-    - service: notify.dan
-      data:
-        title: "Energy schedule updated"
-        data:
-          notification_icon: "mdi:battery-check"
-          channel: "energy_intents_schedule"
-          tag: energy_intents_schedule
-        message: >
-          {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
-          {% if events %}
-            {% for event in events %}
-              {% if event.start and event.end %}
-                {% set start_dt = as_datetime(event.start) %}
-                {% set end_dt = as_datetime(event.end) %}
-                {% set day_name = ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'][start_dt.weekday()] %}
-                • {{ day_name }} {{ start_dt.strftime('%H:%M') }}-{{ end_dt.strftime('%H:%M') }}: {{ event.intent }}
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            No energy intents events found.
-          {% endif %}
 
-  mode: single
+    - if:
+        - condition: state
+          entity_id: input_boolean.notify_on_battery_schedule_changed
+          state: "on"
+      then:
+        - service: notify.dan
+          data:
+            title: "Updating..."
+            message: "Enabled discharge"
+            data:
+              notification_icon: "mdi:battery-sync"
+              channel: "energy_intents_schedule"
+              tag: energy_intents_schedule
+
+    - if:
+        - condition: state
+          entity_id: input_boolean.notify_on_battery_schedule_changed
+          state: "on"
+      then:
+        - service: notify.dan
+          data:
+            title: "Energy schedule updated"
+            data:
+              notification_icon: "mdi:battery-check"
+              channel: "energy_intents_schedule"
+              tag: energy_intents_schedule
+            message: >
+              {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
+              {% if events %}
+                {% for event in events %}
+                  {% if event.start and event.end %}
+                    {% set start_dt = as_datetime(event.start) %}
+                    {% set end_dt = as_datetime(event.end) %}
+                    {% set day_name = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][start_dt.weekday()] %}
+                    • {{ day_name }} {{ start_dt.strftime('%H:%M') }}-{{ end_dt.strftime('%H:%M') }}: {{ event.intent }}
+                  {% endif %}
+                {% endfor %}
+              {% else %}
+                No energy intents events found.
+              {% endif %}

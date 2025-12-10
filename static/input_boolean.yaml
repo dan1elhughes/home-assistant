@@ -22,3 +22,7 @@ motion_sensors_enabled:
 central_heating_intended_state:
   name: Central heating intended state
   icon: mdi:radiator
+
+notify_on_battery_schedule_changed:
+  name: Notify on battery schedule changed
+  icon: mdi:bell
