@@ -257,6 +257,55 @@
           {% endfor %}
           {{ ns_json.output | to_json }}
 
+    - name: "Battery total power"
+      unit_of_measurement: "W"
+      device_class: power
+      state_class: measurement
+      state: >
+        {{
+          (
+            states('sensor.encharge_492452002777_power') | float(0)
+            +
+            states('sensor.encharge_492452002785_power') | float(0)
+            +
+            states('sensor.encharge_492452002787_power') | float(0)
+          )
+        }}
+
+    - name: "Battery total discharge power"
+      unit_of_measurement: "W"
+      device_class: power
+      state_class: measurement
+      state: >
+        {% set p = states('sensor.battery_total_power') | float(0) %}
+        {{ p if p > 0 else 0 }}
+
+    - name: "Battery total charge power"
+      unit_of_measurement: "W"
+      device_class: power
+      state_class: measurement
+      state: >
+        {% set p = states('sensor.battery_total_power') | float(0) %}
+        {{ (p * -1) if p < 0 else 0 }}
+
+    - name: "Battery energy charged"
+      unit_of_measurement: "kWh"
+      device_class: energy
+      state_class: total_increasing
+      state: >
+        {{
+          (states('sensor.battery_total_charge_power') | float(0) / 1000)
+        }}
+
+    - name: "Battery energy discharged"
+      unit_of_measurement: "kWh"
+      device_class: energy
+      state_class: total_increasing
+      state: >
+        {{
+          (states('sensor.battery_total_discharge_power') | float(0) / 1000)
+        }}
+
 - binary_sensor:
     - name: One-room mode
       state: >
