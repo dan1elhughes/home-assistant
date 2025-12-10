@@ -275,8 +275,8 @@
             entity_id:
               - climate.barn_ac
           data:
-            hvac_mode: 'off'
+            hvac_mode: "off"
           action: climate.set_hvac_mode
       default_entity_id: switch.barn_ac_power
       name: Barn AC Power
-      state: '{{ states(''climate.barn_ac'') in [''heat'',''cool'',''heat_cool'',''fan_only'',''dry''] }}'
+      state: "{{ states('climate.barn_ac') in ['heat','cool','heat_cool','fan_only','dry'] }}"
