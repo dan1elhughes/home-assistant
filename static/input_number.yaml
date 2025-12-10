@@ -56,3 +56,17 @@ dehumidifier_offpeak:
   min: 0
   max: 100
   step: 1
+
+battery_energy_charged_wh:
+  name: Battery energy charged (Wh)
+  min: 0
+  max: 999999999
+  step: 0.1
+  mode: box
+
+battery_energy_discharged_wh:
+  name: Battery energy discharged (Wh)
+  min: 0
+  max: 999999999
+  step: 0.1
+  mode: box

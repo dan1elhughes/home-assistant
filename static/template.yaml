@@ -293,18 +293,14 @@
       device_class: energy
       state_class: total_increasing
       state: >
-        {{
-          (states('sensor.battery_total_charge_power') | float(0) / 1000)
-        }}
+        {{ (states('input_number.battery_energy_charged_wh') | float(0)) / 1000 }}
 
     - name: "Battery energy discharged"
       unit_of_measurement: "kWh"
       device_class: energy
       state_class: total_increasing
       state: >
-        {{
-          (states('sensor.battery_total_discharge_power') | float(0) / 1000)
-        }}
+        {{ (states('input_number.battery_energy_discharged_wh') | float(0)) / 1000 }}
 
 - binary_sensor:
     - name: One-room mode

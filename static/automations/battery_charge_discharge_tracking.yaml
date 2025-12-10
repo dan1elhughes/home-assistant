@@ -1,0 +1,40 @@
+- alias: "Track battery charged/discharged"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.envoy_122322027694_available_battery_energy
+  condition:
+    - condition: template
+      # ignore initial restore or unknown -> require both states exist and numeric
+      value_template: >
+        {{ trigger.from_state is not none and trigger.to_state is not none and
+          (trigger.from_state.state | float('nan')) is not none and
+          (trigger.to_state.state | float('nan')) is not none }}
+  action:
+    - variables:
+        old: "{{ trigger.from_state.state | float(0) }}"
+        new: "{{ trigger.to_state.state | float(0) }}"
+        delta: "{{ (new - old) | round(6) }}" # in Wh
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ delta > 0 }}"
+          sequence:
+            # charged: add delta to charged accumulator
+            - service: input_number.set_value
+              target:
+                entity_id: input_number.battery_energy_charged_wh
+              data:
+                value: >
+                  {{ (states('input_number.battery_energy_charged_wh') | float(0)) + (delta | float(0)) }}
+        - conditions:
+            - condition: template
+              value_template: "{{ delta < 0 }}"
+          sequence:
+            # discharged: add -delta to discharged accumulator
+            - service: input_number.set_value
+              target:
+                entity_id: input_number.battery_energy_discharged_wh
+              data:
+                value: >
+                  {{ (states('input_number.battery_energy_discharged_wh') | float(0)) + ((delta * -1) | float(0)) }}
