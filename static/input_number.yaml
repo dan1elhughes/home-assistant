@@ -19,14 +19,6 @@ thermostat_low:
   max: 18
   step: 0.5
 
-battery_export_threshold:
-  name: Battery export threshold
-  unit_of_measurement: "Wh"
-  min: -10000
-  max: 0
-  step: 1000
-  initial: -5000
-
 battery_power_rate_kw:
   name: Battery power rate
   min: 0
