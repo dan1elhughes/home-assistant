@@ -29,7 +29,11 @@
       "name": "Dining room lights"
     },
     "light.kitchen_lights": {
-      "entities": ["light.kitchen_worklights", "light.kitchen_sink"],
+      "entities": [
+        "light.kitchen_worklights",
+        "light.kitchen_sink",
+        "light.kitchen_christmas_lights"
+      ],
       "name": "Kitchen lights"
     },
     "light.living_room_lights": {
