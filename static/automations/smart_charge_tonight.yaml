@@ -22,3 +22,6 @@
           notification_icon: "mdi:car-electric"
           channel: "smart_charge"
           tag: smart_charge_tonight
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.smart_charge_tonight
