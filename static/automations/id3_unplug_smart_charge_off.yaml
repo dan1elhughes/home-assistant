@@ -1,0 +1,24 @@
+- alias: "Turn off smart charge when ID3 unplugged"
+  mode: single
+  triggers:
+    - trigger: state
+      entity_id:
+        - binary_sensor.id3_charging_cable_connected
+      from:
+        - "on"
+      to:
+        - "off"
+  conditions:
+    - condition: state
+      entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+      state: "on"
+  actions:
+    - action: switch.turn_off
+      target:
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - service: notify.dan
+      data:
+        title: "Smart charge disabled"
+        message: "Car unplugged"
+        data:
+          notification_icon: "mdi:car-electric"
