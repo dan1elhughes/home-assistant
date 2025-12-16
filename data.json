@@ -135,12 +135,12 @@
       "other_entities": [
         "switch.3d_printer",
         "climate.server_cabinet",
-        "climate.office_ac",
         "sensor.river_2_max_battery_level",
         "switch.office",
-        "automation.office_switch_control"
+        "automation.office_switch_control",
+        "vacuum.upstairs"
       ],
-      "badges": ["sensor.office_ac_temperature"],
+      "badges": ["climate.office_ac"],
       "co2_sensor": "apollo_msr_2_1517ac"
     },
     {
