@@ -1,0 +1,23 @@
+- alias: Front door light toggles motion detection
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: light.front_door_light
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: light.front_door_light
+              state: "on"
+          sequence:
+            - service: switch.turn_off
+              target:
+                entity_id: switch.front_door_motion_detection
+        - conditions:
+            - condition: state
+              entity_id: light.front_door_light
+              state: "off"
+          sequence:
+            - service: switch.turn_on
+              target:
+                entity_id: switch.front_door_motion_detection
