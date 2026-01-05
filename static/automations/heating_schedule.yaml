@@ -2,7 +2,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: schedule.heating
+      entity_id: binary_sensor.heating
       to: "on"
   condition:
     - condition: state
@@ -20,7 +20,7 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: schedule.heating
+      entity_id: binary_sensor.heating
       to: "off"
   action:
     - service: climate.set_temperature
