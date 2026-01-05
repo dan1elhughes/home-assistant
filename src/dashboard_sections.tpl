@@ -209,9 +209,14 @@ views:
 
       - type: grid
         visibility:
-          - condition: state
-            entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
-            state: "on"
+          - condition: or
+            conditions:
+              - condition: state
+                entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+                state: "on"
+              - condition: state
+                entity: input_boolean.smart_charge_tonight
+                state: "on"
         cards:
           - type: heading
             heading: Smart charge
