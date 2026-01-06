@@ -135,9 +135,7 @@
       "other_entities": [
         "switch.3d_printer",
         "climate.server_cabinet",
-        "sensor.river_2_max_battery_level",
         "switch.office",
-        "automation.office_switch_control",
         "vacuum.upstairs"
       ],
       "badges": ["climate.office_ac"],
