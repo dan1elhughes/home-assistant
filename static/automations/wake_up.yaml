@@ -6,7 +6,7 @@
   condition:
     - alias: "Home"
       condition: state
-      entity_id: group.presence_home
+      entity_id: person.katie
       state: home
     - alias: "Enabled"
       condition: state
@@ -34,7 +34,7 @@
   condition:
     - alias: "Home"
       condition: state
-      entity_id: group.presence_home
+      entity_id: person.dan
       state: home
     - alias: "Enabled"
       condition: state
