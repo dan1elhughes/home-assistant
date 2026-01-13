@@ -4,8 +4,6 @@
   target_sensor: sensor.servers_sensor_temperature
   ac_mode: true
   initial_hvac_mode: "cool"
-  min_cycle_duration:
-    minutes: 5
 
 - platform: generic_thermostat
   name: "Router"
