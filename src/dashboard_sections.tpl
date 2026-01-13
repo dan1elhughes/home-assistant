@@ -101,20 +101,19 @@ views:
               - type: entity
                 entity: sensor.envoy_122322027694_battery
                 show_icon: false
-          - type: horizontal-stack
-            cards:
-              - type: vertical-stack
-                cards:
-                  - type: tile
-                    name: Intent
-                    entity: sensor.current_energy_intent
-                  - type: tile
-                    name: Rate
-                    entity: sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate
-              - type: sensor
-                name: Stored energy
-                entity: sensor.envoy_122322027694_available_battery_energy
-                graph: none
+              - type: entity
+                entity: sensor.next_energy_intent
+                show_icon: false
+          - type: sensor
+            name: Power
+            entity: sensor.battery_total_power
+            graph: line
+            detail: 2
+          - type: sensor
+            name: Energy
+            entity: sensor.envoy_122322027694_available_battery_energy
+            graph: line
+            detail: 2
 
       - type: grid
         cards:

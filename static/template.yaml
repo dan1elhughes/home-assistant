@@ -66,6 +66,28 @@
         {% endfor %}
         {{ ns.current_intent }}
 
+    - name: "Next energy intent"
+      icon: mdi:calendar-clock
+      state: >
+        {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
+        {% set now_time = now() %}
+        {% set ns = namespace(found=false, intent='', start='') %}
+        {% for event in events %}
+          {% if not ns.found and event.start %}
+             {% set start_dt = as_datetime(event.start) %}
+             {% if start_dt > now_time %}
+               {% set ns.intent = event.intent %}
+               {% set ns.start = start_dt %}
+               {% set ns.found = true %}
+             {% endif %}
+          {% endif %}
+        {% endfor %}
+        {% if ns.found %}
+          {{ ns.intent }} at {{ ns.start.strftime('%H:%M') }}
+        {% else %}
+          None
+        {% endif %}
+
     - name: "Energy intents"
       icon: mdi:calendar
       state: "off"
