@@ -71,19 +71,37 @@
       state: >
         {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
         {% set now_time = now() %}
-        {% set ns = namespace(found=false, intent='', start='') %}
+        {% set ns = namespace(found=false, intent='', start='', end='', is_current=false) %}
+
         {% for event in events %}
-          {% if not ns.found and event.start %}
-             {% set start_dt = as_datetime(event.start) %}
-             {% if start_dt > now_time %}
-               {% set ns.intent = event.intent %}
-               {% set ns.start = start_dt %}
-               {% set ns.found = true %}
-             {% endif %}
+          {% if event.start %}
+            {% set start_dt = as_datetime(event.start) %}
+            {% set end_dt = as_datetime(event.end) if event.end is defined else None %}
+
+            {# current intent #}
+            {% if not ns.found and start_dt <= now_time and (end_dt is none or now_time < end_dt) %}
+              {% set ns.intent = event.intent %}
+              {% set ns.start = start_dt %}
+              {% set ns.end = end_dt %}
+              {% set ns.found = true %}
+              {% set ns.is_current = true %}
+            {% endif %}
+
+            {# next intent #}
+            {% if not ns.found and start_dt > now_time %}
+              {% set ns.intent = event.intent %}
+              {% set ns.start = start_dt %}
+              {% set ns.found = true %}
+            {% endif %}
           {% endif %}
         {% endfor %}
+
         {% if ns.found %}
-          {{ ns.intent }} at {{ ns.start.strftime('%H:%M') }}
+          {% if ns.is_current %}
+            {{ ns.intent }} until {{ ns.end.strftime('%H:%M') if ns.end else '?' }}
+          {% else %}
+            {{ ns.intent }} at {{ ns.start.strftime('%H:%M') }}
+          {% endif %}
         {% else %}
           None
         {% endif %}
