@@ -112,8 +112,7 @@
       "ceiling": ["light.dining_room_ceiling_lights"],
       "name": "Dining room",
       "other_entities": [
-        "vacuum.robovac_x10_pro_omni",
-        "timer.robot_vacuum_drying"
+        "vacuum.robovac_x10_pro_omni"
       ]
     },
     {
