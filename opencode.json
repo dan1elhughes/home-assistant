@@ -6,7 +6,7 @@
       "url": "https://home.danhughes.dev/api/mcp",
       "oauth": false,
       "headers": {
-        "Authorization": "{file:.secrets/home-assistant-mcp-token}"
+        "Authorization": "Bearer {file:.secrets/home-assistant-mcp-token}"
       },
       "enabled": true
     }
