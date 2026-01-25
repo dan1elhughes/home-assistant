@@ -7,8 +7,19 @@
   trigger:
     - platform: state
       entity_id: "{{ plant.entity }}"
+    - platform: state
+      entity_id: binary_sensor.plant_lights_disabled
   action:
     - choose:
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.plant_lights_disabled
+              state: "on"
+          sequence:
+            - service: light.turn_off
+              target:
+                entity_id: "{{ plant.indicator }}"
+
         - conditions:
             - condition: template
               value_template: '{% raw %}{{ state_attr("{% endraw %}{{ plant.entity }}{% raw %}","moisture_status") == "High" }}{% endraw %}'
