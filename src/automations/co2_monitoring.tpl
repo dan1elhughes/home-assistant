@@ -17,7 +17,6 @@
       data:
         color_name: red
         brightness_pct: 100
-        effect: "Slow Pulse"
 
 ### CO2 Monitoring: {{ room.name }} - Yellow Warning ###
 - alias: "CO2 Monitoring: {{ room.name }} - Yellow Warning"
@@ -37,7 +36,7 @@
       data:
         color_name: yellow
         brightness_pct: 100
-        effect: "Slow Pulse"
+
 ### CO2 Monitoring: {{ room.name }} - Normal ###
 - alias: "CO2 Monitoring: {{ room.name }} - Normal"
   mode: single
