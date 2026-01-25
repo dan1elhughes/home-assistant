@@ -57,3 +57,14 @@
                 entity_id: select.myenergi_zappi_charge_mode
               data:
                 option: "Stopped"
+
+- alias: "Notify Dan when Zappi plug state changes"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.myenergi_zappi_plug_status
+  action:
+    - service: notify.mobile_app_pixel_9
+      data:
+        title: "Zappi"
+        message: "{{ states('sensor.myenergi_zappi_plug_status') }}"
