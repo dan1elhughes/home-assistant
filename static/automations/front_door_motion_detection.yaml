@@ -35,3 +35,7 @@
     - service: switch.turn_on
       target:
         entity_id: switch.front_door_motion_detection
+    - service: notify.dan
+      data:
+        message: "Front door motion detection enabled"
+        title: "Motion Detection"
