@@ -124,6 +124,13 @@
             {% if start_raw and end_raw %}
               {% set start = as_datetime(start_raw) %}
               {% set end = as_datetime(end_raw) %}
+              {# Ensure timezone awareness for comparison #}
+              {% if start.tzinfo is none %}
+                {% set start = start.replace(tzinfo=now().tzinfo) %}
+              {% endif %}
+              {% if end.tzinfo is none %}
+                {% set end = end.replace(tzinfo=now().tzinfo) %}
+              {% endif %}
               {% if end >= now() %}
                 {% set ns.charges = ns.charges + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
               {% endif %}
@@ -137,6 +144,13 @@
             {% if start_attr and end_attr %}
               {% set start = as_datetime(start_attr) %}
               {% set end = as_datetime(end_attr) %}
+              {# Ensure timezone awareness for comparison #}
+              {% if start.tzinfo is none %}
+                {% set start = start.replace(tzinfo=now().tzinfo) %}
+              {% endif %}
+              {% if end.tzinfo is none %}
+                {% set end = end.replace(tzinfo=now().tzinfo) %}
+              {% endif %}
               {% if end >= now() %}
                 {% set ns.charges = ns.charges + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
               {% endif %}
@@ -178,6 +192,13 @@
             {% if start_raw and end_raw %}
               {% set start = as_datetime(start_raw) %}
               {% set end = as_datetime(end_raw) %}
+              {# Ensure timezone awareness for comparison #}
+              {% if start.tzinfo is none %}
+                {% set start = start.replace(tzinfo=now().tzinfo) %}
+              {% endif %}
+              {% if end.tzinfo is none %}
+                {% set end = end.replace(tzinfo=now().tzinfo) %}
+              {% endif %}
               {% if end >= now() %}
                 {% set ns.discharges = ns.discharges + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
               {% endif %}
