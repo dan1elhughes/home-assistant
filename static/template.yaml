@@ -186,24 +186,28 @@
           {# ======================================================= #}
 
           {# --- A. Saving Sessions (Calendar) --- #}
-          {% for cal in ['calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions'] %}
-            {% set start_raw = state_attr(cal, 'start_time') %}
-            {% set end_raw = state_attr(cal, 'end_time') %}
-            {% if start_raw and end_raw %}
-              {% set start = as_datetime(start_raw) %}
-              {% set end = as_datetime(end_raw) %}
-              {# Ensure timezone awareness for comparison #}
-              {% if start.tzinfo is none %}
-                {% set start = start.replace(tzinfo=now().tzinfo) %}
+          {% set current_battery_kwh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) / 1000 %}
+          {% set min_discharge_threshold = states('input_number.minimum_discharge_threshold') | float(2) %}
+          {% if current_battery_kwh >= min_discharge_threshold %}
+            {% for cal in ['calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions'] %}
+              {% set start_raw = state_attr(cal, 'start_time') %}
+              {% set end_raw = state_attr(cal, 'end_time') %}
+              {% if start_raw and end_raw %}
+                {% set start = as_datetime(start_raw) %}
+                {% set end = as_datetime(end_raw) %}
+                {# Ensure timezone awareness for comparison #}
+                {% if start.tzinfo is none %}
+                  {% set start = start.replace(tzinfo=now().tzinfo) %}
+                {% endif %}
+                {% if end.tzinfo is none %}
+                  {% set end = end.replace(tzinfo=now().tzinfo) %}
+                {% endif %}
+                {% if end >= now() %}
+                  {% set ns.discharges = ns.discharges + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
+                {% endif %}
               {% endif %}
-              {% if end.tzinfo is none %}
-                {% set end = end.replace(tzinfo=now().tzinfo) %}
-              {% endif %}
-              {% if end >= now() %}
-                {% set ns.discharges = ns.discharges + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
-              {% endif %}
-            {% endif %}
-          {% endfor %}
+            {% endfor %}
+          {% endif %}
 
           {# --- B. Pre-Charge Calculations --- #}
           {# Battery Parameters #}

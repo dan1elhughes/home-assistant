@@ -27,6 +27,14 @@ battery_power_rate_kw:
   initial: 9.6
   unit_of_measurement: "kW"
 
+minimum_discharge_threshold:
+  name: Minimum discharge threshold for saving sessions
+  min: 0
+  max: 15
+  step: 0.5
+  initial: 2
+  unit_of_measurement: "kWh"
+
 co2_yellow_threshold:
   name: CO2 yellow threshold
   min: 0
