@@ -68,3 +68,5 @@
       data:
         title: "Zappi"
         message: "{{ states('sensor.myenergi_zappi_plug_status') }} at {{ now().strftime('%H:%M') }}"
+        data:
+          tag: "zappi-plug-status"
