@@ -372,6 +372,12 @@
       state: >
         {{ states('sensor.occupant_count') | int <= 1 }}
 
+    - name: Dehumidifier low power mode
+      state: >
+        {% set power = states('sensor.dehumidifier_energy_power') | float(0) %}
+        {% set switch_on = is_state('switch.dehumidifier', 'on') %}
+        {{ switch_on and 20 < power < 50 }}
+
 - switch:
     - turn_on:
         - target:
