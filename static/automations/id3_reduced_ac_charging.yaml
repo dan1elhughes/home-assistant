@@ -1,0 +1,20 @@
+- alias: "Ensure ID3 reduced AC charging is always on"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: switch.id3_reduced_ac_charging
+      to: "off"
+  action:
+    - alias: "Turn reduced AC charging back on"
+      service: switch.turn_on
+      target:
+        entity_id: switch.id3_reduced_ac_charging
+    - alias: "Notify user that switch was turned off"
+      service: notify.dan
+      data:
+        title: "ID3 Reduced AC Charging was off"
+        message: "Reduced AC charging was turned off and has been automatically turned back on."
+        data:
+          notification_icon: "mdi:car-electric"
+          channel: "id3_charging"
+          tag: id3_reduced_ac_charging_monitor
