@@ -126,44 +126,77 @@ enphase_add_schedule:
   icon: mdi:battery-clock
 
 enphase_delete_schedule:
-  alias: "Delete Enphase Schedules by Type"
-  mode: single
-  fields:
-    schedule_type:
-      name: "Schedule Type"
-      description: "Select which schedule(s) to delete"
-      required: true
-      selector:
-        select:
-          options:
-            - cfg
-            - dtg
-            - rbd
-            - all
-  sequence:
-    - variables:
-        schedules:
-          cfg: "{{ state_attr('sensor.enphase_schedules', 'cfg') or [] }}"
-          dtg: "{{ state_attr('sensor.enphase_schedules', 'dtg') or [] }}"
-          rbd: "{{ state_attr('sensor.enphase_schedules', 'rbd') or [] }}"
-        types_to_delete: >
-          {% if schedule_type == 'all' %}
-            ['cfg','dtg','rbd']
-          {% else %}
-            [schedule_type]
-          {% endif %}
-    - repeat:
-        for_each: "{{ types_to_delete }}"
-        sequence:
-          - repeat:
-              for_each: "{{ schedules[repeat.item] }}"
-              sequence:
-                - service: rest_command.enphase_delete_schedule
-                  data:
-                    battery_id: 5886607
-                    user_id: 5185058
-                    schedule_id: "{{ repeat.item }}"
-          - delay: "00:00:02"
-    - service: homeassistant.update_entity
-      target:
-        entity_id: sensor.enphase_schedules
+   alias: "Delete Enphase Schedules by Type"
+   mode: single
+   fields:
+     schedule_type:
+       name: "Schedule Type"
+       description: "Select which schedule(s) to delete"
+       required: true
+       selector:
+         select:
+           options:
+             - cfg
+             - dtg
+             - rbd
+             - all
+   sequence:
+     - variables:
+         schedules:
+           cfg: "{{ state_attr('sensor.enphase_schedules', 'cfg') or [] }}"
+           dtg: "{{ state_attr('sensor.enphase_schedules', 'dtg') or [] }}"
+           rbd: "{{ state_attr('sensor.enphase_schedules', 'rbd') or [] }}"
+         types_to_delete: >
+           {% if schedule_type == 'all' %}
+             ['cfg','dtg','rbd']
+           {% else %}
+             [schedule_type]
+           {% endif %}
+     - repeat:
+         for_each: "{{ types_to_delete }}"
+         sequence:
+           - repeat:
+               for_each: "{{ schedules[repeat.item] }}"
+               sequence:
+                 - service: rest_command.enphase_delete_schedule
+                   data:
+                     battery_id: 5886607
+                     user_id: 5185058
+                     schedule_id: "{{ repeat.item }}"
+           - delay: "00:00:02"
+     - service: homeassistant.update_entity
+       target:
+         entity_id: sensor.enphase_schedules
+
+notify_battery_schedule_change:
+   alias: "Notify Battery Schedule Change"
+   description: "Send notification if battery schedule change notifications are enabled"
+   mode: single
+   fields:
+     title:
+       description: "Notification title"
+       example: "Updating..."
+       required: true
+     message:
+       description: "Notification message"
+       example: "Schedule updated"
+       required: true
+     icon:
+       description: "Notification icon"
+       example: "mdi:battery-sync"
+       required: false
+       default: "mdi:battery-sync"
+   sequence:
+     - if:
+         - condition: state
+           entity_id: input_boolean.notify_on_battery_schedule_changed
+           state: "on"
+       then:
+         - service: notify.dan
+           data:
+             title: "{{ title }}"
+             message: "{{ message }}"
+             data:
+               notification_icon: "{{ icon }}"
+               channel: "energy_intents_schedule"
+               tag: energy_intents_schedule
