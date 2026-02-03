@@ -3,3 +3,30 @@
 /.vscode
 /enphase.json
 /.secrets
+
+# Python virtual environment
+/.venv
+/venv
+/.env
+
+# Python cache files
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+
+# pytest cache
+.pytest_cache/
+.coverage
+htmlcov/
+
+# IDE files
+.idea/
+*.swp
+*.swo
+*~
+
+# OS files
+.DS_Store
+Thumbs.db
