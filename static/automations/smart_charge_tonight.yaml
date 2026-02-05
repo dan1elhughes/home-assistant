@@ -2,7 +2,7 @@
   mode: single
   trigger:
     - platform: time
-      at: "23:00:00"
+      at: input_datetime.smart_charge_at
   condition:
     - alias: "Smart charge tonight enabled"
       condition: state
