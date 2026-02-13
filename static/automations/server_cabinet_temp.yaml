@@ -1,0 +1,22 @@
+- alias: "Set server cabinet temperature based on active room"
+  trigger:
+    - platform: state
+      entity_id: input_select.active_room
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_select.active_room
+              state: "office"
+          sequence:
+            - service: climate.set_temperature
+              target:
+                entity_id: climate.server_cabinet
+              data:
+                temperature: 30
+      default:
+        - service: climate.set_temperature
+          target:
+            entity_id: climate.server_cabinet
+          data:
+            temperature: 25
