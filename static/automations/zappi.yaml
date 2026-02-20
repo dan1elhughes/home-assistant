@@ -6,6 +6,7 @@
         - sensor.current_energy_intent
         - select.myenergi_zappi_charge_mode
         - switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+        - input_boolean.smart_charge_tonight
   action:
     - choose:
         - alias: "ID3 Smart Charge"
@@ -21,6 +22,19 @@
                 entity_id: select.myenergi_zappi_charge_mode
               data:
                 option: "Fast"
+        - alias: "Smart charge tonight - stop charger"
+          conditions:
+            - alias: "Smart charge tonight is enabled"
+              condition: state
+              entity_id: input_boolean.smart_charge_tonight
+              state: "on"
+          sequence:
+            - alias: "Set Zappi to Stopped"
+              service: select.select_option
+              target:
+                entity_id: select.myenergi_zappi_charge_mode
+              data:
+                option: "Stopped"
         - alias: "Charge"
           conditions:
             - alias: "Current energy intent is Charge"
@@ -31,6 +45,10 @@
               condition: state
               entity_id: select.myenergi_zappi_charge_mode
               state: "Stopped"
+            - alias: "Smart charge tonight is not enabled"
+              condition: state
+              entity_id: input_boolean.smart_charge_tonight
+              state: "off"
           sequence:
             - alias: "Set Zappi to Fast"
               service: select.select_option
