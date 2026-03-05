@@ -1,0 +1,25 @@
+- alias: "Barn AC at sunrise and sunset"
+  mode: single
+  triggers:
+    - trigger: sun
+      event: sunrise
+    - trigger: sun
+      event: sunset
+  action:
+    - choose:
+        - conditions:
+            - condition: template
+              value_template: "{{ trigger.event == 'sunrise' }}"
+          sequence:
+            - service: climate.set_temperature
+              target:
+                entity_id: climate.barn_ac
+              data:
+                temperature: 25
+                hvac_mode: cool
+      default:
+        - service: climate.set_hvac_mode
+          target:
+            entity_id: climate.barn_ac
+          data:
+            hvac_mode: "off"

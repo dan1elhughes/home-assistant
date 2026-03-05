@@ -111,9 +111,7 @@
       "lights": "light.dining_room_lights",
       "ceiling": ["light.dining_room_ceiling_lights"],
       "name": "Dining room",
-      "other_entities": [
-        "vacuum.robovac_x10_pro_omni"
-      ]
+      "other_entities": ["vacuum.robovac_x10_pro_omni"]
     },
     {
       "button_ieee": "00:12:4b:00:29:0f:e9:c1",
@@ -160,7 +158,7 @@
         "sensor.barn_sensor_temperature",
         "sensor.barn_sensor_humidity"
       ],
-      "other_entities": ["climate.virtual_barn_heating"]
+      "other_entities": ["climate.barn_ac"]
     },
     {
       "id": "garden",
