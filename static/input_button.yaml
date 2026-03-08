@@ -1,11 +1,3 @@
-living_room_ac:
-  name: AC toggle
-  icon: mdi:snowflake
-
-living_room_ac_up:
-  name: AC up
-  icon: mdi:thermometer-chevron-up
-
-living_room_ac_down:
-  name: AC down
-  icon: mdi:thermometer-chevron-down
+enable_central_heating:
+  name: "Enable central heating"
+  icon: mdi:home-thermometer
