@@ -93,6 +93,24 @@ views:
     sections:
       - type: grid
         cards:
+          - type: tile
+            entity: sensor.octopus_energy_a_fad3b08a_wheel_of_fortune_spins_electricity
+            name: Electricity spins
+            icon: mdi:rotate-360
+            visibility:
+              - condition: numeric_state
+                entity: sensor.octopus_energy_a_fad3b08a_wheel_of_fortune_spins_electricity
+                above: 0
+          - type: tile
+            entity: sensor.octopus_energy_a_fad3b08a_wheel_of_fortune_spins_gas
+            name: Gas spins
+            icon: mdi:rotate-360
+            visibility:
+              - condition: numeric_state
+                entity: sensor.octopus_energy_a_fad3b08a_wheel_of_fortune_spins_gas
+                above: 0
+      - type: grid
+        cards:
           - type: heading
             heading: Battery
             heading_style: title
