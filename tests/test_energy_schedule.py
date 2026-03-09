@@ -166,7 +166,7 @@ class TestEnergyScheduleTemplates(unittest.TestCase):
         self.assertIsInstance(events, list)
 
         expected_events = [
-            {'intent': 'Discharge', 'start': '2025-01-15T23:30:00+00:00', 'end': '2025-01-16T00:25:00+00:00'},
+            {'intent': 'Discharge', 'start': '2025-01-15T23:40:00+00:00', 'end': '2025-01-16T00:25:00+00:00'},
             {'intent': 'Charge', 'start': '2025-01-16T00:30:00+00:00', 'end': '2025-01-16T05:00:00+00:00'},
         ]
 
@@ -308,7 +308,7 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
 
         expected_events = [
             {'intent': 'Discharge', 'start': '2025-01-14T17:00:00+00:00', 'end': '2025-01-14T19:00:00+00:00'},
-            {'intent': 'Discharge', 'start': '2025-01-14T23:30:00+00:00', 'end': '2025-01-15T00:25:00+00:00'},
+            {'intent': 'Discharge', 'start': '2025-01-14T23:40:00+00:00', 'end': '2025-01-15T00:25:00+00:00'},
             {'intent': 'Charge', 'start': '2025-01-15T00:30:00+00:00', 'end': '2025-01-15T05:00:00+00:00'},
         ]
 
@@ -354,10 +354,9 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
 
         events = json.loads(result)
 
-        # With very low battery (1kWh), pre-discharge is minimal (only 5 minutes)
-        # But it still generates a short pre-discharge before the charge slot
+        # With very low battery (1kWh) below threshold (2kWh), no pre-discharge is generated
+        # Only the charge slot is expected
         expected_events = [
-            {'intent': 'Discharge', 'start': '2025-01-14T23:20:00+00:00', 'end': '2025-01-14T23:25:00+00:00'},
             {'intent': 'Charge', 'start': '2025-01-14T23:30:00+00:00', 'end': '2025-01-15T05:00:00+00:00'},
         ]
 

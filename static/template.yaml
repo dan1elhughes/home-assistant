@@ -237,7 +237,7 @@
           {# Battery Parameters #}
           {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
           {% set battery_kwh = battery_wh / 1000 %}
-          {% set usable_kwh = battery_kwh - min_discharge_threshold_kwh %}
+          {% set usable_kwh = [battery_kwh - min_discharge_threshold_kwh, 0] | max %}
           {% set discharge_rate_kw = states('input_number.battery_power_rate_kw') | float(9.6) %}
           {# Max hours we can physically discharge #}
           {% set max_discharge_hours = (usable_kwh / discharge_rate_kw) | float(0) %}
