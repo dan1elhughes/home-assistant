@@ -103,7 +103,8 @@
       "icon": "mdi:fridge",
       "lights": "light.kitchen_lights",
       "ceiling": ["light.kitchen_ceiling_lights"],
-      "name": "Kitchen"
+      "name": "Kitchen",
+      "other_entities": ["sensor.dishwasher_operation_state"]
     },
     {
       "id": "dining_room",
@@ -188,7 +189,8 @@
       "id": "utility_room",
       "icon": "mdi:toolbox",
       "name": "Utility room",
-      "ceiling": ["light.utility_room_ceiling_light"]
+      "ceiling": ["light.utility_room_ceiling_light"],
+      "other_entities": ["sensor.washer_dryer_operation_state"]
     },
     {
       "id": "garage",
