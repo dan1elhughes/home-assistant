@@ -182,13 +182,13 @@
           {% set flat_charges = ns_flat.items %}
 
           {% set current_battery_kwh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) / 1000 %}
-          {% set min_discharge_threshold = states('input_number.minimum_discharge_threshold') | float(2) %}
+          {% set min_discharge_threshold_kwh = states('input_number.minimum_discharge_threshold') | float(2) %}
 
           {# ======================================================= #}
           {# 3a. GENERATE DISCHARGE SLOTS (Saving Sessions)          #}
           {# ======================================================= #}
 
-          {% if current_battery_kwh >= min_discharge_threshold %}
+          {% if current_battery_kwh >= min_discharge_threshold_kwh %}
             {% for cal in ['calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions'] %}
               {% set start_raw = state_attr(cal, 'start_time') %}
               {% set end_raw = state_attr(cal, 'end_time') %}
@@ -237,8 +237,7 @@
           {# Battery Parameters #}
           {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
           {% set battery_kwh = battery_wh / 1000 %}
-          {% set target_percent = 10 %}
-          {% set usable_kwh = battery_kwh * (1 - target_percent / 100) %}
+          {% set usable_kwh = battery_kwh - min_discharge_threshold_kwh %}
           {% set discharge_rate_kw = states('input_number.battery_power_rate_kw') | float(9.6) %}
           {# Max hours we can physically discharge #}
           {% set max_discharge_hours = (usable_kwh / discharge_rate_kw) | float(0) %}
