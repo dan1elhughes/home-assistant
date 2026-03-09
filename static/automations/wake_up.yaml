@@ -19,12 +19,6 @@
         entity_id: light.bedroom_lamp_left
       data:
         brightness: 125
-    - alias: "Partially open curtain"
-      service: v6_quietdrift.set_switchbot_curtain_position
-      data:
-        position: 25
-        entity_id: cover.curtain_right
-        speed: 1
 
 - alias: Wake up lights (Dan)
   mode: single
@@ -41,12 +35,11 @@
       entity_id: input_boolean.wake_up_dan_enabled
       state: "on"
   action:
-    - alias: "Turn on lamp"
-      service: light.turn_on
-      target:
-        entity_id: light.bedroom_lamp_right
+    - alias: "Set active room"
+      service: input_select.select_option
       data:
-        brightness: 125
+        entity_id: input_select.active_room
+        option: bedroom
     - alias: "Fully open curtains"
       service: v6_quietdrift.set_switchbot_curtain_position
       data:
