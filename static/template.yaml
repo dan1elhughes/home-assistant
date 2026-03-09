@@ -181,13 +181,13 @@
           {# The flattened charges are now our "Anchors" #}
           {% set flat_charges = ns_flat.items %}
 
-          {# ======================================================= #}
-          {# 3. GENERATE DISCHARGE SLOTS                             #}
-          {# ======================================================= #}
-
-          {# --- A. Saving Sessions (Calendar) --- #}
           {% set current_battery_kwh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) / 1000 %}
           {% set min_discharge_threshold = states('input_number.minimum_discharge_threshold') | float(2) %}
+
+          {# ======================================================= #}
+          {# 3a. GENERATE DISCHARGE SLOTS (Saving Sessions)          #}
+          {# ======================================================= #}
+
           {% if current_battery_kwh >= min_discharge_threshold %}
             {% for cal in ['calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions'] %}
               {% set start_raw = state_attr(cal, 'start_time') %}
@@ -209,7 +209,31 @@
             {% endfor %}
           {% endif %}
 
-          {# --- B. Pre-Charge Calculations --- #}
+          {# ======================================================= #}
+          {# 3b. GENERATE DISCHARGE SLOTS (Target Times)             #}
+          {# ======================================================= #}
+          {% set ns_target_discharges = namespace(items=[]) %}
+
+          {# Target Times from Binary Sensor #}
+          {% set target_times = state_attr('binary_sensor.target_timeframes_agile_export_export_timeframe', 'target_times') or [] %}
+          {% for tt in target_times %}
+            {% set start = as_datetime(tt.start) %}
+            {% set end = as_datetime(tt.end) %}
+            {# Ensure timezone awareness #}
+            {% if start.tzinfo is none %}
+              {% set start = start.replace(tzinfo=now().tzinfo) %}
+            {% endif %}
+            {% if end.tzinfo is none %}
+              {% set end = end.replace(tzinfo=now().tzinfo) %}
+            {% endif %}
+            {% if end >= now() %}
+              {% set ns_target_discharges.items = ns_target_discharges.items + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
+            {% endif %}
+          {% endfor %}
+
+          {# ======================================================= #}
+          {# 3b. GENERATE DISCHARGE SLOTS (Pre-charge)               #}
+          {# ======================================================= #}
           {# Battery Parameters #}
           {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
           {% set battery_kwh = battery_wh / 1000 %}
@@ -246,7 +270,7 @@
           {# 4. FINAL PASS: COMBINE AND TRIM (Buffer Enforcement)    #}
           {# ======================================================= #}
 
-          {% set all_raw = flat_charges + ns.discharges %}
+          {% set all_raw = flat_charges + ns.discharges + ns_target_discharges.items %}
           {% set sorted_all = all_raw | sort(attribute='start') %}
           {% set ns_final = namespace(items=[]) %}
 
@@ -270,41 +294,41 @@
                 {# -- Different Intent: Conflict Resolution -- #}
                 {% if event.start < last.end %}
                     {# Overlap #}
-                    {% if event.intent == 'Charge' %}
+                      {% if event.intent == 'Charge' %}
                       {# Charge wins. Trim previous Discharge end. #}
-                      {% set trimmed_last_end = event.start - timedelta(minutes=5) %}
-                      {% if trimmed_last_end > last.start %}
-                          {% set ns_final.items = ns_final.items[:-1] + [{'start': last.start, 'end': trimmed_last_end, 'intent': last.intent}] %}
-                          {% set ns_final.items = ns_final.items + [event] %}
+                        {% set trimmed_last_end = event.start - timedelta(minutes=5) %}
+                        {% if trimmed_last_end > last.start %}
+                            {% set ns_final.items = ns_final.items[:-1] + [{'start': last.start, 'end': trimmed_last_end, 'intent': last.intent}] %}
+                            {% set ns_final.items = ns_final.items + [event] %}
+                        {% else %}
+                            {% set ns_final.items = ns_final.items[:-1] + [event] %}
+                        {% endif %}
                       {% else %}
-                          {% set ns_final.items = ns_final.items[:-1] + [event] %}
-                      {% endif %}
-                    {% else %}
                       {# Charge wins. Trim current Discharge start. #}
-                      {% set trimmed_event_start = last.end + timedelta(minutes=5) %}
-                      {% if trimmed_event_start < event.end %}
-                        {% set ns_final.items = ns_final.items + [{'start': trimmed_event_start, 'end': event.end, 'intent': event.intent}] %}
+                        {% set trimmed_event_start = last.end + timedelta(minutes=5) %}
+                        {% if trimmed_event_start < event.end %}
+                          {% set ns_final.items = ns_final.items + [{'start': trimmed_event_start, 'end': event.end, 'intent': event.intent}] %}
+                        {% endif %}
                       {% endif %}
-                    {% endif %}
                 {% else %}
                     {# Gap check #}
                     {% set gap = (event.start - last.end).total_seconds() / 60 %}
                     {% if gap < 5 %}
                       {# Buffer violation #}
-                      {% if event.intent == 'Charge' %}
-                          {% set required_end = event.start - timedelta(minutes=5) %}
-                          {% if required_end > last.start %}
-                            {% set ns_final.items = ns_final.items[:-1] + [{'start': last.start, 'end': required_end, 'intent': last.intent}] %}
-                            {% set ns_final.items = ns_final.items + [event] %}
-                          {% else %}
-                            {% set ns_final.items = ns_final.items[:-1] + [event] %}
-                          {% endif %}
-                      {% else %}
-                          {% set required_start = last.end + timedelta(minutes=5) %}
-                          {% if required_start < event.end %}
-                            {% set ns_final.items = ns_final.items + [{'start': required_start, 'end': event.end, 'intent': event.intent}] %}
-                          {% endif %}
-                      {% endif %}
+                        {% if event.intent == 'Charge' %}
+                            {% set required_end = event.start - timedelta(minutes=5) %}
+                            {% if required_end > last.start %}
+                              {% set ns_final.items = ns_final.items[:-1] + [{'start': last.start, 'end': required_end, 'intent': last.intent}] %}
+                              {% set ns_final.items = ns_final.items + [event] %}
+                            {% else %}
+                              {% set ns_final.items = ns_final.items[:-1] + [event] %}
+                            {% endif %}
+                        {% else %}
+                            {% set required_start = last.end + timedelta(minutes=5) %}
+                            {% if required_start < event.end %}
+                              {% set ns_final.items = ns_final.items + [{'start': required_start, 'end': event.end, 'intent': event.intent}] %}
+                            {% endif %}
+                        {% endif %}
                     {% else %}
                       {% set ns_final.items = ns_final.items + [event] %}
                     {% endif %}

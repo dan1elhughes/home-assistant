@@ -1,0 +1,23 @@
+- alias: "Update battery discharge target timeframe"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.envoy_122322027694_available_battery_energy
+  variables:
+    battery_kwh: "{{ states('sensor.envoy_122322027694_available_battery_energy') | float(0) / 1000 }}"
+    minimum_kwh: "{{ states('input_number.minimum_discharge_threshold') | float(2) }}"
+    discharge_rate_kw: "{{ states('input_number.battery_power_rate_kw') | float(9.6) }}"
+    available_kwh: "{{ [battery_kwh - minimum_kwh, 0] | max }}"
+    discharge_minutes: "{{ (available_kwh / discharge_rate_kw * 60) | float(0) }}"
+    target_hours: "{{ ((discharge_minutes / 30) | int * 0.5) | float(0) }}"
+    current_hours: "{{ state_attr('binary_sensor.target_timeframes_agile_export_export_timeframe', 'hours') | float(0) }}"
+  condition:
+    - condition: template
+      value_template: "{{ target_hours != current_hours }}"
+  action:
+    - alias: "Update target timeframe config"
+      service: target_timeframes.update_target_timeframe_config
+      target:
+        entity_id: binary_sensor.target_timeframes_agile_export_export_timeframe
+      data:
+        target_hours: "{{ target_hours }}"
