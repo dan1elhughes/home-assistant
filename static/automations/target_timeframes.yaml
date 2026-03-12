@@ -1,0 +1,9 @@
+- alias: "Timeframe: Agile export"
+  description: "Timeframe: Agile export"
+  use_blueprint:
+    path: bottlecapdave.github.io/target_timeframes_octopus_energy.yaml
+    input:
+      target_timeframe_data_source_sensor: sensor.target_timeframes_agile_export_data_source_last_updated
+      octopus_energy_previous_day_rates: event.octopus_energy_electricity_15p0706167_2000060833200_export_previous_day_rates
+      octopus_energy_current_day_rates: event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates
+      octopus_energy_next_day_rates: event.octopus_energy_electricity_15p0706167_2000060833200_export_next_day_rates
