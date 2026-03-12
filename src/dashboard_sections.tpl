@@ -116,6 +116,8 @@ views:
             entity: sensor.envoy_122322027694_available_battery_energy
             graph: line
             detail: 2
+          - type: markdown
+            content: "{% raw %}{% set events = state_attr('sensor.energy_intents', 'events') %}{% if events %}{% for event in events %}{% set start = strptime(event.start, '%Y-%m-%dT%H:%M:%S%z') %}{% set end = strptime(event.end, '%Y-%m-%dT%H:%M:%S%z') %}{{ as_local(start).strftime('%H:%M') }} - {{ as_local(end).strftime('%H:%M') }}: **{{ event.intent }}**\n{% endfor %}{% else %}No scheduled intents{% endif %}{% endraw %}"
 
       - type: grid
         cards:
