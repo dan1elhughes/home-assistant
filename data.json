@@ -225,19 +225,11 @@
     { "name": "Dan", "prefix": "sensor.pixel_9" },
     { "name": "Katie", "prefix": "sensor.pixel_7a" }
   ],
-  "disabled_dimmers": [
-    "light.kitchen_worklights",
-    "light.patio_light",
-    "light.front_door_light"
-  ],
+  "disabled_dimmers": ["light.kitchen_worklights"],
   "light_sync": [
     {
       "source": "light.kitchen_worklights",
       "targets": ["light.kitchen_sink"]
-    },
-    {
-      "source": "light.patio_light",
-      "targets": ["light.garden_lights"]
     }
   ],
   "multiLightDimmers": [
