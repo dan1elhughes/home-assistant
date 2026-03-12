@@ -271,22 +271,22 @@
 
           {% set all_raw = flat_charges + ns.discharges + ns_target_discharges.items %}
           {% set sorted_all = all_raw | sort(attribute='start') %}
-          {% set ns_final = namespace(items=[]) %}
+          {% set ns_merged = namespace(items=[]) %}
 
           {% for event in sorted_all %}
-            {% if ns_final.items | length == 0 %}
-              {% set ns_final.items = ns_final.items + [event] %}
+            {% if ns_merged.items | length == 0 %}
+              {% set ns_merged.items = ns_merged.items + [event] %}
             {% else %}
-              {% set last = ns_final.items[-1] %}
+              {% set last = ns_merged.items[-1] %}
 
               {% if event.intent == last.intent %}
                 {# -- Same Intent: Merge if touching/overlapping -- #}
                 {% if event.start <= last.end %}
                   {% set new_end = event.end if event.end > last.end else last.end %}
-                  {% set ns_final.items = ns_final.items[:-1] + [{'start': last.start, 'end': new_end, 'intent': last.intent}] %}
+                  {% set ns_merged.items = ns_merged.items[:-1] + [{'start': last.start, 'end': new_end, 'intent': last.intent}] %}
                 {% else %}
                   {# GAP PRESERVATION: Maintain gap between non-touching same-intent events #}
-                  {% set ns_final.items = ns_final.items + [event] %}
+                  {% set ns_merged.items = ns_merged.items + [event] %}
                 {% endif %}
 
               {% else %}
@@ -297,16 +297,16 @@
                       {# Charge wins. Trim previous Discharge end. #}
                         {% set trimmed_last_end = event.start - timedelta(minutes=5) %}
                         {% if trimmed_last_end > last.start %}
-                            {% set ns_final.items = ns_final.items[:-1] + [{'start': last.start, 'end': trimmed_last_end, 'intent': last.intent}] %}
-                            {% set ns_final.items = ns_final.items + [event] %}
+                            {% set ns_merged.items = ns_merged.items[:-1] + [{'start': last.start, 'end': trimmed_last_end, 'intent': last.intent}] %}
+                            {% set ns_merged.items = ns_merged.items + [event] %}
                         {% else %}
-                            {% set ns_final.items = ns_final.items[:-1] + [event] %}
+                            {% set ns_merged.items = ns_merged.items[:-1] + [event] %}
                         {% endif %}
                       {% else %}
                       {# Charge wins. Trim current Discharge start. #}
                         {% set trimmed_event_start = last.end + timedelta(minutes=5) %}
                         {% if trimmed_event_start < event.end %}
-                          {% set ns_final.items = ns_final.items + [{'start': trimmed_event_start, 'end': event.end, 'intent': event.intent}] %}
+                          {% set ns_merged.items = ns_merged.items + [{'start': trimmed_event_start, 'end': event.end, 'intent': event.intent}] %}
                         {% endif %}
                       {% endif %}
                 {% else %}
@@ -317,21 +317,72 @@
                         {% if event.intent == 'Charge' %}
                             {% set required_end = event.start - timedelta(minutes=5) %}
                             {% if required_end > last.start %}
-                              {% set ns_final.items = ns_final.items[:-1] + [{'start': last.start, 'end': required_end, 'intent': last.intent}] %}
-                              {% set ns_final.items = ns_final.items + [event] %}
+                              {% set ns_merged.items = ns_merged.items[:-1] + [{'start': last.start, 'end': required_end, 'intent': last.intent}] %}
+                              {% set ns_merged.items = ns_merged.items + [event] %}
                             {% else %}
-                              {% set ns_final.items = ns_final.items[:-1] + [event] %}
+                              {% set ns_merged.items = ns_merged.items[:-1] + [event] %}
                             {% endif %}
                         {% else %}
                             {% set required_start = last.end + timedelta(minutes=5) %}
                             {% if required_start < event.end %}
-                              {% set ns_final.items = ns_final.items + [{'start': required_start, 'end': event.end, 'intent': event.intent}] %}
+                              {% set ns_merged.items = ns_merged.items + [{'start': required_start, 'end': event.end, 'intent': event.intent}] %}
                             {% endif %}
                         {% endif %}
                     {% else %}
-                      {% set ns_final.items = ns_final.items + [event] %}
+                      {% set ns_merged.items = ns_merged.items + [event] %}
                     {% endif %}
                 {% endif %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {# ======================================================= #}
+          {# 4b. FILTER: Never export if export price < import price #}
+          {# ======================================================= #}
+          {% set import_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates', 'rates') or [] %}
+          {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
+          {% set ns_filtered = namespace(items=[]) %}
+          
+          {% for e in ns_merged.items %}
+            {% if e.intent != 'Discharge' %}
+              {# Always keep non-discharge events #}
+              {% set ns_filtered.items = ns_filtered.items + [e] %}
+            {% else %}
+              {# For discharge events, check if export >= import for ALL rate periods in this slot #}
+              {% set slot_start = e.start %}
+              {% set slot_end = e.end %}
+              {% set can_export = true %}
+              
+              {# Check each rate period that overlaps with this slot #}
+              {% for rate in import_rates %}
+                {% set rate_start = as_datetime(rate.start) %}
+                {% set rate_end = as_datetime(rate.end) %}
+                {# Check if this rate period overlaps with the slot #}
+                {% if rate_start < slot_end and rate_end > slot_start %}
+                  {% set import_rate = rate.value_inc_vat %}
+                  {% set found_export_rate = false %}
+                  
+                  {# Find corresponding export rate #}
+                  {% for exp_rate in export_rates %}
+                    {% set exp_start = as_datetime(exp_rate.start) %}
+                    {% set exp_end = as_datetime(exp_rate.end) %}
+                    {% if exp_start < slot_end and exp_end > slot_start %}
+                      {% set found_export_rate = true %}
+                      {% if exp_rate.value_inc_vat < import_rate %}
+                        {% set can_export = false %}
+                      {% endif %}
+                    {% endif %}
+                  {% endfor %}
+                  
+                  {# If no matching export rate found, can't export #}
+                  {% if not found_export_rate %}
+                    {% set can_export = false %}
+                  {% endif %}
+                {% endif %}
+              {% endfor %}
+              
+              {% if can_export %}
+                {% set ns_filtered.items = ns_filtered.items + [e] %}
               {% endif %}
             {% endif %}
           {% endfor %}
@@ -340,7 +391,7 @@
           {# 5. OUTPUT JSON                                          #}
           {# ======================================================= #}
           {% set ns_json = namespace(output=[]) %}
-          {% for e in ns_final.items %}
+          {% for e in ns_filtered.items %}
             {% set ns_json.output = ns_json.output + [{'start': e.start.isoformat(), 'end': e.end.isoformat(), 'intent': e.intent}] %}
           {% endfor %}
           {{ ns_json.output | to_json }}
