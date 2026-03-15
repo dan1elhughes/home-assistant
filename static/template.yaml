@@ -111,7 +111,8 @@
       state: "off"
       attributes:
         events: >
-          {% set ns = namespace(charges=[], discharges=[], all_events=[]) %}
+          {% set ns = namespace(charges=[], discharges=[]) %}
+          {% set tz = now().tzinfo %}
 
           {# ======================================================= #}
           {# 1. COLLECT ALL GUARANTEED CHARGE SLOTS                  #}
@@ -122,15 +123,8 @@
             {% set start_raw = state_attr(cal, 'start_time') %}
             {% set end_raw = state_attr(cal, 'end_time') %}
             {% if start_raw and end_raw %}
-              {% set start = as_datetime(start_raw) %}
-              {% set end = as_datetime(end_raw) %}
-              {# Ensure timezone awareness for comparison #}
-              {% if start.tzinfo is none %}
-                {% set start = start.replace(tzinfo=now().tzinfo) %}
-              {% endif %}
-              {% if end.tzinfo is none %}
-                {% set end = end.replace(tzinfo=now().tzinfo) %}
-              {% endif %}
+              {% set start = as_datetime(start_raw).replace(tzinfo=tz) %}
+              {% set end = as_datetime(end_raw).replace(tzinfo=tz) %}
               {% if end >= now() %}
                 {% set ns.charges = ns.charges + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
               {% endif %}
@@ -142,15 +136,8 @@
             {% set start_attr = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', state_type + '_start') %}
             {% set end_attr = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', state_type + '_end') %}
             {% if start_attr and end_attr %}
-              {% set start = as_datetime(start_attr) %}
-              {% set end = as_datetime(end_attr) %}
-              {# Ensure timezone awareness for comparison #}
-              {% if start.tzinfo is none %}
-                {% set start = start.replace(tzinfo=now().tzinfo) %}
-              {% endif %}
-              {% if end.tzinfo is none %}
-                {% set end = end.replace(tzinfo=now().tzinfo) %}
-              {% endif %}
+              {% set start = as_datetime(start_attr).replace(tzinfo=tz) %}
+              {% set end = as_datetime(end_attr).replace(tzinfo=tz) %}
               {% if end >= now() %}
                 {% set ns.charges = ns.charges + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
               {% endif %}
@@ -193,15 +180,8 @@
               {% set start_raw = state_attr(cal, 'start_time') %}
               {% set end_raw = state_attr(cal, 'end_time') %}
               {% if start_raw and end_raw %}
-                {% set start = as_datetime(start_raw) %}
-                {% set end = as_datetime(end_raw) %}
-                {# Ensure timezone awareness for comparison #}
-                {% if start.tzinfo is none %}
-                  {% set start = start.replace(tzinfo=now().tzinfo) %}
-                {% endif %}
-                {% if end.tzinfo is none %}
-                  {% set end = end.replace(tzinfo=now().tzinfo) %}
-                {% endif %}
+                {% set start = as_datetime(start_raw).replace(tzinfo=tz) %}
+                {% set end = as_datetime(end_raw).replace(tzinfo=tz) %}
                 {% if end >= now() %}
                   {% set ns.discharges = ns.discharges + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
                 {% endif %}
@@ -217,15 +197,8 @@
           {# Target Times from Binary Sensor #}
           {% set target_times = state_attr('binary_sensor.target_timeframes_agile_export_export_timeframe', 'target_times') or [] %}
           {% for tt in target_times %}
-            {% set start = as_datetime(tt.start) %}
-            {% set end = as_datetime(tt.end) %}
-            {# Ensure timezone awareness #}
-            {% if start.tzinfo is none %}
-              {% set start = start.replace(tzinfo=now().tzinfo) %}
-            {% endif %}
-            {% if end.tzinfo is none %}
-              {% set end = end.replace(tzinfo=now().tzinfo) %}
-            {% endif %}
+            {% set start = as_datetime(tt.start).replace(tzinfo=tz) %}
+            {% set end = as_datetime(tt.end).replace(tzinfo=tz) %}
             {% if end >= now() %}
               {% set ns_target_discharges.items = ns_target_discharges.items + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
             {% endif %}
