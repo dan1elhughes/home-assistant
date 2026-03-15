@@ -351,7 +351,7 @@
               {# For discharge events, check if export >= import for ALL rate periods in this slot #}
               {% set slot_start = e.start %}
               {% set slot_end = e.end %}
-              {% set can_export = true %}
+              {% set ns_check = namespace(can_export=true, found_any=false) %}
               
               {# Check each rate period that overlaps with this slot #}
               {% for rate in import_rates %}
@@ -362,26 +362,28 @@
                   {% set import_rate = rate.value_inc_vat %}
                   {% set found_export_rate = false %}
                   
-                  {# Find corresponding export rate #}
+                  {# Find corresponding export rate - must overlap with import rate period, not just slot #}
                   {% for exp_rate in export_rates %}
                     {% set exp_start = as_datetime(exp_rate.start) %}
                     {% set exp_end = as_datetime(exp_rate.end) %}
-                    {% if exp_start < slot_end and exp_end > slot_start %}
+                    {# Check if export rate overlaps with IMPORT rate period, not just slot #}
+                    {% if exp_start < rate_end and exp_end > rate_start %}
                       {% set found_export_rate = true %}
+                      {% set ns_check.found_any = true %}
                       {% if exp_rate.value_inc_vat < import_rate %}
-                        {% set can_export = false %}
+                        {% set ns_check.can_export = false %}
                       {% endif %}
                     {% endif %}
                   {% endfor %}
                   
                   {# If no matching export rate found, can't export #}
                   {% if not found_export_rate %}
-                    {% set can_export = false %}
+                    {% set ns_check.can_export = false %}
                   {% endif %}
                 {% endif %}
               {% endfor %}
               
-              {% if can_export %}
+              {% if ns_check.can_export %}
                 {% set ns_filtered.items = ns_filtered.items + [e] %}
               {% endif %}
             {% endif %}
