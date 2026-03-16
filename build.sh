@@ -4,10 +4,9 @@ set -euo pipefail
 
 rsync -a --delete static/ dist/
 
-# npm i -g nunjucks-cli
-nunjucks \*\*/\*.tpl data.json -o dist -p src -e yaml -O nunjucks.json
+npx nunjucks-cli \*\*/\*.tpl data.json -o dist -p src -e yaml -O nunjucks.json
 
-nunjucks \*.tpl enphase.json -o dist/scripts -p scripts -e sh -O nunjucks.json
+npx nunjucks-cli \*.tpl enphase.json -o dist/scripts -p scripts -e sh -O nunjucks.json
 chmod +x dist/scripts/*.sh
 
 yamllint dist
