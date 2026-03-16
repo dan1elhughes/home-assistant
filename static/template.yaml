@@ -399,6 +399,26 @@
       state: >
         {{ (states('input_number.battery_energy_discharged_wh') | float(0)) / 1000 }}
 
+    - name: "ID3 charge time remaining"
+      unit_of_measurement: "h"
+      icon: mdi:timer-outline
+      state: >
+        {% set current_soc = states('sensor.id3_battery_level') | float(none) %}
+        {% set target_soc = states('number.id3_battery_target_charge_level') | float(none) %}
+        {% set capacity = 58 %}
+        {% set power = 2 %}
+        
+        {% if current_soc is not none and target_soc is not none %}
+          {% set soc_diff = target_soc - current_soc %}
+          {% if soc_diff > 0 %}
+            {{ (soc_diff / 100 * capacity / power) | round(2) }}
+          {% else %}
+            0.0
+          {% endif %}
+        {% else %}
+          unavailable
+        {% endif %}
+
 - binary_sensor:
     - name: One-room mode
       state: >
