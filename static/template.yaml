@@ -310,10 +310,13 @@
           {% endfor %}
 
           {# ======================================================= #}
-          {# 4b. FILTER: Never export if export price < import price #}
+          {# 4b. FILTER: Never export if export price < min import price #}
           {# ======================================================= #}
-          {% set import_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates', 'rates') or [] %}
+          {% set current_import = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float(0) %}
+          {% set next_import = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate') | float(0) %}
+          {% set min_import_rate = [current_import, next_import] | min %}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
+          
           {% set ns_filtered = namespace(items=[]) %}
           
           {% for e in ns_merged.items %}
@@ -321,42 +324,22 @@
               {# Always keep non-discharge events #}
               {% set ns_filtered.items = ns_filtered.items + [e] %}
             {% else %}
-              {# For discharge events, check if export >= import for ALL rate periods in this slot #}
+              {# Check if export rate for this slot >= min import rate #}
               {% set slot_start = e.start %}
               {% set slot_end = e.end %}
-              {% set ns_check = namespace(can_export=true, found_any=false) %}
+              {% set ns_check = namespace(can_export=true, export_rate=none) %}
               
-              {# Check each rate period that overlaps with this slot #}
-              {% for rate in import_rates %}
-                {% set rate_start = as_datetime(rate.start) %}
-                {% set rate_end = as_datetime(rate.end) %}
-                {# Check if this rate period overlaps with the slot #}
-                {% if rate_start < slot_end and rate_end > slot_start %}
-                  {% set import_rate = rate.value_inc_vat %}
-                  {% set found_export_rate = false %}
-                  
-                  {# Find corresponding export rate - must overlap with import rate period, not just slot #}
-                  {% for exp_rate in export_rates %}
-                    {% set exp_start = as_datetime(exp_rate.start) %}
-                    {% set exp_end = as_datetime(exp_rate.end) %}
-                    {# Check if export rate overlaps with IMPORT rate period, not just slot #}
-                    {% if exp_start < rate_end and exp_end > rate_start %}
-                      {% set found_export_rate = true %}
-                      {% set ns_check.found_any = true %}
-                      {% if exp_rate.value_inc_vat < import_rate %}
-                        {% set ns_check.can_export = false %}
-                      {% endif %}
-                    {% endif %}
-                  {% endfor %}
-                  
-                  {# If no matching export rate found, can't export #}
-                  {% if not found_export_rate %}
-                    {% set ns_check.can_export = false %}
-                  {% endif %}
+              {# Find export rate that overlaps with this slot #}
+              {% for exp_rate in export_rates %}
+                {% set exp_start = as_datetime(exp_rate.start) %}
+                {% set exp_end = as_datetime(exp_rate.end) %}
+                {# Check if export rate overlaps with slot #}
+                {% if exp_start < slot_end and exp_end > slot_start %}
+                  {% set ns_check.export_rate = exp_rate.value_inc_vat %}
                 {% endif %}
               {% endfor %}
               
-              {% if ns_check.can_export %}
+              {% if ns_check.export_rate is not none and ns_check.export_rate >= min_import_rate %}
                 {% set ns_filtered.items = ns_filtered.items + [e] %}
               {% endif %}
             {% endif %}
