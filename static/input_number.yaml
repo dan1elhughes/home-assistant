@@ -78,3 +78,11 @@ battery_energy_discharged_wh:
   max: 999999999
   step: 0.1
   mode: box
+
+battery_round_trip_efficiency:
+  name: Battery round trip efficiency
+  min: 0.5
+  max: 1.0
+  step: 0.01
+  initial: 0.9
+  unit_of_measurement: "%"

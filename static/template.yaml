@@ -315,6 +315,8 @@
           {% set current_import = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float(0) %}
           {% set next_import = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate') | float(0) %}
           {% set min_import_rate = [current_import, next_import] | min %}
+          {% set battery_efficiency = states('input_number.battery_round_trip_efficiency') | float(0.9) %}
+          {% set adjusted_min_import = min_import_rate / battery_efficiency %}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
           
           {% set ns_filtered = namespace(items=[]) %}
@@ -339,7 +341,7 @@
                 {% endif %}
               {% endfor %}
               
-              {% if ns_check.export_rate is not none and ns_check.export_rate >= min_import_rate %}
+              {% if ns_check.export_rate is not none and ns_check.export_rate >= adjusted_min_import %}
                 {% set ns_filtered.items = ns_filtered.items + [e] %}
               {% endif %}
             {% endif %}
