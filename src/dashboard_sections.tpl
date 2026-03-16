@@ -123,8 +123,8 @@ views:
               {%- set export_rates = state_attr('sensor.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') %}
               {%- if events %}
                 {%- for event in events %}
-                  {%- set start = strptime(event.start, '%Y-%m-%dT%H:%M:%S.%f%z') %}
-                  {%- set end = strptime(event.end, '%Y-%m-%dT%H:%M:%S.%f%z') %}
+                  {%- set start = as_datetime(event.start) %}
+                  {%- set end = as_datetime(event.end) %}
                   {%- set start_local = as_local(start) %}
                   {%- set end_local = as_local(end) %}
                   {%- set event_date = start_local.date() %}
@@ -134,8 +134,8 @@ views:
                   {%- set max_rate = none %}
                   {%- if export_rates and event.intent == 'discharge' %}
                     {%- for rate in export_rates %}
-                      {%- set rate_start = strptime(rate.start, '%Y-%m-%dT%H:%M:%S.%f%z') %}
-                      {%- set rate_end = strptime(rate.end, '%Y-%m-%dT%H:%M:%S.%f%z') %}
+                      {%- set rate_start = as_datetime(rate.start) %}
+                      {%- set rate_end = as_datetime(rate.end) %}
                       {%- if rate_start < end_local and rate_end > start_local %}
                         {%- if max_rate == none or rate.value_inc_vat > max_rate %}
                           {%- set max_rate = rate.value_inc_vat %}
