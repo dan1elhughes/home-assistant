@@ -48,7 +48,7 @@ views:
         cards:
           {% for room in rooms|sort(attribute='id') %}
           - type: button
-            name: {{ room.name }}
+            name: {{ room.name | safe }}
             icon: {{ room.icon }}
             tap_action:
               action: navigate
@@ -427,7 +427,7 @@ views:
                   - entity_id: sensor.*_battery
 
   {% for room in rooms|sort(attribute='id') %}
-  - title: {{ room.name }}
+  - title: {{ room.name | safe }}
     path: sub-{{ room.id }}
     subview: true
     badges:
@@ -453,7 +453,7 @@ views:
       - type: grid
         cards:
           - type: heading
-            heading: {{ room.name }}
+            heading: {{ room.name | safe }}
 
           {% if room.lights %}
           - type: tile
