@@ -2,7 +2,7 @@ active_room:
   name: Active room
   icon: mdi:door-sliding
   options:
-    {% for room in rooms -%}
+    {% for room in rooms|sort(attribute='id') -%}
     - {{ room.id }}
     {% endfor %}
     - out
