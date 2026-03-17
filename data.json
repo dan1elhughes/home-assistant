@@ -12,6 +12,15 @@
     }
   ],
   "groups": {
+    "light.outside_lights": {
+      "entities": [
+        "light.driveway_light",
+        "light.front_door_light",
+        "light.patio_light",
+        "light.side_light"
+      ],
+      "name": "Outside lights"
+    },
     "light.bedroom_lights": {
       "entities": [
         "light.bedroom_lamp_left",

@@ -3,5 +3,6 @@
 - name: "default"
   lights:
     {{- lights.ids() | indent(4) }}
+    - light.outside_lights
   autoreset_control_seconds: 5
   transition: 5
