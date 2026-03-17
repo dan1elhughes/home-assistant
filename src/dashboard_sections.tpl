@@ -46,7 +46,7 @@ views:
 
       - type: grid
         cards:
-          {% for room in rooms %}
+          {% for room in rooms|sort(attribute='id') %}
           - type: button
             name: {{ room.name }}
             icon: {{ room.icon }}
@@ -426,7 +426,7 @@ views:
                 include:
                   - entity_id: sensor.*_battery
 
-  {% for room in rooms %}
+  {% for room in rooms|sort(attribute='id') %}
   - title: {{ room.name }}
     path: sub-{{ room.id }}
     subview: true
