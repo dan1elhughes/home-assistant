@@ -1,0 +1,17 @@
+- alias: "Dehumidifier based on active room"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_select.active_room
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_select.active_room
+              state: "conservatory"
+          sequence:
+            - service: humidifier.turn_off
+              entity_id: humidifier.conservatory_dehumidifier
+      default:
+        - service: humidifier.turn_on
+          entity_id: humidifier.conservatory_dehumidifier
