@@ -1,0 +1,29 @@
+- alias: "Office AC when active room is office"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_select.active_room
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_select.active_room
+              state: "office"
+          sequence:
+            - service: climate.turn_on
+              target:
+                entity_id: climate.office_ac
+            - service: climate.set_preset_mode
+              target:
+                entity_id: climate.office_ac
+              data:
+                preset_mode: quiet
+            - service: climate.set_temperature
+              target:
+                entity_id: climate.office_ac
+              data:
+                temperature: 19
+      default:
+        - service: climate.turn_off
+          target:
+            entity_id: climate.office_ac
