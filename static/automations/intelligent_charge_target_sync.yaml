@@ -1,0 +1,19 @@
+- alias: "Sync octopus intelligent charge target to ID3"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target
+  action:
+    - service: number.set_value
+      target:
+        entity_id: number.id3_battery_target_charge_level
+      data:
+        value: "{{ trigger.to_state.state }}"
+    - service: notify.dan
+      data:
+        title: "Charge target synced"
+        message: "Octopus intelligent charge target set to {{ trigger.to_state.state }}%"
+        data:
+          notification_icon: "mdi:car-electric"
+          channel: "smart_charge"
+          tag: charge_target_sync
