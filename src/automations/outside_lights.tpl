@@ -1,4 +1,4 @@
-- alias: "Outside lights at sunset"
+- alias: "Front lights at sunset"
   mode: single
   trigger:
     - platform: sun
@@ -6,11 +6,11 @@
   action:
     - service: light.turn_on
       target:
-        entity_id: light.outside_lights
+        entity_id: light.front_lights
       data:
         brightness_pct: 100
 
-- alias: "Outside lights off"
+- alias: "Front lights off"
   mode: single
   trigger:
     - platform: time
@@ -26,9 +26,9 @@
         minutes: 5
   condition:
     - condition: state
-      entity_id: light.outside_lights
+      entity_id: light.front_lights
       state: "on"
   action:
     - service: light.turn_off
       target:
-        entity_id: light.outside_lights
+        entity_id: light.front_lights

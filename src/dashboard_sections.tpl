@@ -350,8 +350,8 @@ views:
                 - state
                 - last-changed
             - type: tile
-              entity: light.outside_lights
-              name: Outside lights
+              entity: light.front_lights
+              name: Front lights
             - type: tile
               name: Hallway motion sensors
               entity: input_boolean.motion_sensors_enabled
