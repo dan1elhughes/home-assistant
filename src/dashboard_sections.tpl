@@ -350,14 +350,12 @@ views:
                 - state
                 - last-changed
             - type: tile
-              entity: light.front_door_light
-              name: Porch light
+              entity: light.outside_lights
+              name: Outside lights
             - type: tile
               name: Hallway motion sensors
               entity: input_boolean.motion_sensors_enabled
-            - type: tile
-              name: Front door motion sensor
-              entity: switch.front_door_motion_detection
+
 
       - type: grid
         cards:
