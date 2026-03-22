@@ -405,6 +405,10 @@ views:
                 entity: input_number.thermostat_high
                 name: High
                 secondary_info: none
+              - type: entity
+                entity: input_number.barn_ac_default_temp
+                name: Barn AC default
+                secondary_info: none
 
       - type: grid
         cards:
