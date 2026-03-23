@@ -367,18 +367,29 @@
             {% set actual_discharge_hours = [ns_loop.remaining_kwh / discharge_rate_kw, rate_duration_hours] | min %}
             {% set actual_discharge_kwh = actual_discharge_hours * discharge_rate_kw %}
 
-            {# Calculate the end time of this discharge slot #}
-            {% set slot_end = rate_start + timedelta(hours=actual_discharge_hours) %}
+            {# Calculate slot times - fill from END for non-full slots #}
+            {% if actual_discharge_hours < rate_duration_hours %}
+              {# Non-full slot: place at end of rate period #}
+              {% set slot_start = rate_end - timedelta(hours=actual_discharge_hours) %}
+              {% set slot_end = rate_end %}
+            {% else %}
+              {# Full slot: place at start of rate period #}
+              {% set slot_start = rate_start %}
+              {% set slot_end = rate_start + timedelta(hours=actual_discharge_hours) %}
+            {% endif %}
 
             {# Round to 5-minute intervals for cleanliness #}
+            {% set rounded_slot_start = slot_start.replace(minute=(slot_start.minute // 5) * 5, second=0, microsecond=0) %}
             {% set rounded_slot_end = slot_end.replace(minute=(slot_end.minute // 5) * 5, second=0, microsecond=0) %}
 
             {# Ensure slot is in the future #}
             {% if rounded_slot_end > now() %}
-              {% set slot_start = rate_start if rate_start >= now() else now() %}
-              {% if slot_start < rounded_slot_end %}
+              {# Only adjust start if rate_start is in the future (for full slots starting at rate_start) #}
+              {% set final_slot_start = rate_start if rate_start >= now() and actual_discharge_hours >= rate_duration_hours else rounded_slot_start %}
+              {% set final_slot_start = final_slot_start.replace(minute=(final_slot_start.minute // 5) * 5, second=0, microsecond=0) %}
+              {% if final_slot_start < rounded_slot_end %}
                 {% set ns_loop.processed_slots = ns_loop.processed_slots + [{
-                  'start': slot_start,
+                  'start': final_slot_start,
                   'end': rounded_slot_end,
                   'intent': 'Discharge'
                 }] %}
