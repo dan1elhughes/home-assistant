@@ -356,6 +356,81 @@
           {% endfor %}
           {{ ns_json.output | to_json }}
 
+    - name: "Optimal discharge slots"
+      icon: mdi:battery-charging-high
+      state: "on"
+      attributes:
+        events: >
+          {% set ns = namespace(discharges=[]) %}
+          {% set tz = now().tzinfo %}
+
+          {# Battery Parameters #}
+          {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
+          {% set battery_kwh = battery_wh / 1000 %}
+          {% set min_discharge_threshold_kwh = states('input_number.minimum_discharge_threshold') | float(2) %}
+          {% set usable_kwh = [battery_kwh - min_discharge_threshold_kwh, 0] | max %}
+          {% set discharge_rate_kw = states('input_number.battery_power_rate_kw') | float(9.6) %}
+
+          {# Get export rates for the current day #}
+          {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
+
+          {# Filter and sort export rates by price (highest first) #}
+          {% set sorted_rates = export_rates | sort(attribute='value_inc_vat', reverse=true) %}
+
+          {# Process each rate period, starting from highest #}
+          {% set ns_loop = namespace(remaining_kwh=usable_kwh, processed_slots=[]) %}
+
+          {% for rate in sorted_rates %}
+            {% if ns_loop.remaining_kwh <= 0 %}
+              {% break %}
+            {% endif %}
+
+            {# Parse the rate period #}
+            {% set rate_start = as_datetime(rate.start).replace(tzinfo=tz) %}
+            {% set rate_end = as_datetime(rate.end).replace(tzinfo=tz) %}
+
+            {# Skip if in the past #}
+            {% if rate_end <= now() %}
+              {% continue %}
+            {% endif %}
+
+            {# Calculate how long we can discharge at this rate #}
+            {% set rate_duration_hours = (rate_end - rate_start).total_seconds() / 3600 %}
+
+            {# Determine actual discharge duration #}
+            {% set actual_discharge_hours = [ns_loop.remaining_kwh / discharge_rate_kw, rate_duration_hours] | min %}
+            {% set actual_discharge_kwh = actual_discharge_hours * discharge_rate_kw %}
+
+            {# Calculate the end time of this discharge slot #}
+            {% set slot_end = rate_start + timedelta(hours=actual_discharge_hours) %}
+
+            {# Round to 5-minute intervals for cleanliness #}
+            {% set rounded_slot_end = slot_end.replace(minute=(slot_end.minute // 5) * 5, second=0, microsecond=0) %}
+
+            {# Ensure slot is in the future #}
+            {% if rounded_slot_end > now() %}
+              {% set slot_start = rate_start if rate_start >= now() else now() %}
+              {% if slot_start < rounded_slot_end %}
+                {% set ns_loop.processed_slots = ns_loop.processed_slots + [{
+                  'start': slot_start,
+                  'end': rounded_slot_end,
+                  'intent': 'Discharge'
+                }] %}
+                {% set ns_loop.remaining_kwh = ns_loop.remaining_kwh - actual_discharge_kwh %}
+              {% endif %}
+            {% endif %}
+          {% endfor %}
+
+          {# Sort final slots by start time #}
+          {% set final_slots = ns_loop.processed_slots | sort(attribute='start') %}
+
+          {# Output as JSON #}
+          {% set ns_json = namespace(output=[]) %}
+          {% for slot in final_slots %}
+            {% set ns_json.output = ns_json.output + [{'start': slot.start.isoformat(), 'end': slot.end.isoformat(), 'intent': slot.intent}] %}
+          {% endfor %}
+          {{ ns_json.output | to_json }}
+
     - name: "Battery total power"
       unit_of_measurement: "W"
       device_class: power
