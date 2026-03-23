@@ -409,6 +409,10 @@ views:
                 entity: input_number.barn_ac_default_temp
                 name: Barn AC default
                 secondary_info: none
+              - type: entity
+                entity: input_number.office_ac_default_temp
+                name: Office AC default
+                secondary_info: none
 
       - type: grid
         cards:

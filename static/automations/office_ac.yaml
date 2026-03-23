@@ -24,7 +24,7 @@
               target:
                 entity_id: climate.office_ac
               data:
-                temperature: 19
+                temperature: "{{ states('input_number.office_ac_default_temp') | float }}"
       default:
         - service: climate.turn_off
           target:
