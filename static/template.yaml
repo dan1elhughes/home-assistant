@@ -172,25 +172,7 @@
           {% set min_discharge_threshold_kwh = states('input_number.minimum_discharge_threshold') | float(2) %}
 
           {# ======================================================= #}
-          {# 3a. GENERATE DISCHARGE SLOTS (Saving Sessions)          #}
-          {# ======================================================= #}
-
-          {% if current_battery_kwh >= min_discharge_threshold_kwh %}
-            {% for cal in ['calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions'] %}
-              {% set start_raw = state_attr(cal, 'start_time') %}
-              {% set end_raw = state_attr(cal, 'end_time') %}
-              {% if start_raw and end_raw %}
-                {% set start = as_datetime(start_raw).replace(tzinfo=tz) %}
-                {% set end = as_datetime(end_raw).replace(tzinfo=tz) %}
-                {% if end >= now() %}
-                  {% set ns.discharges = ns.discharges + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
-                {% endif %}
-              {% endif %}
-            {% endfor %}
-          {% endif %}
-
-          {# ======================================================= #}
-          {# 3b. GENERATE DISCHARGE SLOTS (Optimal Discharge)       #}
+          {# 3a. GENERATE DISCHARGE SLOTS (Optimal Discharge)       #}
           {# ======================================================= #}
           {% set ns_optimal_discharges = namespace(items=[]) %}
 
