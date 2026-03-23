@@ -190,51 +190,17 @@
           {% endif %}
 
           {# ======================================================= #}
-          {# 3b. GENERATE DISCHARGE SLOTS (Target Times)             #}
+          {# 3b. GENERATE DISCHARGE SLOTS (Optimal Discharge)       #}
           {# ======================================================= #}
-          {% set ns_target_discharges = namespace(items=[]) %}
+          {% set ns_optimal_discharges = namespace(items=[]) %}
 
-          {# Target Times from Binary Sensor #}
-          {% set target_times = state_attr('binary_sensor.target_timeframes_agile_export_export_timeframe', 'target_times') or [] %}
-          {% for tt in target_times %}
-            {% set start = as_datetime(tt.start).replace(tzinfo=tz) %}
-            {% set end = as_datetime(tt.end).replace(tzinfo=tz) %}
+          {# Optimal Discharge Slots from Sensor #}
+          {% set optimal_events = state_attr('sensor.optimal_discharge_slots', 'events') or [] %}
+          {% for slot in optimal_events %}
+            {% set start = as_datetime(slot.start).replace(tzinfo=tz) %}
+            {% set end = as_datetime(slot.end).replace(tzinfo=tz) %}
             {% if end >= now() %}
-              {% set ns_target_discharges.items = ns_target_discharges.items + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
-            {% endif %}
-          {% endfor %}
-
-          {# ======================================================= #}
-          {# 3b. GENERATE DISCHARGE SLOTS (Pre-charge)               #}
-          {# ======================================================= #}
-          {# Battery Parameters #}
-          {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
-          {% set battery_kwh = battery_wh / 1000 %}
-          {% set usable_kwh = [battery_kwh - min_discharge_threshold_kwh, 0] | max %}
-          {% set discharge_rate_kw = states('input_number.battery_power_rate_kw') | float(9.6) %}
-          {# Max hours we can physically discharge #}
-          {% set max_discharge_hours = (usable_kwh / discharge_rate_kw) | float(0) %}
-
-          {% for c in flat_charges %}
-            {# Duration of the charge slot #}
-            {% set charge_duration_hours = (c.end - c.start).total_seconds() / 3600 %}
-
-            {# Limit discharge time: Min(Battery Capacity, Charge Duration) #}
-            {% set hours_to_discharge = max_discharge_hours if max_discharge_hours < charge_duration_hours else charge_duration_hours %}
-
-            {# Calculate Start #}
-            {% set d_end = c.start %}
-            {% set d_start_raw = d_end - timedelta(hours=hours_to_discharge) %}
-
-            {# Round start down to 10 mins for cleanliness #}
-            {% set d_start = d_start_raw.replace(minute=(d_start_raw.minute // 10) * 10, second=0, microsecond=0) %}
-
-            {# Add if valid and in future #}
-            {% if d_start < d_end and d_end >= now() %}
-              {% set effective_start = d_start if d_start >= now() else now() %}
-              {% if effective_start < d_end %}
-                {% set ns.discharges = ns.discharges + [{'start': effective_start, 'end': d_end, 'intent': 'Discharge'}] %}
-              {% endif %}
+              {% set ns_optimal_discharges.items = ns_optimal_discharges.items + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
             {% endif %}
           {% endfor %}
 
@@ -242,7 +208,7 @@
           {# 4. FINAL PASS: COMBINE AND TRIM (Buffer Enforcement)    #}
           {# ======================================================= #}
 
-          {% set all_raw = flat_charges + ns.discharges + ns_target_discharges.items %}
+          {% set all_raw = flat_charges + ns.discharges + ns_optimal_discharges.items %}
           {% set sorted_all = all_raw | sort(attribute='start') %}
           {% set ns_merged = namespace(items=[]) %}
 
