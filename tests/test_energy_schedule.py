@@ -148,7 +148,6 @@ class TestEnergyScheduleTemplates(unittest.TestCase):
             'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': '2025-01-16T05:00:00+00:00',
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': None,
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': None,
-            'binary_sensor.target_timeframes_agile_export_export_timeframe.target_times': None,
             'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
                 {'start': '2025-01-15T23:00:00+00:00', 'end': '2025-01-16T00:00:00+00:00', 'value_inc_vat': 15.0},
                 {'start': '2025-01-16T00:00:00+00:00', 'end': '2025-01-16T01:00:00+00:00', 'value_inc_vat': 15.0},
@@ -193,7 +192,6 @@ class TestEnergyScheduleTemplates(unittest.TestCase):
             'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': None,
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': '2025-01-15T17:00:00+00:00',
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': '2025-01-15T18:30:00+00:00',
-            'binary_sensor.target_timeframes_agile_export_export_timeframe.target_times': None,
             'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
                 {'start': '2025-01-15T17:00:00+00:00', 'end': '2025-01-15T18:00:00+00:00', 'value_inc_vat': 15.0},
                 {'start': '2025-01-15T18:00:00+00:00', 'end': '2025-01-15T19:00:00+00:00', 'value_inc_vat': 15.0},
@@ -306,7 +304,6 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
             'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': '2025-01-15T05:00:00+00:00',
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': '2025-01-14T17:00:00+00:00',
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': '2025-01-14T19:00:00+00:00',
-            'binary_sensor.target_timeframes_agile_export_export_timeframe.target_times': None,
             'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
                 {'start': '2025-01-14T17:00:00+00:00', 'end': '2025-01-14T18:00:00+00:00', 'value_inc_vat': 15.0},
                 {'start': '2025-01-14T18:00:00+00:00', 'end': '2025-01-14T19:00:00+00:00', 'value_inc_vat': 15.0},
@@ -403,7 +400,6 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
             'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': None,
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': '2025-01-14T17:00:00+00:00',
             'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': '2025-01-14T19:00:00+00:00',
-            'binary_sensor.target_timeframes_agile_export_export_timeframe.target_times': None,
             'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
                 {'start': '2025-01-14T17:00:00+00:00', 'end': '2025-01-14T18:00:00+00:00', 'value_inc_vat': 15.0},
                 {'start': '2025-01-14T18:00:00+00:00', 'end': '2025-01-14T19:00:00+00:00', 'value_inc_vat': 15.0},
