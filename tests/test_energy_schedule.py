@@ -179,50 +179,6 @@ class TestEnergyScheduleTemplates(unittest.TestCase):
             {'intent': 'Discharge', 'start': '2025-01-15T23:40:00+00:00', 'end': '2025-01-16T00:25:00+00:00'},
             {'intent': 'Charge', 'start': '2025-01-16T00:30:00+00:00', 'end': '2025-01-16T05:00:00+00:00'},
         ]
-
-        assert_events_equal(self, events, expected_events)
-
-    def test_template_handles_saving_sessions(self):
-        """Test that the template can process saving session events and returns valid JSON structure."""
-        ctx = HomeAssistantContext(now=datetime(2025, 1, 15, 12, 0, 0, tzinfo=timezone.utc))
-
-        mock_attrs = {
-            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.start_time': None,
-            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.end_time': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_start': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_end': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_start': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': None,
-            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': '2025-01-15T17:00:00+00:00',
-            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': '2025-01-15T18:30:00+00:00',
-            'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
-                {'start': '2025-01-15T17:00:00+00:00', 'end': '2025-01-15T18:00:00+00:00', 'value_inc_vat': 15.0},
-                {'start': '2025-01-15T18:00:00+00:00', 'end': '2025-01-15T19:00:00+00:00', 'value_inc_vat': 15.0},
-            ],
-        }
-        mock_states = {
-            'sensor.envoy_122322027694_available_battery_energy': '5000',
-            'input_number.minimum_discharge_threshold': '2',
-            'input_number.battery_power_rate_kw': '9.6',
-            'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '10.0',
-            'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '10.0',
-            'input_number.battery_round_trip_efficiency': '0.9',
-        }
-
-        result = self.render_template(
-            self.events_template,
-            context=ctx,
-            **{**mock_attrs, **mock_states}
-        )
-
-        # Parse JSON and verify structure
-        events = json.loads(result)
-        self.assertIsInstance(events, list)
-
-        expected_events = [
-            {'intent': 'Discharge', 'start': '2025-01-15T17:00:00+00:00', 'end': '2025-01-15T18:30:00+00:00'},
-        ]
-
         assert_events_equal(self, events, expected_events)
 
 
@@ -286,13 +242,11 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
         Scenario: It's Tuesday Jan 14, 2025 at noon.
         - Free electricity session: Tuesday night 00:30-05:00 (already passed, but future relative to "now" is 00:30 Wed)
         - Off-peak sensor: current passed, next is Wednesday 00:30-05:00
-        - Saving session: Tuesday 17:00-19:00 (future)
         - Battery: 10kWh available, can discharge before charge slots
 
         Expected events:
-        1. Saving session discharge: 17:00-19:00
-        2. Pre-charge discharge for Wed 00:30-05:00: 23:30-00:25
-        3. Charge slot (off-peak next): 00:30-05:00
+        1. Pre-charge discharge for Wed 00:30-05:00: 23:40-00:25
+        2. Charge slot (off-peak next): 00:30-05:00
         """
         ctx = HomeAssistantContext(
             now=datetime(2025, 1, 14, 12, 0, 0, tzinfo=timezone.utc)
@@ -305,14 +259,10 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
             'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_end': '2025-01-14T05:00:00+00:00',
             'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_start': '2025-01-15T00:30:00+00:00',
             'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': '2025-01-15T05:00:00+00:00',
-            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': '2025-01-14T17:00:00+00:00',
-            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': '2025-01-14T19:00:00+00:00',
             'sensor.optimal_discharge_slots.events': [
                 {'start': '2025-01-14T23:40:00+00:00', 'end': '2025-01-15T00:25:00+00:00', 'intent': 'Discharge'},
             ],
             'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
-                {'start': '2025-01-14T17:00:00+00:00', 'end': '2025-01-14T18:00:00+00:00', 'value_inc_vat': 15.0},
-                {'start': '2025-01-14T18:00:00+00:00', 'end': '2025-01-14T19:00:00+00:00', 'value_inc_vat': 15.0},
                 {'start': '2025-01-14T23:00:00+00:00', 'end': '2025-01-15T00:00:00+00:00', 'value_inc_vat': 15.0},
                 {'start': '2025-01-15T00:00:00+00:00', 'end': '2025-01-15T01:00:00+00:00', 'value_inc_vat': 15.0},
             ],
@@ -335,8 +285,8 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
 
         events = json.loads(result)
 
+        # Saving sessions are no longer processed - only pre-discharge and charge expected
         expected_events = [
-            {'intent': 'Discharge', 'start': '2025-01-14T17:00:00+00:00', 'end': '2025-01-14T19:00:00+00:00'},
             {'intent': 'Discharge', 'start': '2025-01-14T23:40:00+00:00', 'end': '2025-01-15T00:25:00+00:00'},
             {'intent': 'Charge', 'start': '2025-01-15T00:30:00+00:00', 'end': '2025-01-15T05:00:00+00:00'},
         ]
@@ -387,50 +337,6 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
         # Only the charge slot is expected
         expected_events = [
             {'intent': 'Charge', 'start': '2025-01-14T23:30:00+00:00', 'end': '2025-01-15T05:00:00+00:00'},
-        ]
-
-        assert_events_equal(self, events, expected_events)
-
-    def test_multiple_saving_sessions(self):
-        """Test handling of saving session calendar event."""
-        ctx = HomeAssistantContext(
-            now=datetime(2025, 1, 14, 12, 0, 0, tzinfo=timezone.utc)
-        )
-
-        mock_attrs = {
-            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.start_time': None,
-            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.end_time': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_start': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_end': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_start': None,
-            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': None,
-            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': '2025-01-14T17:00:00+00:00',
-            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': '2025-01-14T19:00:00+00:00',
-            'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
-                {'start': '2025-01-14T17:00:00+00:00', 'end': '2025-01-14T18:00:00+00:00', 'value_inc_vat': 15.0},
-                {'start': '2025-01-14T18:00:00+00:00', 'end': '2025-01-14T19:00:00+00:00', 'value_inc_vat': 15.0},
-            ],
-        }
-
-        mock_states = {
-            'sensor.envoy_122322027694_available_battery_energy': '10000',
-            'input_number.minimum_discharge_threshold': '2',
-            'input_number.battery_power_rate_kw': '9.6',
-            'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '10.0',
-            'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '10.0',
-            'input_number.battery_round_trip_efficiency': '0.9',
-        }
-
-        result = self.render_template(
-            self.events_template,
-            context=ctx,
-            **{**mock_attrs, **mock_states}
-        )
-
-        events = json.loads(result)
-
-        expected_events = [
-            {'intent': 'Discharge', 'start': '2025-01-14T17:00:00+00:00', 'end': '2025-01-14T19:00:00+00:00'},
         ]
 
         assert_events_equal(self, events, expected_events)
