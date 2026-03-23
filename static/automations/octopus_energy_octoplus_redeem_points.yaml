@@ -1,0 +1,15 @@
+- alias: Octoplus - Redeem Points
+  use_blueprint:
+    path: BottlecapDave/octopus_energy_octoplus_redeem_points_for_account_credit.yaml
+    input:
+      octoplus_points_entity: sensor.octopus_energy_a_fad3b08a_octoplus_points
+      threshold: 8
+      actions:
+        - action: notify.dan
+          data:
+            title: "Octoplus Points Redeemed"
+            message: "Your Octoplus points have been automatically redeemed for account credit."
+            data:
+              channel: "energy"
+              tag: octopus-points
+              notification_icon: "mdi:gift-outline"

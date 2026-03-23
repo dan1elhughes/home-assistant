@@ -1,0 +1,6 @@
+- alias: Octoplus - Spin Wheel (dual)
+  use_blueprint:
+    path: BottlecapDave/octopus_energy_spin_wheel_of_fortune_dual.yaml
+    input:
+      wheel_of_fortune_spins_electricity: sensor.octopus_energy_a_fad3b08a_wheel_of_fortune_spins_electricity
+      wheel_of_fortune_spins_gas: sensor.octopus_energy_a_fad3b08a_wheel_of_fortune_spins_gas
