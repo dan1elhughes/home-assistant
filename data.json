@@ -8,7 +8,7 @@
     {
       "ieee": "00:17:88:01:06:07:f7:2b",
       "name": "Bedroom button right",
-      "light": "light.bedroom_lamp_right"
+      "light": "light.dan_bed_light"
     }
   ],
   "groups": {
@@ -20,7 +20,8 @@
       "entities": [
         "light.bedroom_lamp_left",
         "light.bedroom_lamp_right",
-        "light.bedroom_cupboard_light"
+        "light.bedroom_cupboard_light",
+        "light.dan_bed_light"
       ],
       "name": "Bedroom lights"
     },
