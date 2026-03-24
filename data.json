@@ -13,10 +13,7 @@
   ],
   "groups": {
     "light.front_lights": {
-      "entities": [
-        "light.driveway_light",
-        "light.front_door_light"
-      ],
+      "entities": ["light.driveway_light", "light.front_door_light"],
       "name": "Front lights"
     },
     "light.bedroom_lights": {
@@ -28,7 +25,11 @@
       "name": "Bedroom lights"
     },
     "light.garden_lighting": {
-      "entities": ["light.garden_lights", "light.patio_light", "light.side_light"],
+      "entities": [
+        "light.garden_lights",
+        "light.patio_light",
+        "light.side_light"
+      ],
       "name": "Garden lighting"
     },
     "light.dining_room_lights": {
