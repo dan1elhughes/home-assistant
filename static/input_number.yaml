@@ -34,6 +34,13 @@ minimum_discharge_threshold:
   step: 0.5
   unit_of_measurement: "kWh"
 
+idle_power_draw:
+  name: Idle power draw
+  unit_of_measurement: "W"
+  min: 0
+  max: 1000
+  step: 10
+
 co2_yellow_threshold:
   name: CO2 yellow threshold
   min: 0

@@ -105,6 +105,14 @@ views:
               - style: buttons
                 type: numeric-input
             features_position: inline
+          - type: tile
+            name: Idle power draw
+            entity: input_number.idle_power_draw
+            icon: mdi:power-plug-outline
+            features:
+              - style: buttons
+                type: numeric-input
+            features_position: inline
           - type: markdown
             content: >
               {% raw %}
