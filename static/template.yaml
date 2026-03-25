@@ -169,7 +169,7 @@
           {% set flat_charges = ns_flat.items %}
 
           {% set current_battery_kwh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) / 1000 %}
-          {% set min_discharge_threshold_kwh = states('input_number.minimum_discharge_threshold') | float(2) %}
+          {% set min_discharge_threshold_kwh = states('sensor.power_requirement_until_cheap_slot') | float(0) / 1000 %}
 
           {# ======================================================= #}
           {# 3a. GENERATE DISCHARGE SLOTS (Optimal Discharge)       #}
@@ -315,7 +315,7 @@
           {# Battery Parameters #}
           {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
           {% set battery_kwh = battery_wh / 1000 %}
-          {% set min_discharge_threshold_kwh = states('input_number.minimum_discharge_threshold') | float(2) %}
+          {% set min_discharge_threshold_kwh = states('sensor.power_requirement_until_cheap_slot') | float(0) / 1000 %}
           {% set usable_kwh = [battery_kwh - min_discharge_threshold_kwh, 0] | max %}
           {% set discharge_rate_kw = states('input_number.battery_power_rate_kw') | float(9.6) %}
 
@@ -453,6 +453,37 @@
           {% endif %}
         {% else %}
           unavailable
+        {% endif %}
+
+    - name: "Power requirement until cheap slot"
+      unit_of_measurement: "Wh"
+      icon: mdi:flash
+      state: >
+        {% set idle_power = states('input_number.idle_power_draw') | float(0) %}
+        {% set battery_minimum = 1000 %}
+        
+        {# Check if we're currently in off-peak #}
+        {% if is_state('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'on') %}
+          {# Currently in off-peak - keep minimum reserve #}
+          {{ battery_minimum }}
+        {% else %}
+          {# Not in off-peak - get next cheap slot from the binary sensor #}
+          {% set next_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_start') %}
+          
+          {% set now_time = now() %}
+          
+          {% if next_start %}
+            {% set next_start_dt = as_datetime(next_start) %}
+            
+            {# Time until cheap slot starts #}
+            {% set hours_until_cheap = (next_start_dt - now_time).total_seconds() / 3600 %}
+            
+            {# Calculate energy needed during this period plus battery minimum #}
+            {{ ((idle_power * hours_until_cheap) + battery_minimum) | round(0) }}
+          {% else %}
+            {# No cheap slot found #}
+            {{ battery_minimum }}
+          {% endif %}
         {% endif %}
 
 - binary_sensor:

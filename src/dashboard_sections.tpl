@@ -97,22 +97,6 @@ views:
             entity: sensor.envoy_122322027694_available_battery_energy
             graph: line
             detail: 2
-          - type: tile
-            name: Discharge threshold
-            entity: input_number.minimum_discharge_threshold
-            icon: mdi:battery-arrow-down-outline
-            features:
-              - style: buttons
-                type: numeric-input
-            features_position: inline
-          - type: tile
-            name: Idle power draw
-            entity: input_number.idle_power_draw
-            icon: mdi:power-plug-outline
-            features:
-              - style: buttons
-                type: numeric-input
-            features_position: inline
           - type: markdown
             content: >
               {% raw %}
@@ -242,6 +226,24 @@ views:
             graph: none
 
       - type: grid
+        cards:
+          - type: heading
+            heading: Settings
+            heading_style: title
+            icon: mdi:cog
+          - type: tile
+            name: Energy reserve
+            entity: sensor.power_requirement_until_cheap_slot
+            icon: mdi:battery-arrow-down-outline
+          - type: tile
+            name: Idle power draw
+            entity: input_number.idle_power_draw
+            icon: mdi:power-plug-outline
+            features:
+              - style: buttons
+                type: numeric-input
+            features_position: inline
+      - type: grid
         visibility:
           - condition: or
             conditions:
@@ -296,13 +298,6 @@ views:
               Dispatches not yet scheduled.
               {% endif %}
               {% endraw %}
-
-      - type: grid
-        cards:
-          - type: custom:calendar-card-pro
-            entities:
-              - calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions
-              - calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
 
   - type: sections
     max_columns: 4
