@@ -97,6 +97,14 @@ views:
             entity: sensor.envoy_122322027694_available_battery_energy
             graph: line
             detail: 2
+          - type: tile
+            name: Discharge threshold
+            entity: input_number.minimum_discharge_threshold
+            icon: mdi:battery-arrow-down-outline
+            features:
+              - style: buttons
+                type: numeric-input
+            features_position: inline
           - type: markdown
             content: >
               {% raw %}
