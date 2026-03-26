@@ -4,10 +4,13 @@
     - platform: sun
       event: sunset
   condition:
-{%- for person in people if person != 'person.guest' %}
-    - condition: state
-      entity_id: {{ person }}
-      state: home
+    - or:
+{%- for person in people -%}
+{%- if person != "person.guest" %}
+      - condition: state
+        entity_id: {{ person }}
+        state: not_home
+{%- endif -%}
 {%- endfor %}
   action:
     - service: light.turn_on
