@@ -226,26 +226,28 @@ views:
             graph: none
 
       - type: grid
-        max_columns: 1
         cards:
           - type: heading
-            heading: Settings
+            heading: Battery management
             heading_style: title
-            icon: mdi:cog
-          - type: vertical-stack
-            cards:
-              - type: tile
-                name: Energy reserve
-                entity: sensor.power_requirement_until_cheap_slot
-                icon: mdi:battery-arrow-down-outline
-              - type: tile
-                name: Idle power draw
-                entity: input_number.idle_power_draw
-                icon: mdi:power-plug-outline
-                features:
-                  - style: buttons
-                    type: numeric-input
-                features_position: inline
+            icon: mdi:battery
+          - type: history-graph
+            hours_to_show: 10
+            entities:
+              - entity: sensor.power_requirement_until_cheap_slot
+                name: Energy needed
+              - entity: sensor.envoy_122322027694_available_battery_energy
+                name: Energy available
+            max_y_axis: 15000
+            min_y_axis: 0
+          - type: tile
+            name: Idle power draw
+            entity: input_number.idle_power_draw
+            icon: mdi:power-plug-outline
+            features:
+              - style: buttons
+                type: numeric-input
+            features_position: inline
 
       - type: grid
         visibility:
