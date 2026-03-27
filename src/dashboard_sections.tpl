@@ -240,14 +240,20 @@ views:
                 name: Energy available
             max_y_axis: 15000
             min_y_axis: 0
-          - type: tile
-            name: Idle power draw
-            entity: input_number.idle_power_draw
-            icon: mdi:power-plug-outline
-            features:
-              - style: buttons
-                type: numeric-input
-            features_position: inline
+          - type: vertical-stack
+            cards:
+              - type: tile
+                name: Exportable battery
+                entity: sensor.exportable_battery
+                icon: mdi:battery-arrow-up-outline
+              - type: tile
+                name: Idle power draw
+                entity: input_number.idle_power_draw
+                icon: mdi:power-plug-outline
+                features:
+                  - style: buttons
+                    type: numeric-input
+                features_position: inline
 
       - type: grid
         visibility:

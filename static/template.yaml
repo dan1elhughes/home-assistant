@@ -455,6 +455,15 @@
           unavailable
         {% endif %}
 
+    - name: "Exportable battery"
+      unit_of_measurement: "Wh"
+      icon: mdi:battery-arrow-up-outline
+      state: >
+        {% set available = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
+        {% set needed = states('sensor.power_requirement_until_cheap_slot') | float(0) %}
+        {% set diff = available - needed %}
+        {{ diff if diff > 0 else 0 }}
+
     - name: "Power requirement until cheap slot"
       unit_of_measurement: "Wh"
       icon: mdi:flash
