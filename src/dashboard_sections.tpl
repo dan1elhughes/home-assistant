@@ -247,6 +247,10 @@ views:
                 entity: sensor.exportable_battery
                 icon: mdi:battery-arrow-up-outline
               - type: tile
+                name: Reserved battery
+                entity: sensor.power_requirement_until_cheap_slot
+                icon: mdi:battery-arrow-down-outline
+              - type: tile
                 name: Idle power draw
                 entity: input_number.idle_power_draw
                 icon: mdi:power-plug-outline
