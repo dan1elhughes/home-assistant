@@ -103,17 +103,27 @@ views:
               {%- set events = state_attr('sensor.energy_intents', 'events') %}
               {%- set export_rates = state_attr('sensor.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') %}
               {%- if events %}
-                {%- for event in events %}
+                {# Create an empty list to hold our formatted lines #}
+                {%- set ns = namespace(items=[]) %}
+
+                {%- for event in events | sort(attribute='start') %}
                   {%- set start = as_datetime(event.start) %}
                   {%- set end = as_datetime(event.end) %}
                   {%- set start_local = as_local(start) %}
                   {%- set end_local = as_local(end) %}
                   {%- set event_date = start_local.date() %}
                   {%- set today = now().date() %}
-                  {%- set day_label = ' (tomorrow)' if event_date != today else '' %}
+
+                  {%- if event_date > today %}
+                    {%- set day_label = ' (tomorrow)' %}
+                  {%- elif event_date < today %}
+                    {%- set day_label = ' (yesterday)' %}
+                  {%- else %}
+                    {%- set day_label = '' %}
+                  {%- endif %}
 
                   {%- set max_rate = none %}
-                  {%- if export_rates and event.intent == 'discharge' %}
+                  {%- if export_rates and event.intent | lower == 'discharge' %}
                     {%- for rate in export_rates %}
                       {%- set rate_start = as_datetime(rate.start) %}
                       {%- set rate_end = as_datetime(rate.end) %}
@@ -125,10 +135,17 @@ views:
                     {%- endfor %}
                   {%- endif %}
 
+                  {# Build the string for this specific event #}
                   {%- set rate_display = ' @ ' ~ '%.1f'|format(max_rate * 100) ~ 'p' if max_rate else '' %}
-                  {{ start_local.strftime('%H:%M') }} - {{ end_local.strftime('%H:%M') }}: **{{ event.intent }}**{{ day_label }}{{ rate_display }}
+                  {%- set line = '- ' ~ start_local.strftime('%H:%M') ~ ' - ' ~ end_local.strftime('%H:%M') ~ ': **' ~ event.intent ~ '**' ~ day_label ~ rate_display %}
 
+                  {# Append it to our namespace list #}
+                  {%- set ns.items = ns.items + [line] %}
                 {%- endfor %}
+
+                {# Print the final list all at once, separated by newlines #}
+                {{- ns.items | join('\n') }}
+
               {%- else %}
                 No scheduled intents
               {%- endif %}
