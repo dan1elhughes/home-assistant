@@ -15,16 +15,10 @@ views:
             show_icon: true
             show_state: true
             entities:
-              - entity: sensor.kingsclere_waste
-                name: Waste
-              - entity: sensor.kingsclere_recycling
-                name: Recycling
-              - entity: sensor.kingsclere_garden
-                name: Garden
-              - entity: sensor.kingsclere_glass
-                name: Glass
-              - entity: sensor.kingsclere_food
-                name: Food
+              {% for w in waste_collections %}
+              - entity: {{ w.entity }}
+                name: {{ w.name }}
+              {% endfor %}
 
           - type: weather-forecast
             show_current: true

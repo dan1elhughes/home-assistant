@@ -22,6 +22,9 @@ sensor: !include sensor.yaml
 template: !include template.yaml
 timer: !include timer.yaml
 
+frontend:
+  themes: !include_dir_merge_named themes
+
 command_line:
   - sensor:
       name: "Enphase JWT"
@@ -61,6 +64,12 @@ lovelace:
       icon: mdi:flower
       show_in_sidebar: true
       filename: dashboard_plants.yaml
+    trmnl-page:
+      mode: yaml
+      title: TRMNL
+      icon: mdi:terminal
+      show_in_sidebar: true
+      filename: dashboard_trmnl.yaml
 
 logger:
   default: warning
