@@ -34,5 +34,5 @@ views:
           - type: custom:calendar-card-pro
             entities:
             - calendar.k_d
-            days_to_show: 1
+            days_to_show: 2
             show_location: true
