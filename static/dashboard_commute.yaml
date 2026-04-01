@@ -1,0 +1,9 @@
+views:
+  - type: panel
+    theme: Graphite E-ink Light
+    path: ""
+    cards:
+      - type: iframe
+        url: >-
+          https://maps.google.com/maps?saddr=RG20+5SD&daddr=Oxford+Rd%2C+Donnington%2C+Newbury+RG14+2JB&output=embed
+        aspect_ratio: 100%
