@@ -1,115 +1,294 @@
 - alias: "Update Enphase Schedule on Energy Intents Change"
   mode: single
-  description: "Triggers when sensor.energy_intents changes and updates the Enphase schedule."
-  trigger:
-    - platform: state
-      entity_id: sensor.energy_intents
+  description: "Triggers when sensor.energy_intents changes and updates the Enphase battery schedules using enphase_envoy_cloud_control integration."
+  trigger: []  # Commented out automatic trigger - manual trigger only
   condition:
     - condition: not
       conditions:
         - condition: state
-          entity_id: sensor.envoy_122322027694_available_battery_energy
+          entity_id: sensor.enphase_schedules_summary
           state: unavailable
   action:
-    - service: script.enphase_delete_schedule
-      data:
-        schedule_type: "all"
-
-    - service: script.notify_battery_schedule_change
-      data:
-        title: "Updating..."
-        message: "Deleted existing schedules"
-
-    - delay: "00:00:02"
-
     - variables:
-        simplified_events: >
-          {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
-          [
-            {% for event in events %}
-              {% if event.start and event.end %}
-                {% set start_dt = as_datetime(event.start) %}
-                {% set end_dt = as_datetime(event.end) %}
-                {
-                  'start_time': '{{ start_dt.strftime('%H:%M') }}',
-                  'end_time': '{{ end_dt.strftime('%H:%M') }}',
-                  'weekday': {{ start_dt.weekday() + 1 }},
-                  'schedule_type': '{{ 'CFG' if event.intent == 'Charge' else 'DTG' }}',
-                  'limit': {{ 100 if event.intent == 'Charge' else 6 }}
-                }{% if not loop.last %},{% endif %}
-              {% endif %}
-            {% endfor %}
-          ]
-        discharge_schedule_count: >
-          {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
-          {{ events | selectattr('intent', 'equalto', 'Discharge') | list | count }}
+        events: "{{ state_attr('sensor.energy_intents', 'events') or [] }}"
+        charge_events: "{{ events | selectattr('intent', 'equalto', 'Charge') | list }}"
+        discharge_events: "{{ events | selectattr('intent', 'equalto', 'Discharge') | list }}"
 
+    - service: system_log.write
+      data:
+        logger: EnphaseSchedule
+        level: info
+        message: "Energy intents changed: {{ charge_events | length }} charge, {{ discharge_events | length }} discharge events"
+
+    # Get current schedules to delete
+    - variables:
+        current_schedules: "{{ (state_attr('sensor.enphase_schedules', 'cfg') or []) + (state_attr('sensor.enphase_schedules', 'dtg') or []) + (state_attr('sensor.enphase_schedules', 'rbd') or []) }}"
+
+    - service: system_log.write
+      data:
+        logger: EnphaseSchedule
+        level: info
+        message: "Found {{ current_schedules | length }} existing schedules to delete"
+
+    # Delete all existing schedules one by one
     - repeat:
-        for_each: "{{ simplified_events }}"
+        for_each: "{{ current_schedules }}"
         sequence:
-          - service: script.enphase_add_schedule
+          - service: system_log.write
             data:
-              start_time: "{{ repeat.item.start_time }}"
-              end_time: "{{ repeat.item.end_time }}"
-              schedule_type: "{{ repeat.item.schedule_type }}"
-              days: "{{ [repeat.item.weekday] | string }}"
-              limit: "{{ repeat.item.limit }}"
+              logger: EnphaseSchedule
+              level: info
+              message: "Deleting schedule ID: {{ repeat.item }}"
 
-          - service: script.notify_battery_schedule_change
+          - service: select.select_option
+            target:
+              entity_id: select.enphase_schedule_selected
             data:
-              title: "Updating..."
-              message: "Added schedule from {{ repeat.item.start_time }} to {{ repeat.item.end_time }}"
+              option: "{{ repeat.item }}"
 
           - delay: "00:00:01"
 
-    - service: script.toggle_enphase_charge_from_grid
+          - service: button.press
+            target:
+              entity_id: button.schedule_delete
+
+          - delay: "00:00:01"
+
+    - service: system_log.write
       data:
-        charge: "true"
+        logger: EnphaseSchedule
+        level: info
+        message: "Deleted {{ current_schedules | length }} existing schedules"
 
-    - service: script.notify_battery_schedule_change
-      data:
-        title: "Updating..."
-        message: "Enabled charge"
 
-    - delay: "00:00:01"
 
+    # Add charge (CFG) schedules
+    - repeat:
+        for_each: "{{ charge_events }}"
+        sequence:
+          - service: system_log.write
+            data:
+              logger: EnphaseSchedule
+              level: info
+              message: "Adding CFG charge schedule: {{ repeat.item.start }} to {{ repeat.item.end }}"
+
+          # Set the schedule type
+          - service: select.select_option
+            target:
+              entity_id: select.enphase_new_schedule_type
+            data:
+              option: "cfg"
+
+          # Set start time (use time entity)
+          - service: time.set_value
+            target:
+              entity_id: time.enphase_new_schedule_start
+            data:
+              time: "{{ as_datetime(repeat.item.start).strftime('%H:%M') }}"
+
+          # Set end time (use time entity)
+          - service: time.set_value
+            target:
+              entity_id: time.enphase_new_schedule_end
+            data:
+              time: "{{ as_datetime(repeat.item.end).strftime('%H:%M') }}"
+
+          # Set limit
+          - service: number.set_value
+            target:
+              entity_id: number.enphase_new_schedule_limit
+            data:
+              value: 100
+
+          # Set the single day
+          - variables:
+              weekday: "{{ as_datetime(repeat.item.start).weekday() }}"
+
+          - service: homeassistant.turn_off
+            target:
+              entity_id:
+                - switch.enphase_new_schedule_mon
+                - switch.enphase_new_schedule_tue
+                - switch.enphase_new_schedule_wed
+                - switch.enphase_new_schedule_thu
+                - switch.enphase_new_schedule_fri
+                - switch.enphase_new_schedule_sat
+                - switch.enphase_new_schedule_sun
+
+          - service: homeassistant.turn_on
+            target:
+              entity_id: >
+                {% set day_entities = {
+                  0: 'switch.enphase_new_schedule_mon',
+                  1: 'switch.enphase_new_schedule_tue',
+                  2: 'switch.enphase_new_schedule_wed',
+                  3: 'switch.enphase_new_schedule_thu',
+                  4: 'switch.enphase_new_schedule_fri',
+                  5: 'switch.enphase_new_schedule_sat',
+                  6: 'switch.enphase_new_schedule_sun'
+                } %}
+                {{ [day_entities[weekday]] }}
+
+          - delay: "00:00:02"
+
+          # Add the schedule
+          - service: button.press
+            target:
+              entity_id: button.new_schedule_add
+
+          - delay: "00:00:02"
+
+          - service: system_log.write
+            data:
+              logger: EnphaseSchedule
+              level: info
+              message: "Added CFG charge schedule {{ repeat.item.start }} - {{ repeat.item.end }}"
+    
+    # Add discharge (DTG) schedules
+    - repeat:
+        for_each: "{{ discharge_events }}"
+        sequence:
+          - service: system_log.write
+            data:
+              logger: EnphaseSchedule
+              level: info
+              message: "Adding DTG discharge schedule: {{ repeat.item.start }} to {{ repeat.item.end }}"
+
+          # Set the schedule type
+          - service: select.select_option
+            target:
+              entity_id: select.enphase_new_schedule_type
+            data:
+              option: "dtg"
+
+          # Set start time (use time entity)
+          - service: time.set_value
+            target:
+              entity_id: time.enphase_new_schedule_start
+            data:
+              time: "{{ as_datetime(repeat.item.start).strftime('%H:%M') }}"
+
+          # Set end time (use time entity)
+          - service: time.set_value
+            target:
+              entity_id: time.enphase_new_schedule_end
+            data:
+              time: "{{ as_datetime(repeat.item.end).strftime('%H:%M') }}"
+
+          # Set limit
+          - service: number.set_value
+            target:
+              entity_id: number.enphase_new_schedule_limit
+            data:
+              value: 6
+
+          # Set the single day
+          - variables:
+              weekday: "{{ as_datetime(repeat.item.start).weekday() }}"
+
+          - service: homeassistant.turn_off
+            target:
+              entity_id:
+                - switch.enphase_new_schedule_mon
+                - switch.enphase_new_schedule_tue
+                - switch.enphase_new_schedule_wed
+                - switch.enphase_new_schedule_thu
+                - switch.enphase_new_schedule_fri
+                - switch.enphase_new_schedule_sat
+                - switch.enphase_new_schedule_sun
+
+          - service: homeassistant.turn_on
+            target:
+              entity_id: >
+                {% set day_entities = {
+                  0: 'switch.enphase_new_schedule_mon',
+                  1: 'switch.enphase_new_schedule_tue',
+                  2: 'switch.enphase_new_schedule_wed',
+                  3: 'switch.enphase_new_schedule_thu',
+                  4: 'switch.enphase_new_schedule_fri',
+                  5: 'switch.enphase_new_schedule_sat',
+                  6: 'switch.enphase_new_schedule_sun'
+                } %}
+                {{ [day_entities[weekday]] }}
+
+          - delay: "00:00:02"
+
+          # Add the schedule
+          - service: button.press
+            target:
+              entity_id: button.new_schedule_add
+
+          - delay: "00:00:02"
+
+          - service: system_log.write
+            data:
+              logger: EnphaseSchedule
+              level: info
+              message: "Added DTG discharge schedule {{ repeat.item.start }} - {{ repeat.item.end }}"
+    
+    # Enable/disable CFG (charge from grid) based on charge events
     - if:
         - condition: template
-          value_template: "{{ discharge_schedule_count | int > 0 }}"
+          value_template: "{{ charge_events | length > 0 }}"
       then:
-        - service: script.toggle_enphase_discharge_to_grid
+        - service: system_log.write
           data:
-            discharge: "true"
+            logger: EnphaseSchedule
+            level: info
+            message: "Enabling CFG (charge from grid)"
 
-        - service: script.notify_battery_schedule_change
-          data:
-            title: "Updating..."
-            message: "Enabled discharge ({{ discharge_schedule_count }} schedule(s))"
+        - service: homeassistant.turn_on
+          target:
+            entity_id: switch.enphase_cfg_mode
       else:
-        - service: script.toggle_enphase_discharge_to_grid
+        - service: system_log.write
           data:
-            discharge: "false"
+            logger: EnphaseSchedule
+            level: info
+            message: "Disabling CFG (no charge schedules)"
 
-        - service: script.notify_battery_schedule_change
+        - service: homeassistant.turn_off
+          target:
+            entity_id: switch.enphase_cfg_mode
+
+    # Enable/disable DTG (discharge to grid) based on discharge events
+    - if:
+        - condition: template
+          value_template: "{{ discharge_events | length > 0 }}"
+      then:
+        - service: system_log.write
           data:
-            title: "Updating..."
-            message: "Disabled discharge (no discharge schedules)"
+            logger: EnphaseSchedule
+            level: info
+            message: "Enabling DTG (discharge to grid)"
 
-    - service: script.notify_battery_schedule_change
+        - service: homeassistant.turn_on
+          target:
+            entity_id: switch.enphase_dtg_mode
+      else:
+        - service: system_log.write
+          data:
+            logger: EnphaseSchedule
+            level: info
+            message: "Disabling DTG (no discharge schedules)"
+
+        - service: homeassistant.turn_off
+          target:
+            entity_id: switch.enphase_dtg_mode
+
+    # Force cloud refresh to ensure sensors update
+    - service: system_log.write
       data:
-        title: "Energy schedule updated"
-        icon: "mdi:battery-check"
-        message: >
-          {% set events = state_attr('sensor.energy_intents', 'events') or [] %}
-          {% if events %}
-            {% for event in events %}
-              {% if event.start and event.end %}
-                {% set start_dt = as_datetime(event.start) %}
-                {% set end_dt = as_datetime(event.end) %}
-                {% set day_name = ['Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sunday'][start_dt.weekday()] %}
-                • {{ day_name }} {{ start_dt.strftime('%H:%M') }}-{{ end_dt.strftime('%H:%M') }}: {{ event.intent }}
-              {% endif %}
-            {% endfor %}
-          {% else %}
-            No energy intents events found.
-          {% endif %}
+        logger: EnphaseSchedule
+        level: info
+        message: "Forcing cloud refresh"
+
+    - service: button.press
+      target:
+        entity_id: button.force_cloud_refresh
+
+    - service: system_log.write
+      data:
+        logger: EnphaseSchedule
+        level: info
+        message: "Energy schedule update complete"

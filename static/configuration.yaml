@@ -14,7 +14,6 @@ input_number: !include input_number.yaml
 input_select: !include input_select.yaml
 light: !include light.yaml
 media_player: !include media_player.yaml
-rest_command: !include rest_command.yaml
 scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
 script: !include scripts.yaml
@@ -24,30 +23,6 @@ timer: !include timer.yaml
 
 frontend:
   themes: !include_dir_merge_named themes
-
-command_line:
-  - sensor:
-      name: "Enphase JWT"
-      command: "/config/scripts/get-enphase-token.sh"
-      scan_interval: 900 # every 15 minutes
-      value_template: "{{ value_json.status }}"
-      json_attributes:
-        - token
-        - xsrf
-
-  - sensor:
-      name: "Enphase Schedules"
-      command: >
-        /bin/bash -c 'ENPHASE_AUTH="{{ state_attr("sensor.enphase_jwt", "token") }}"
-        ENPHASE_XSRF="{{ state_attr("sensor.enphase_jwt", "xsrf") }}"
-        /config/scripts/get_enphase_schedules_json.sh'
-      scan_interval: 30
-      value_template: "OK"
-      json_attributes:
-        - cfg
-        - dtg
-        - rbd
-        - other
 
 lovelace:
   mode: storage

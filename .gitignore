@@ -1,7 +1,6 @@
 /.env
 /dist
 /.vscode
-/enphase.json
 /.secrets
 
 # Python virtual environment
