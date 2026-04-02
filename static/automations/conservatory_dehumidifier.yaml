@@ -26,18 +26,39 @@
 - alias: Conservatory dehumidifier monitoring
   trigger:
     - platform: state
-      entity_id: binary_sensor.dehumidifier_low_power_mode
-      to: "on"
-      for:
-        minutes: 10
+      entity_id: binary_sensor.dehumidifier_sensor
+  condition:
+    - condition: template
+      value_template: "{{ states('binary_sensor.dehumidifier_sensor') in ['on', 'off'] }}"
   action:
-    - service: notify.dan
-      data:
-        title: "Dehumidifier tank full"
-        message: >
-          Tank needs emptying. 
-          Power: {{ states('sensor.dehumidifier_energy_power') }}W (compressor not running).
-          Humidity: {{ states('sensor.conservatory_sensor_humidity') }}%
-        data:
-          channel: "dehumidifier"
-          notification_icon: "mdi:water-alert"
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.dehumidifier_sensor
+              state: "on"
+          sequence:
+            - service: humidifier.turn_off
+              target:
+                entity_id: humidifier.conservatory_dehumidifier
+            - service: notify.dan
+              data:
+                title: "Dehumidifier"
+                message: "Sensor wet - empty tank"
+                data:
+                  channel: "dehumidifier"
+                  notification_icon: "mdi:water-alert"
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.dehumidifier_sensor
+              state: "off"
+          sequence:
+            - service: humidifier.turn_on
+              target:
+                entity_id: humidifier.conservatory_dehumidifier
+            - service: notify.dan
+              data:
+                title: "Dehumidifier"
+                message: "Tank emptied - resuming"
+                data:
+                  channel: "dehumidifier"
+                  notification_icon: "mdi:check-circle"
