@@ -1,7 +1,9 @@
 - alias: "Update Enphase Schedule on Energy Intents Change"
   mode: single
   description: "Triggers when sensor.energy_intents changes and updates the Enphase battery schedules using enphase_envoy_cloud_control integration."
-  trigger: []  # Commented out automatic trigger - manual trigger only
+  trigger:
+    - platform: state
+      entity_id: sensor.energy_intents
   condition:
     - condition: not
       conditions:
