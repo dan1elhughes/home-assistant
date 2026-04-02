@@ -26,7 +26,7 @@
 
     - alias: "Get current schedules to delete"
       variables:
-        current_schedules: "{{ (state_attr('sensor.enphase_schedules', 'cfg') or []) + (state_attr('sensor.enphase_schedules', 'dtg') or []) + (state_attr('sensor.enphase_schedules', 'rbd') or []) }}"
+        current_schedules: "{{ state_attr('sensor.enphase_schedules_summary', 'schedules') or [] }}"
 
     - alias: "Log existing schedules count"
       service: system_log.write
@@ -44,14 +44,14 @@
             data:
               logger: EnphaseSchedule
               level: info
-              message: "Deleting schedule ID: {{ repeat.item }}"
+              message: "Deleting schedule ID: {{ repeat.item.id }}"
 
           - alias: "Select schedule to delete"
             service: select.select_option
             target:
               entity_id: select.enphase_schedule_selected
             data:
-              option: "{{ repeat.item }}"
+              option: "{{ repeat.item.id }}"
 
           - delay: "00:00:01"
 
