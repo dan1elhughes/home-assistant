@@ -4,6 +4,9 @@
     - trigger: state
       entity_id:
         - sensor.pixel_9_next_alarm
+  condition:
+    - condition: template
+      value_template: "{{ state_attr('sensor.pixel_9_next_alarm', 'package') == 'com.google.android.deskclock' }}"
   actions:
     - action: input_datetime.set_datetime
       entity_id: input_datetime.wake_up_dan
@@ -16,6 +19,9 @@
     - trigger: state
       entity_id:
         - sensor.pixel_7a_next_alarm
+  condition:
+    - condition: template
+      value_template: "{{ state_attr('sensor.pixel_7a_next_alarm', 'package') == 'com.google.android.deskclock' }}"
   actions:
     - action: input_datetime.set_datetime
       entity_id: input_datetime.wake_up_katie
