@@ -469,7 +469,7 @@
       icon: mdi:flash
       state: >
         {% set idle_power = states('input_number.idle_power_draw') | float(0) %}
-        {% set battery_minimum = 1000 %}
+        {% set battery_minimum = states('input_number.battery_lower_discharge_limit') | float(0) %}
         
         {# Check if we're currently in off-peak #}
         {% if is_state('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'on') %}

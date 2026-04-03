@@ -86,6 +86,13 @@ battery_round_trip_efficiency:
   initial: 0.9
   unit_of_measurement: "%"
 
+battery_lower_discharge_limit:
+  name: Battery lower discharge limit
+  unit_of_measurement: "Wh"
+  min: 750
+  max: 15000
+  step: 100
+
 barn_ac_default_temp:
   name: Barn AC default temperature
   unit_of_measurement: "°C"

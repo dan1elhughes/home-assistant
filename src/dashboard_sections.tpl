@@ -269,6 +269,14 @@ views:
                   - style: buttons
                     type: numeric-input
                 features_position: inline
+              - type: tile
+                name: Battery lower discharge limit
+                entity: input_number.battery_lower_discharge_limit
+                icon: mdi:home-battery-outline
+                features:
+                  - style: buttons
+                    type: numeric-input
+                features_position: inline
 
       - type: grid
         visibility:
