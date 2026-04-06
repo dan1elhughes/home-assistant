@@ -4,6 +4,8 @@
   trigger:
     - platform: state
       entity_id: sensor.energy_intents
+    - platform: state
+      entity_id: input_number.battery_upper_charge_limit
   condition:
     - condition: not
       conditions:
@@ -101,12 +103,12 @@
             data:
               time: "{{ as_datetime(repeat.item.end).strftime('%H:%M') }}"
 
-          - alias: "Set charge limit to 100%"
+          - alias: "Set charge limit"
             service: number.set_value
             target:
               entity_id: number.enphase_new_schedule_limit
             data:
-              value: 100
+              value: "{{ states('input_number.battery_upper_charge_limit') | int }}"
 
           - alias: "Set the single day"
             variables:
@@ -154,7 +156,7 @@
               logger: EnphaseSchedule
               level: info
               message: "Added CFG charge schedule {{ repeat.item.start }} - {{ repeat.item.end }}"
-    
+
     - alias: "Add discharge (DTG) schedules"
       repeat:
         for_each: "{{ discharge_events }}"
@@ -240,7 +242,7 @@
               logger: EnphaseSchedule
               level: info
               message: "Added DTG discharge schedule {{ repeat.item.start }} - {{ repeat.item.end }}"
-    
+
     - alias: "Enable/disable CFG based on charge events"
       if:
         - condition: template

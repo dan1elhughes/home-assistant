@@ -93,6 +93,13 @@ battery_lower_discharge_limit:
   max: 15000
   step: 100
 
+battery_upper_charge_limit:
+  name: Battery upper charge limit
+  unit_of_measurement: "%"
+  min: 0
+  max: 100
+  step: 1
+
 barn_ac_default_temp:
   name: Barn AC default temperature
   unit_of_measurement: "°C"
