@@ -266,9 +266,9 @@
           {% set battery_efficiency = states('input_number.battery_round_trip_efficiency') | float(0.9) %}
           {% set adjusted_min_import = min_import_rate / battery_efficiency %}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
-          
+
           {% set ns_filtered = namespace(items=[]) %}
-          
+
           {% for e in ns_merged.items %}
             {% if e.intent != 'Discharge' %}
               {# Always keep non-discharge events #}
@@ -278,7 +278,7 @@
               {% set slot_start = e.start %}
               {% set slot_end = e.end %}
               {% set ns_check = namespace(can_export=true, export_rate=none) %}
-              
+
               {# Find export rate that overlaps with this slot #}
               {% for exp_rate in export_rates %}
                 {% set exp_start = as_datetime(exp_rate.start) %}
@@ -288,7 +288,7 @@
                   {% set ns_check.export_rate = exp_rate.value_inc_vat %}
                 {% endif %}
               {% endfor %}
-              
+
               {% if ns_check.export_rate is not none and ns_check.export_rate >= adjusted_min_import %}
                 {% set ns_filtered.items = ns_filtered.items + [e] %}
               {% endif %}
@@ -443,7 +443,7 @@
         {% set target_soc = states('number.id3_battery_target_charge_level') | float(none) %}
         {% set capacity = 58 %}
         {% set power = 2 %}
-        
+
         {% if current_soc is not none and target_soc is not none %}
           {% set soc_diff = target_soc - current_soc %}
           {% if soc_diff > 0 %}
@@ -470,29 +470,22 @@
       state: >
         {% set idle_power = states('input_number.idle_power_draw') | float(0) %}
         {% set battery_minimum = states('input_number.battery_lower_discharge_limit') | float(0) %}
-        
-        {# Check if we're currently in off-peak #}
-        {% if is_state('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'on') %}
-          {# Currently in off-peak - keep minimum reserve #}
-          {{ battery_minimum }}
+
+        {% set next_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_start') %}
+
+        {% set now_time = now() %}
+
+        {% if next_start %}
+          {% set next_start_dt = as_datetime(next_start) %}
+
+          {# Time until cheap slot starts #}
+          {% set hours_until_cheap = (next_start_dt - now_time).total_seconds() / 3600 %}
+
+          {# Calculate energy needed during this period plus battery minimum #}
+          {{ ((idle_power * hours_until_cheap) + battery_minimum) | round(0) }}
         {% else %}
-          {# Not in off-peak - get next cheap slot from the binary sensor #}
-          {% set next_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_start') %}
-          
-          {% set now_time = now() %}
-          
-          {% if next_start %}
-            {% set next_start_dt = as_datetime(next_start) %}
-            
-            {# Time until cheap slot starts #}
-            {% set hours_until_cheap = (next_start_dt - now_time).total_seconds() / 3600 %}
-            
-            {# Calculate energy needed during this period plus battery minimum #}
-            {{ ((idle_power * hours_until_cheap) + battery_minimum) | round(0) }}
-          {% else %}
-            {# No cheap slot found #}
-            {{ battery_minimum }}
-          {% endif %}
+          {# No cheap slot found #}
+          {{ battery_minimum }}
         {% endif %}
 
 - binary_sensor:
