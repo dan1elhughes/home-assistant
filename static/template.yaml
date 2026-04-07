@@ -470,6 +470,7 @@
       state: >
         {% set idle_power = states('input_number.idle_power_draw') | float(0) %}
         {% set battery_minimum = states('input_number.battery_lower_discharge_limit') | float(0) %}
+        {% set battery_capacity = states('sensor.envoy_122322027694_battery_capacity') | float(0) %}
 
         {% set next_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_start') %}
 
@@ -482,10 +483,11 @@
           {% set hours_until_cheap = (next_start_dt - now_time).total_seconds() / 3600 %}
 
           {# Calculate energy needed during this period plus battery minimum #}
-          {{ ((idle_power * hours_until_cheap) + battery_minimum) | round(0) }}
+          {% set calculated = ((idle_power * hours_until_cheap) + battery_minimum) | round(0) %}
+          {{ [calculated, battery_capacity] | min }}
         {% else %}
           {# No cheap slot found #}
-          {{ battery_minimum }}
+          {{ [battery_minimum, battery_capacity] | min }}
         {% endif %}
 
 - binary_sensor:
