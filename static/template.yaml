@@ -364,6 +364,12 @@
             {% set rounded_slot_start = slot_start.replace(minute=(slot_start.minute // 5) * 5, second=0, microsecond=0) %}
             {% set rounded_slot_end = slot_end.replace(minute=(slot_end.minute // 5) * 5, second=0, microsecond=0) %}
 
+            {# Discard slots smaller than 5 minutes after rounding (round down to 0) #}
+            {% set rounded_duration_minutes = ((rounded_slot_end - rounded_slot_start).total_seconds() / 60) | int %}
+            {% if rounded_duration_minutes < 5 %}
+              {% continue %}
+            {% endif %}
+
             {# Ensure slot is in the future #}
             {% if rounded_slot_end > now() %}
               {# Only adjust start if rate_start is in the future (for full slots starting at rate_start) #}
