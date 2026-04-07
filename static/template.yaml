@@ -360,24 +360,25 @@
               {% set slot_end = rate_start + timedelta(hours=actual_discharge_hours) %}
             {% endif %}
 
-            {# Round to 5-minute intervals for cleanliness #}
-            {% set rounded_slot_start = slot_start.replace(minute=(slot_start.minute // 5) * 5, second=0, microsecond=0) %}
-            {% set rounded_slot_end = slot_end.replace(minute=(slot_end.minute // 5) * 5, second=0, microsecond=0) %}
+            {# Calculate duration first, then round DOWN to 5-minute intervals #}
+            {% set raw_duration_minutes = (slot_end - slot_start).total_seconds() / 60 %}
+            {% set rounded_duration_minutes = ((raw_duration_minutes | int) // 5) * 5 %}
 
-            {# Discard slots smaller than 5 minutes after rounding (round down to 0) #}
-            {% set rounded_duration_minutes = ((rounded_slot_end - rounded_slot_start).total_seconds() / 60) | int %}
+            {# Discard slots smaller than 5 minutes #}
             {% if rounded_duration_minutes < 5 %}
               {% continue %}
             {% endif %}
 
+            {# Now apply the rounded duration to get end time #}
+            {% set rounded_slot_start = slot_start.replace(second=0, microsecond=0) %}
+            {% set rounded_slot_end = rounded_slot_start + timedelta(minutes=rounded_duration_minutes) %}
+
             {# Ensure slot is in the future #}
             {% if rounded_slot_end > now() %}
-              {# Only adjust start if rate_start is in the future (for full slots starting at rate_start) #}
-              {% set final_slot_start = rate_start if rate_start >= now() and actual_discharge_hours >= rate_duration_hours else rounded_slot_start %}
-              {% set final_slot_start = final_slot_start.replace(minute=(final_slot_start.minute // 5) * 5, second=0, microsecond=0) %}
-              {% if final_slot_start < rounded_slot_end %}
+              {# Use the rounded start directly (already aligned) #}
+              {% if rounded_slot_start < rounded_slot_end %}
                 {% set ns_loop.processed_slots = ns_loop.processed_slots + [{
-                  'start': final_slot_start,
+                  'start': rounded_slot_start,
                   'end': rounded_slot_end,
                   'intent': 'Discharge'
                 }] %}
