@@ -199,6 +199,9 @@ views:
               - type: entity
                 entity: sensor.solar_power_generation_paid
                 show_icon: false
+              - type: entity
+                entity: sensor.energy_production_today
+                show_icon: false
           - type: sensor
             name: Generation
             icon: mdi:solar-power-variant
