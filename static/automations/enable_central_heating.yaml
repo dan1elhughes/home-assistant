@@ -6,12 +6,12 @@
   action:
     - service: climate.set_hvac_mode
       target:
-        entity_id: climate.virtual_central_heating
+        entity_id: climate.central_heating
       data:
         hvac_mode: heat
     - service: climate.set_temperature
       target:
-        entity_id: climate.virtual_central_heating
+        entity_id: climate.central_heating
       data:
         temperature: >
           {{ states("input_number.thermostat_high") | float }}

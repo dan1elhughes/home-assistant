@@ -18,7 +18,7 @@
                 temperature: >
                   {{ states("input_number.thermostat_high") | float }}
               target:
-                entity_id: climate.virtual_central_heating
+                entity_id: climate.central_heating
         - conditions:
             - condition: state
               entity_id: binary_sensor.heating
@@ -29,4 +29,4 @@
                 temperature: >
                   {{ states("input_number.thermostat_low") | float }}
               target:
-                entity_id: climate.virtual_central_heating
+                entity_id: climate.central_heating

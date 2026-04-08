@@ -222,7 +222,7 @@ views:
                 entity: sensor.accumulative_gas_cost_without_standing_charge
                 show_icon: false
               - type: entity
-                entity: sensor.central_heating_hvac_action
+                entity: sensor.central_heating_controller_wiser_heating
                 show_icon: false
           - type: sensor
             name: Import now

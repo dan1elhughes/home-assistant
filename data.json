@@ -74,7 +74,7 @@
       ],
       "other_entities": ["scene.downstairs_on", "scene.movie_mode"],
       "name": "Living room",
-      "badges": ["climate.virtual_central_heating"],
+      "badges": ["climate.central_heating"],
       "co2_sensor": "apollo_msr_2_15c4e4"
     },
     {

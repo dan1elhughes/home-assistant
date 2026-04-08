@@ -15,15 +15,6 @@
     minutes: 5
 
 - platform: generic_thermostat
-  name: "Virtual central heating"
-  heater: input_boolean.central_heating_intended_state
-  target_sensor: sensor.living_room_sensor_temperature
-  min_temp: 10
-  max_temp: 25
-  cold_tolerance: 0.1
-  hot_tolerance: 0.1
-
-- platform: generic_thermostat
   name: Virtual barn heating
   heater: switch.barn_ac_power
   target_sensor: sensor.barn_ac_temperature
