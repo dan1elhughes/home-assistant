@@ -309,7 +309,6 @@
       state: "on"
       attributes:
         events: >
-          {% set ns = namespace(discharges=[]) %}
           {% set tz = now().tzinfo %}
 
           {# Battery Parameters #}
@@ -322,78 +321,60 @@
           {# Get export rates for the current day #}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
 
-          {# Filter and sort export rates by price (highest first) #}
-          {% set sorted_rates = export_rates | sort(attribute='value_inc_vat', reverse=true) %}
-
-          {# Process each rate period, starting from highest #}
-          {% set ns_loop = namespace(remaining_kwh=usable_kwh, processed_slots=[]) %}
-
-          {% for rate in sorted_rates %}
-            {% if ns_loop.remaining_kwh <= 0 %}
-              {% break %}
-            {% endif %}
-
-            {# Parse the rate period #}
+          {# Step 1: Expand each rate period into individual minutes #}
+          {% set ns_minutes = namespace(all=[]) %}
+          {% for rate in export_rates %}
             {% set rate_start = as_datetime(rate.start).replace(tzinfo=tz) %}
             {% set rate_end = as_datetime(rate.end).replace(tzinfo=tz) %}
-
-            {# Skip if in the past #}
-            {% if rate_end <= now() %}
-              {% continue %}
-            {% endif %}
-
-            {# Calculate how long we can discharge at this rate #}
-            {% set rate_duration_hours = (rate_end - rate_start).total_seconds() / 3600 %}
-
-            {# Determine actual discharge duration #}
-            {% set actual_discharge_hours = [ns_loop.remaining_kwh / discharge_rate_kw, rate_duration_hours] | min %}
-            {% set actual_discharge_kwh = actual_discharge_hours * discharge_rate_kw %}
-
-            {# Calculate slot times - fill from END for non-full slots #}
-            {% if actual_discharge_hours < rate_duration_hours %}
-              {# Non-full slot: place at end of rate period #}
-              {% set slot_start = rate_end - timedelta(hours=actual_discharge_hours) %}
-              {% set slot_end = rate_end %}
-            {% else %}
-              {# Full slot: place at start of rate period #}
-              {% set slot_start = rate_start %}
-              {% set slot_end = rate_start + timedelta(hours=actual_discharge_hours) %}
-            {% endif %}
-
-            {# Calculate duration first, then round DOWN to 5-minute intervals #}
-            {% set raw_duration_minutes = (slot_end - slot_start).total_seconds() / 60 %}
-            {% set rounded_duration_minutes = ((raw_duration_minutes | int) // 5) * 5 %}
-
-            {# Discard slots smaller than 5 minutes #}
-            {% if rounded_duration_minutes < 5 %}
-              {% continue %}
-            {% endif %}
-
-            {# Now apply the rounded duration to get end time #}
-            {% set rounded_slot_start = slot_start.replace(second=0, microsecond=0) %}
-            {% set rounded_slot_end = rounded_slot_start + timedelta(minutes=rounded_duration_minutes) %}
-
-            {# Ensure slot is in the future #}
-            {% if rounded_slot_end > now() %}
-              {# Use the rounded start directly (already aligned) #}
-              {% if rounded_slot_start < rounded_slot_end %}
-                {% set ns_loop.processed_slots = ns_loop.processed_slots + [{
-                  'start': rounded_slot_start,
-                  'end': rounded_slot_end,
-                  'intent': 'Discharge'
+            {% if rate_end > now() %}
+              {% set current = rate_start if rate_start > now() else now() %}
+              {% for minute in range(((rate_end - current).total_seconds() / 60) | int) %}
+                {% set ns_minutes.all = ns_minutes.all + [{
+                  'time': current + timedelta(minutes=minute),
+                  'rate': rate.value_inc_vat
                 }] %}
-                {% set ns_loop.remaining_kwh = ns_loop.remaining_kwh - actual_discharge_kwh %}
-              {% endif %}
+              {% endfor %}
             {% endif %}
           {% endfor %}
 
-          {# Sort final slots by start time #}
-          {% set final_slots = ns_loop.processed_slots | sort(attribute='start') %}
+          {# Step 2: Sort by rate (highest first), then time (latest first) #}
+          {% set ns_sorted = namespace(result=[]) %}
+          {% set sorted_rates = ns_minutes.all | map(attribute='rate') | unique | sort(reverse=true) %}
+          {% for r in sorted_rates %}
+            {% set same_rate = ns_minutes.all | selectattr('rate', 'equalto', r) | sort(attribute='time', reverse=true) %}
+            {% set ns_sorted.result = ns_sorted.result + (same_rate | list) %}
+          {% endfor %}
+          {% set sorted_minutes = ns_sorted.result %}
+
+          {# Step 3: Fill out each minute from our bucket #}
+          {% set minutes_needed = ((usable_kwh / discharge_rate_kw * 60) | int) %}
+          {% set filled_minutes = sorted_minutes[:minutes_needed] %}
+
+          {# Step 4: Combine contiguous blocks of time #}
+          {% set sorted_filled = filled_minutes | sort(attribute='time') %}
+          {% set ns_blocks = namespace(blocks=[]) %}
+          {% set ns_loop = namespace(block_start=none, prev_time=none) %}
+
+          {% for minute in sorted_filled %}
+            {% if ns_loop.prev_time is none %}
+              {% set ns_loop.block_start = minute.time %}
+            {% elif (minute.time - ns_loop.prev_time).total_seconds() > 60 %}
+              {# Gap detected - close current block and start new one #}
+              {% set ns_blocks.blocks = ns_blocks.blocks + [{'start': ns_loop.block_start, 'end': ns_loop.prev_time + timedelta(minutes=1)}] %}
+              {% set ns_loop.block_start = minute.time %}
+            {% endif %}
+            {% set ns_loop.prev_time = minute.time %}
+          {% endfor %}
+
+          {# Close last block #}
+          {% if ns_loop.block_start is not none and ns_loop.prev_time is not none %}
+            {% set ns_blocks.blocks = ns_blocks.blocks + [{'start': ns_loop.block_start, 'end': ns_loop.prev_time + timedelta(minutes=1)}] %}
+          {% endif %}
 
           {# Output as JSON #}
           {% set ns_json = namespace(output=[]) %}
-          {% for slot in final_slots %}
-            {% set ns_json.output = ns_json.output + [{'start': slot.start.isoformat(), 'end': slot.end.isoformat(), 'intent': slot.intent}] %}
+          {% for block in ns_blocks.blocks %}
+            {% set ns_json.output = ns_json.output + [{'start': block.start.isoformat(), 'end': block.end.isoformat(), 'intent': 'Discharge'}] %}
           {% endfor %}
           {{ ns_json.output | to_json }}
 
