@@ -112,7 +112,8 @@
       attributes:
         events: >
           {% set ns = namespace(charges=[], discharges=[]) %}
-          {% set tz = now().tzinfo %}
+          {% set current_now = now().replace(second=0, microsecond=0) %}
+          {% set tz = current_now.tzinfo %}
 
           {# ======================================================= #}
           {# 1. COLLECT ALL GUARANTEED CHARGE SLOTS                  #}
@@ -309,7 +310,8 @@
       state: "on"
       attributes:
         events: >
-          {% set tz = now().tzinfo %}
+          {% set current_now = now().replace(second=0, microsecond=0) %}
+          {% set tz = current_now.tzinfo %}
 
           {# Battery Parameters #}
           {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
@@ -324,10 +326,10 @@
           {# Step 1: Expand each rate period into individual minutes #}
           {% set ns_minutes = namespace(all=[]) %}
           {% for rate in export_rates %}
-            {% set rate_start = as_datetime(rate.start).replace(tzinfo=tz) %}
-            {% set rate_end = as_datetime(rate.end).replace(tzinfo=tz) %}
-            {% if rate_end > now() %}
-              {% set current = rate_start if rate_start > now() else now() %}
+            {% set rate_start = as_datetime(rate.start).replace(tzinfo=tz, second=0, microsecond=0) %}
+            {% set rate_end = as_datetime(rate.end).replace(tzinfo=tz, second=0, microsecond=0) %}
+            {% if rate_end > current_now %}
+              {% set current = rate_start if rate_start > current_now else current_now %}
               {% for minute in range(((rate_end - current).total_seconds() / 60) | int) %}
                 {% set ns_minutes.all = ns_minutes.all + [{
                   'time': current + timedelta(minutes=minute),
@@ -374,7 +376,7 @@
           {# Output as JSON #}
           {% set ns_json = namespace(output=[]) %}
           {% for block in ns_blocks.blocks %}
-            {% set ns_json.output = ns_json.output + [{'start': block.start.isoformat(), 'end': block.end.isoformat(), 'intent': 'Discharge'}] %}
+            {% set ns_json.output = ns_json.output + [{'start': block.start.replace(second=0, microsecond=0).isoformat(), 'end': block.end.replace(second=0, microsecond=0).isoformat(), 'intent': 'Discharge'}] %}
           {% endfor %}
           {{ ns_json.output | to_json }}
 
