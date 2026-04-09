@@ -281,6 +281,40 @@ views:
                     type: numeric-input
                 features_position: inline
 
+              - type: markdown
+                content: >
+                  {% raw %}
+                  {%- set schedules = state_attr('sensor.enphase_schedules_summary', 'schedules') %}
+                  {%- set weekdays = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+                  **Battery schedule**
+                  {%- if schedules %}
+                    {%- set ns = namespace(items=[]) %}
+
+                    {%- for schedule in schedules | sort(attribute='start') %}
+                      {%- set day_ns = namespace(items=[]) %}
+                      {%- for day in schedule.days | default([]) %}
+                        {%- set day_ns.items = day_ns.items + [weekdays[day] if day >= 0 and day < weekdays | count else day] %}
+                      {%- endfor %}
+
+                      {%- if schedule.type | lower == 'cfg' %}
+                        {%- set action = 'Charge from grid' %}
+                      {%- elif schedule.type | lower == 'dtg' %}
+                        {%- set action = 'Discharge to grid' %}
+                      {%- else %}
+                        {%- set action = schedule.type | upper %}
+                      {%- endif %}
+
+                      {%- set days_label = ' (' ~ day_ns.items | join(', ') ~ ')' if day_ns.items else '' %}
+                      {%- set line = '- ' ~ schedule.start ~ ' - ' ~ schedule.end ~ ': **' ~ action ~ '** to ' ~ schedule.limit ~ '%' ~ days_label %}
+                      {%- set ns.items = ns.items + [line] %}
+                    {%- endfor %}
+
+                    {{ '\n' ~ ns.items | join('\n') }}
+                  {%- else %}
+                    {{ '\nNo battery schedule configured' }}
+                  {%- endif %}
+                  {% endraw %}
+
       - type: grid
         visibility:
           - condition: or
