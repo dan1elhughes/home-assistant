@@ -124,9 +124,9 @@
             {% set start_raw = state_attr(cal, 'start_time') %}
             {% set end_raw = state_attr(cal, 'end_time') %}
             {% if start_raw and end_raw %}
-              {% set start = as_datetime(start_raw).replace(tzinfo=tz) %}
-              {% set end = as_datetime(end_raw).replace(tzinfo=tz) %}
-              {% if end >= now() %}
+              {% set start = as_datetime(start_raw).replace(tzinfo=tz, second=0, microsecond=0) %}
+              {% set end = as_datetime(end_raw).replace(tzinfo=tz, second=0, microsecond=0) %}
+              {% if end >= current_now %}
                 {% set ns.charges = ns.charges + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
               {% endif %}
             {% endif %}
@@ -137,9 +137,9 @@
             {% set start_attr = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', state_type + '_start') %}
             {% set end_attr = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', state_type + '_end') %}
             {% if start_attr and end_attr %}
-              {% set start = as_datetime(start_attr).replace(tzinfo=tz) %}
-              {% set end = as_datetime(end_attr).replace(tzinfo=tz) %}
-              {% if end >= now() %}
+              {% set start = as_datetime(start_attr).replace(tzinfo=tz, second=0, microsecond=0) %}
+              {% set end = as_datetime(end_attr).replace(tzinfo=tz, second=0, microsecond=0) %}
+              {% if end >= current_now %}
                 {% set ns.charges = ns.charges + [{'start': start, 'end': end, 'intent': 'Charge'}] %}
               {% endif %}
             {% endif %}
@@ -180,9 +180,9 @@
           {# Optimal Discharge Slots from Sensor #}
           {% set optimal_events = state_attr('sensor.optimal_discharge_slots', 'events') or [] %}
           {% for slot in optimal_events %}
-            {% set start = as_datetime(slot.start).replace(tzinfo=tz) %}
-            {% set end = as_datetime(slot.end).replace(tzinfo=tz) %}
-            {% if end >= now() %}
+            {% set start = as_datetime(slot.start).replace(tzinfo=tz, second=0, microsecond=0) %}
+            {% set end = as_datetime(slot.end).replace(tzinfo=tz, second=0, microsecond=0) %}
+            {% if end >= current_now %}
               {% set ns_optimal_discharges.items = ns_optimal_discharges.items + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
             {% endif %}
           {% endfor %}
@@ -282,8 +282,8 @@
 
               {# Find export rate that overlaps with this slot #}
               {% for exp_rate in export_rates %}
-                {% set exp_start = as_datetime(exp_rate.start) %}
-                {% set exp_end = as_datetime(exp_rate.end) %}
+                {% set exp_start = as_datetime(exp_rate.start).replace(tzinfo=tz, second=0, microsecond=0) %}
+                {% set exp_end = as_datetime(exp_rate.end).replace(tzinfo=tz, second=0, microsecond=0) %}
                 {# Check if export rate overlaps with slot #}
                 {% if exp_start < slot_end and exp_end > slot_start %}
                   {% set ns_check.export_rate = exp_rate.value_inc_vat %}
@@ -376,7 +376,7 @@
           {# Output as JSON #}
           {% set ns_json = namespace(output=[]) %}
           {% for block in ns_blocks.blocks %}
-            {% set ns_json.output = ns_json.output + [{'start': block.start.replace(second=0, microsecond=0).isoformat(), 'end': block.end.replace(second=0, microsecond=0).isoformat(), 'intent': 'Discharge'}] %}
+            {% set ns_json.output = ns_json.output + [{'start': block.start.isoformat(), 'end': block.end.isoformat(), 'intent': 'Discharge'}] %}
           {% endfor %}
           {{ ns_json.output | to_json }}
 
