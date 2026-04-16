@@ -169,9 +169,6 @@
           {# The flattened charges are now our "Anchors" #}
           {% set flat_charges = ns_flat.items %}
 
-          {% set current_battery_kwh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) / 1000 %}
-          {% set min_discharge_threshold_kwh = states('sensor.power_requirement_until_cheap_slot') | float(0) / 1000 %}
-
           {# ======================================================= #}
           {# 3a. GENERATE DISCHARGE SLOTS (Optimal Discharge)       #}
           {# ======================================================= #}
