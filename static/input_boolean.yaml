@@ -23,6 +23,10 @@ notify_on_battery_schedule_changed:
   name: Notify on battery schedule changed
   icon: mdi:bell
 
-smart_charge_tonight:
-  name: Smart charge tonight
+auto_enable_smart_charge:
+  name: Auto enable smart charge
+  icon: mdi:car-electric
+
+auto_disable_smart_charge:
+  name: Auto disable smart charge
   icon: mdi:car-electric

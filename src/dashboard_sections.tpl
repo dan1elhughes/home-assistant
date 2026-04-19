@@ -323,7 +323,7 @@ views:
                 entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
                 state: "on"
               - condition: state
-                entity: input_boolean.smart_charge_tonight
+                entity: input_boolean.auto_enable_smart_charge
                 state: "on"
         cards:
           - type: heading

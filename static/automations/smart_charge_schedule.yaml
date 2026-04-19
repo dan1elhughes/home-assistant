@@ -1,0 +1,56 @@
+- alias: "Smart charge tonight"
+  mode: single
+  trigger:
+    - platform: time
+      at: input_datetime.smart_charge_at
+  condition:
+    - alias: "Auto enable smart charge enabled"
+      condition: state
+      entity_id: input_boolean.auto_enable_smart_charge
+      state: "on"
+  action:
+    - alias: "Enable smart charge"
+      service: switch.turn_on
+      target:
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - alias: "Notify user"
+      service: notify.dan
+      data:
+        title: "Smart charge enabled"
+        message: "Smart charge has been enabled for tonight"
+        data:
+          notification_icon: "mdi:car-electric"
+          channel: "smart_charge"
+          tag: auto_enable_smart_charge
+    - service: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.auto_enable_smart_charge
+
+- alias: "Disable smart charge when waiting for EV"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.myenergi_zappi_plug_status
+      from: "Charging"
+      to: "Waiting for EV"
+  condition:
+    - alias: "After 11am"
+      condition: time
+      after: "11:00:00"
+    - alias: "Auto disable smart charge enabled"
+      condition: state
+      entity_id: input_boolean.auto_disable_smart_charge
+      state: "on"
+  action:
+    - alias: "Disable smart charge"
+      service: switch.turn_off
+      target:
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - alias: "Notify user"
+      service: notify.dan
+      data:
+        title: "Smart charge disabled"
+        data:
+          notification_icon: "mdi:car-electric"
+          channel: "smart_charge"
+          tag: smart_charge_disabled
