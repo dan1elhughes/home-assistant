@@ -213,7 +213,8 @@
         "select.myenergi_zappi_charge_mode",
         "automation.zappi_control",
         "sensor.id3_battery_level",
-        "input_boolean.smart_charge_tonight",
+        "input_boolean.auto_enable_smart_charge",
+        "input_boolean.auto_disable_smart_charge",
         "input_datetime.smart_charge_at",
         "switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge",
         "sensor.wp22lxc_battery"
