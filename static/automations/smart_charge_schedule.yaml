@@ -16,8 +16,7 @@
     - alias: "Notify user"
       service: notify.dan
       data:
-        title: "Smart charge enabled"
-        message: "Smart charge has been enabled for tonight"
+        message: "Smart charge enabled"
         data:
           notification_icon: "mdi:car-electric"
           channel: "smart_charge"
@@ -49,7 +48,7 @@
     - alias: "Notify user"
       service: notify.dan
       data:
-        title: "Smart charge disabled"
+        message: "Smart charge disabled"
         data:
           notification_icon: "mdi:car-electric"
           channel: "smart_charge"
