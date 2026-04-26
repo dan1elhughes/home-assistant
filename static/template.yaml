@@ -175,11 +175,13 @@
           {% set ns_optimal_discharges = namespace(items=[]) %}
 
           {# Optimal Discharge Slots from Sensor #}
+          {% set min_slot_length = states('input_number.minimum_slot_length') | int(0) %}
           {% set optimal_events = state_attr('sensor.optimal_discharge_slots', 'events') or [] %}
           {% for slot in optimal_events %}
             {% set start = as_datetime(slot.start).replace(tzinfo=tz, second=0, microsecond=0) %}
             {% set end = as_datetime(slot.end).replace(tzinfo=tz, second=0, microsecond=0) %}
-            {% if end >= current_now %}
+            {% set slot_duration = ((end - start).total_seconds() / 60) | int %}
+            {% if end >= current_now and slot_duration >= min_slot_length %}
               {% set ns_optimal_discharges.items = ns_optimal_discharges.items + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
             {% endif %}
           {% endfor %}
@@ -349,25 +351,36 @@
           {% set minutes_needed = ((usable_kwh / discharge_rate_kw * 60) | int) %}
           {% set filled_minutes = sorted_minutes[:minutes_needed] %}
 
-          {# Step 4: Combine contiguous blocks of time #}
+          {# Step 4: Combine contiguous blocks, skipping short fragments #}
+          {% set min_slot_length = states('input_number.minimum_slot_length') | int(0) %}
           {% set sorted_filled = filled_minutes | sort(attribute='time') %}
-          {% set ns_blocks = namespace(blocks=[]) %}
-          {% set ns_loop = namespace(block_start=none, prev_time=none) %}
+          {% set ns_blocks = namespace(blocks=[], current_start=none, current_end=none) %}
+          {% set ns_loop = namespace(prev_time=none) %}
 
           {% for minute in sorted_filled %}
             {% if ns_loop.prev_time is none %}
-              {% set ns_loop.block_start = minute.time %}
+              {% set ns_blocks.current_start = minute.time %}
+              {% set ns_blocks.current_end = minute.time %}
             {% elif (minute.time - ns_loop.prev_time).total_seconds() > 60 %}
-              {# Gap detected - close current block and start new one #}
-              {% set ns_blocks.blocks = ns_blocks.blocks + [{'start': ns_loop.block_start, 'end': ns_loop.prev_time + timedelta(minutes=1)}] %}
-              {% set ns_loop.block_start = minute.time %}
+              {# Gap detected - close current block if valid, start new one #}
+              {% set block_duration = ((ns_blocks.current_end - ns_blocks.current_start).total_seconds() / 60) + 1 %}
+              {% if block_duration >= min_slot_length or min_slot_length == 0 %}
+                {% set ns_blocks.blocks = ns_blocks.blocks + [{'start': ns_blocks.current_start, 'end': ns_blocks.current_end + timedelta(minutes=1)}] %}
+              {% endif %}
+              {% set ns_blocks.current_start = minute.time %}
+              {% set ns_blocks.current_end = minute.time %}
+            {% else %}
+              {% set ns_blocks.current_end = minute.time %}
             {% endif %}
             {% set ns_loop.prev_time = minute.time %}
           {% endfor %}
 
-          {# Close last block #}
-          {% if ns_loop.block_start is not none and ns_loop.prev_time is not none %}
-            {% set ns_blocks.blocks = ns_blocks.blocks + [{'start': ns_loop.block_start, 'end': ns_loop.prev_time + timedelta(minutes=1)}] %}
+          {# Close last block if valid #}
+          {% if ns_blocks.current_start is not none and ns_blocks.current_end is not none %}
+            {% set block_duration = ((ns_blocks.current_end - ns_blocks.current_start).total_seconds() / 60) + 1 %}
+            {% if block_duration >= min_slot_length or min_slot_length == 0 %}
+              {% set ns_blocks.blocks = ns_blocks.blocks + [{'start': ns_blocks.current_start, 'end': ns_blocks.current_end + timedelta(minutes=1)}] %}
+            {% endif %}
           {% endif %}
 
           {# Output as JSON #}
