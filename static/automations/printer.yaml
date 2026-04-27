@@ -88,22 +88,15 @@
 - alias: Printer speed
   mode: single
   triggers:
-    # Wait 10s to avoid bouncing when the user changes the speed setting
     - trigger: state
+      entity_id: sensor.a1_print_progress
+  condition:
+    - condition: state
       entity_id: select.a1_printing_speed
-      for:
-        seconds: 10
+      state: standard
   action:
-    - choose:
-        - conditions:
-            - condition: not
-              conditions:
-                - condition: state
-                  entity_id: select.a1_printing_speed
-                  state: silent
-          sequence:
-            - service: select.select_option
-              target:
-                entity_id: select.a1_printing_speed
-              data:
-                option: silent
+    - service: select.select_option
+      target:
+        entity_id: select.a1_printing_speed
+      data:
+        option: silent
