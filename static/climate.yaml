@@ -1,6 +1,6 @@
 - platform: generic_thermostat
   name: "Server cabinet"
-  heater: light.homelab_power_usb
+  heater: light.homelab_power_ventilation
   target_sensor: sensor.servers_sensor_temperature
   ac_mode: true
   initial_hvac_mode: "cool"
