@@ -11,6 +11,4 @@ fi
 server="$HA_IP"
 config="/mnt/cephfs/homeassistant"
 
-ssh "$server" "rm -rv $config/automations $config/scenes"
-
 rsync -rvzP dist/ "$server:$config"
