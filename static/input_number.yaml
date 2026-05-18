@@ -53,15 +53,15 @@ co2_red_threshold:
 dehumidifier_peak:
   name: Dehumidifier peak humidity
   unit_of_measurement: "%"
-  min: 0
-  max: 100
+  min: 30
+  max: 85
   step: 1
 
 dehumidifier_offpeak:
   name: Dehumidifier off-peak humidity
   unit_of_measurement: "%"
-  min: 0
-  max: 100
+  min: 30
+  max: 85
   step: 1
 
 battery_energy_charged_wh:
