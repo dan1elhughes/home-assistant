@@ -157,7 +157,7 @@
       ],
       "other_entities": [
         "climate.conservatory_heater_heater",
-        "humidifier.conservatory_dehumidifier",
+        "humidifier.dehumidifier",
         "switch.heated_airer"
       ]
     },
