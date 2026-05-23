@@ -490,6 +490,17 @@
           {{ [battery_minimum, battery_capacity] | min }}
         {% endif %}
 
+    - name: "Office AC power filtered"
+      unit_of_measurement: "W"
+      device_class: power
+      state_class: measurement
+      state: >
+        {% if states('climate.office_ac') in ['heat', 'cool'] %}
+          {{ states('sensor.office_ac_power') }}
+        {% else %}
+          0
+        {% endif %}
+
 - binary_sensor:
     - name: One-room mode
       state: >
