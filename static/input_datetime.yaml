@@ -8,7 +8,12 @@ wake_up_katie:
   has_date: false
   has_time: true
 
-smart_charge_at:
-  name: Smart charge at
+smart_charge_start:
+  name: Smart charge start
+  has_date: false
+  has_time: true
+
+smart_charge_end:
+  name: Smart charge end
   has_date: false
   has_time: true

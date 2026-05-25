@@ -216,7 +216,7 @@
         "sensor.id3_battery_level",
         "input_boolean.auto_enable_smart_charge",
         "input_boolean.auto_disable_smart_charge",
-        "input_datetime.smart_charge_at",
+        "input_datetime.smart_charge_start",
         "switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge",
         "sensor.wp22lxc_battery"
       ]
