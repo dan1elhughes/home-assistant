@@ -6,6 +6,8 @@
       entity_id: sensor.energy_intents
     - platform: state
       entity_id: input_number.battery_upper_charge_limit
+    - platform: state
+      entity_id: input_boolean.allow_discharge
   condition:
     - condition: not
       conditions:

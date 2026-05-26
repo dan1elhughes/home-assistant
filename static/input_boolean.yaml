@@ -30,3 +30,7 @@ auto_enable_smart_charge:
 auto_disable_smart_charge:
   name: Auto disable smart charge
   icon: mdi:car-electric
+
+allow_discharge:
+  name: Allow discharge
+  icon: mdi:battery-arrow-up-outline

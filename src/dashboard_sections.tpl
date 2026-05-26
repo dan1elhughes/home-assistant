@@ -288,6 +288,10 @@ views:
                   - style: buttons
                     type: numeric-input
                 features_position: inline
+              - type: tile
+                name: Allow discharge
+                entity: input_boolean.allow_discharge
+                icon: mdi:battery-arrow-up-outline
 
               - type: markdown
                 content: >

@@ -174,7 +174,8 @@
           {# ======================================================= #}
           {% set ns_optimal_discharges = namespace(items=[]) %}
 
-          {# Optimal Discharge Slots from Sensor #}
+          {# Only generate discharge slots if allow_discharge is enabled #}
+          {% if states('input_boolean.allow_discharge') == 'on' %}
           {% set min_slot_length = states('input_number.minimum_slot_length') | int(0) %}
           {% set optimal_events = state_attr('sensor.optimal_discharge_slots', 'events') or [] %}
           {% for slot in optimal_events %}
@@ -185,6 +186,7 @@
               {% set ns_optimal_discharges.items = ns_optimal_discharges.items + [{'start': start, 'end': end, 'intent': 'Discharge'}] %}
             {% endif %}
           {% endfor %}
+          {% endif %}
 
           {# ======================================================= #}
           {# 4. FINAL PASS: COMBINE AND TRIM (Buffer Enforcement)    #}

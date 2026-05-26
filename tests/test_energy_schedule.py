@@ -163,6 +163,7 @@ class TestEnergyScheduleTemplates(unittest.TestCase):
             'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '10.0',
             'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '10.0',
             'input_number.battery_round_trip_efficiency': '0.9',
+            'input_boolean.allow_discharge': 'on',
         }
 
         result = self.render_template(
@@ -275,6 +276,7 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
             'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '10.0',
             'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '10.0',
             'input_number.battery_round_trip_efficiency': '0.9',
+            'input_boolean.allow_discharge': 'on',
         }
 
         result = self.render_template(
@@ -337,6 +339,62 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
         # Only the charge slot is expected
         expected_events = [
             {'intent': 'Charge', 'start': '2025-01-14T23:30:00+00:00', 'end': '2025-01-15T05:00:00+00:00'},
+        ]
+
+        assert_events_equal(self, events, expected_events)
+
+    def test_allow_discharge_off_blocks_discharge_events(self):
+        """
+        Test that when allow_discharge is off, no discharge events are generated.
+
+        Scenario: Same as comprehensive scenario with battery available for discharge,
+        but allow_discharge is off.
+
+        Expected events:
+        1. Only the charge slot - no discharge event
+        """
+        ctx = HomeAssistantContext(
+            now=datetime(2025, 1, 14, 12, 0, 0, tzinfo=timezone.utc)
+        )
+
+        mock_attrs = {
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.start_time': '2025-01-14T00:30:00+00:00',
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.end_time': '2025-01-14T05:00:00+00:00',
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_start': '2025-01-14T00:30:00+00:00',
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_end': '2025-01-14T05:00:00+00:00',
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_start': '2025-01-15T00:30:00+00:00',
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': '2025-01-15T05:00:00+00:00',
+            'sensor.optimal_discharge_slots.events': [
+                {'start': '2025-01-14T23:40:00+00:00', 'end': '2025-01-15T00:25:00+00:00', 'intent': 'Discharge'},
+            ],
+            'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
+                {'start': '2025-01-14T23:00:00+00:00', 'end': '2025-01-15T00:00:00+00:00', 'value_inc_vat': 15.0},
+                {'start': '2025-01-15T00:00:00+00:00', 'end': '2025-01-15T01:00:00+00:00', 'value_inc_vat': 15.0},
+            ],
+        }
+
+        mock_states = {
+            'sensor.envoy_122322027694_available_battery_energy': '10000',  # 10kWh
+            'input_number.minimum_discharge_threshold': '2',
+            'input_number.battery_power_rate_kw': '9.6',
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '10.0',
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '10.0',
+            'input_number.battery_round_trip_efficiency': '0.9',
+            'input_boolean.allow_discharge': 'off',
+        }
+
+        result = self.render_template(
+            self.events_template,
+            context=ctx,
+            **{**mock_attrs, **mock_states}
+        )
+
+        events = json.loads(result)
+
+        # No discharge events should appear when allow_discharge is off
+        # Only the charge slot is expected
+        expected_events = [
+            {'intent': 'Charge', 'start': '2025-01-15T00:30:00+00:00', 'end': '2025-01-15T05:00:00+00:00'},
         ]
 
         assert_events_equal(self, events, expected_events)
