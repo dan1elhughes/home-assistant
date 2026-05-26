@@ -31,7 +31,7 @@ idle_power_draw:
   name: Idle power draw
   unit_of_measurement: "W"
   min: 0
-  max: 1000
+  max: 2000
   step: 10
 
 co2_yellow_threshold:
