@@ -32,7 +32,7 @@ idle_power_draw:
   unit_of_measurement: "W"
   min: 0
   max: 2000
-  step: 10
+  step: 50
 
 co2_yellow_threshold:
   name: CO2 yellow threshold
