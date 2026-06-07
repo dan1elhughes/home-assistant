@@ -1,0 +1,19 @@
+- alias: Conservatory dehumidifier door
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.conservatory_door_opening
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: binary_sensor.conservatory_door_opening
+              state: "on"
+          sequence:
+            - service: humidifier.turn_off
+              target:
+                entity_id: humidifier.dehumidifier
+      default:
+        - service: humidifier.turn_on
+          target:
+            entity_id: humidifier.dehumidifier
