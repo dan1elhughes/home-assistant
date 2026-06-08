@@ -9,9 +9,9 @@
         - input_boolean.auto_enable_smart_charge
   action:
     - choose:
-        - alias: "ID3 Smart Charge"
+        - alias: "Smart Charge"
           conditions:
-            - alias: "ID3 smart charge enabled"
+            - alias: "Octopus smart charge enabled"
               condition: state
               entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
               state: "on"
