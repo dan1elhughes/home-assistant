@@ -17,3 +17,6 @@
         - service: humidifier.turn_on
           target:
             entity_id: humidifier.dehumidifier
+        - service: automation.trigger
+          target:
+            entity_id: automation.conservatory_dehumidifier_control
