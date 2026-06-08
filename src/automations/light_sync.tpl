@@ -12,7 +12,7 @@
               state: "on"
           sequence:
             {% for target in sync.targets %}
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id:
                   - {{ target }}
@@ -23,7 +23,7 @@
               state: "off"
           sequence:
             {% for target in sync.targets %}
-            - service: light.turn_off
+            - action: light.turn_off
               target:
                 entity_id:
                   - {{ target }}

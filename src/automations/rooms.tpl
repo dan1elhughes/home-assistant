@@ -10,7 +10,7 @@
         device_ieee: {{ room.button_ieee }}
         command: toggle
   action:
-    - service: input_select.select_option
+    - action: input_select.select_option
       target:
         entity_id: input_select.active_room
       data:

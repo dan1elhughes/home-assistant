@@ -14,7 +14,7 @@
       state: "on"
   action:
     - alias: "Turn on lamp"
-      service: light.turn_on
+      action: light.turn_on
       target:
         entity_id: light.bedroom_lamp_left
       data:
@@ -36,12 +36,12 @@
       state: "on"
   action:
     - alias: "Set active room"
-      service: input_select.select_option
+      action: input_select.select_option
       data:
         entity_id: input_select.active_room
         option: bedroom
     - alias: "Fully open curtains"
-      service: v6_quietdrift.set_switchbot_curtain_position
+      action: v6_quietdrift.set_switchbot_curtain_position
       data:
         position: 100
         entity_id: cover.curtains

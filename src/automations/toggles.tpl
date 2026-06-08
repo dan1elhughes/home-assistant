@@ -9,7 +9,7 @@
         device_ieee: {{ toggle.ieee }}
         command: toggle
   action:
-    - service: homeassistant.toggle
+    - action: homeassistant.toggle
       target:
         entity_id: {{ toggle.target }}
 {% endfor %}

@@ -11,7 +11,7 @@
         entity_id: person.dan
         state: "unknown"
   action:
-    - service: input_select.select_option
+    - action: input_select.select_option
       target:
         entity_id: input_select.active_room
       data:
@@ -35,7 +35,7 @@
         entity_id: person.dan
         state: "unknown"
   action:
-    - service: input_select.select_option
+    - action: input_select.select_option
       target:
         entity_id: input_select.active_room
       data:
@@ -53,7 +53,7 @@
         {%- endfor %}
       to: null
   action:
-    - service: notify.dan
+    - action: notify.dan
       data:
         message: "{% raw %}{{ trigger.entity_id  | replace('person.', '') | title }} is now {{ trigger.to_state.state }}{% endraw %}"
         data:

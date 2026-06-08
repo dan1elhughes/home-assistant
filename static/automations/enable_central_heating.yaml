@@ -4,12 +4,12 @@
     - platform: state
       entity_id: input_button.enable_central_heating
   action:
-    - service: climate.set_hvac_mode
+    - action: climate.set_hvac_mode
       target:
         entity_id: climate.central_heating
       data:
         hvac_mode: heat
-    - service: climate.set_temperature
+    - action: climate.set_temperature
       target:
         entity_id: climate.central_heating
       data:

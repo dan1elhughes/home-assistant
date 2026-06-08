@@ -22,7 +22,7 @@
         discharge_events: "{{ events | selectattr('intent', 'equalto', 'Discharge') | list }}"
 
     - alias: "Log energy intents change"
-      service: system_log.write
+      action: system_log.write
       data:
         logger: EnphaseSchedule
         level: info
@@ -33,7 +33,7 @@
         current_schedules: "{{ state_attr('sensor.enphase_schedules_summary', 'schedules') or [] }}"
 
     - alias: "Log existing schedules count"
-      service: system_log.write
+      action: system_log.write
       data:
         logger: EnphaseSchedule
         level: info
@@ -44,14 +44,14 @@
         for_each: "{{ current_schedules }}"
         sequence:
           - alias: "Log schedule deletion"
-            service: system_log.write
+            action: system_log.write
             data:
               logger: EnphaseSchedule
               level: info
               message: "Deleting schedule ID: {{ repeat.item.id }}"
 
           - alias: "Select schedule to delete"
-            service: select.select_option
+            action: select.select_option
             target:
               entity_id: select.enphase_schedule_selected
             data:
@@ -60,14 +60,14 @@
           - delay: "00:00:01"
 
           - alias: "Delete selected schedule"
-            service: button.press
+            action: button.press
             target:
               entity_id: button.schedule_delete
 
           - delay: "00:00:01"
 
     - alias: "Log schedule deletion complete"
-      service: system_log.write
+      action: system_log.write
       data:
         logger: EnphaseSchedule
         level: info
@@ -78,35 +78,35 @@
         for_each: "{{ charge_events }}"
         sequence:
           - alias: "Log CFG schedule creation"
-            service: system_log.write
+            action: system_log.write
             data:
               logger: EnphaseSchedule
               level: info
               message: "Adding CFG charge schedule: {{ repeat.item.start }} to {{ repeat.item.end }}"
 
           - alias: "Set schedule type to CFG"
-            service: select.select_option
+            action: select.select_option
             target:
               entity_id: select.enphase_new_schedule_type
             data:
               option: "cfg"
 
           - alias: "Set start time"
-            service: time.set_value
+            action: time.set_value
             target:
               entity_id: time.enphase_new_schedule_start
             data:
               time: "{{ as_datetime(repeat.item.start).strftime('%H:%M') }}"
 
           - alias: "Set end time"
-            service: time.set_value
+            action: time.set_value
             target:
               entity_id: time.enphase_new_schedule_end
             data:
               time: "{{ as_datetime(repeat.item.end).strftime('%H:%M') }}"
 
           - alias: "Set charge limit"
-            service: number.set_value
+            action: number.set_value
             target:
               entity_id: number.enphase_new_schedule_limit
             data:
@@ -117,7 +117,7 @@
               weekday: "{{ as_datetime(repeat.item.start).weekday() }}"
 
           - alias: "Disable all weekday switches"
-            service: homeassistant.turn_off
+            action: homeassistant.turn_off
             target:
               entity_id:
                 - switch.enphase_new_schedule_mon
@@ -129,7 +129,7 @@
                 - switch.enphase_new_schedule_sun
 
           - alias: "Enable selected weekday"
-            service: homeassistant.turn_on
+            action: homeassistant.turn_on
             target:
               entity_id: >
                 {% set day_entities = {
@@ -146,14 +146,14 @@
           - delay: "00:00:02"
 
           - alias: "Add the schedule"
-            service: button.press
+            action: button.press
             target:
               entity_id: button.new_schedule_add
 
           - delay: "00:00:02"
 
           - alias: "Log CFG schedule added"
-            service: system_log.write
+            action: system_log.write
             data:
               logger: EnphaseSchedule
               level: info
@@ -164,35 +164,35 @@
         for_each: "{{ discharge_events }}"
         sequence:
           - alias: "Log DTG schedule creation"
-            service: system_log.write
+            action: system_log.write
             data:
               logger: EnphaseSchedule
               level: info
               message: "Adding DTG discharge schedule: {{ repeat.item.start }} to {{ repeat.item.end }}"
 
           - alias: "Set schedule type to DTG"
-            service: select.select_option
+            action: select.select_option
             target:
               entity_id: select.enphase_new_schedule_type
             data:
               option: "dtg"
 
           - alias: "Set start time"
-            service: time.set_value
+            action: time.set_value
             target:
               entity_id: time.enphase_new_schedule_start
             data:
               time: "{{ as_datetime(repeat.item.start).strftime('%H:%M') }}"
 
           - alias: "Set end time"
-            service: time.set_value
+            action: time.set_value
             target:
               entity_id: time.enphase_new_schedule_end
             data:
               time: "{{ as_datetime(repeat.item.end).strftime('%H:%M') }}"
 
           - alias: "Set discharge limit to 6%"
-            service: number.set_value
+            action: number.set_value
             target:
               entity_id: number.enphase_new_schedule_limit
             data:
@@ -203,7 +203,7 @@
               weekday: "{{ as_datetime(repeat.item.start).weekday() }}"
 
           - alias: "Disable all weekday switches"
-            service: homeassistant.turn_off
+            action: homeassistant.turn_off
             target:
               entity_id:
                 - switch.enphase_new_schedule_mon
@@ -215,7 +215,7 @@
                 - switch.enphase_new_schedule_sun
 
           - alias: "Enable selected weekday"
-            service: homeassistant.turn_on
+            action: homeassistant.turn_on
             target:
               entity_id: >
                 {% set day_entities = {
@@ -232,14 +232,14 @@
           - delay: "00:00:02"
 
           - alias: "Add the schedule"
-            service: button.press
+            action: button.press
             target:
               entity_id: button.new_schedule_add
 
           - delay: "00:00:02"
 
           - alias: "Log DTG schedule added"
-            service: system_log.write
+            action: system_log.write
             data:
               logger: EnphaseSchedule
               level: info
@@ -251,26 +251,26 @@
           value_template: "{{ charge_events | length > 0 }}"
       then:
         - alias: "Log CFG enable"
-          service: system_log.write
+          action: system_log.write
           data:
             logger: EnphaseSchedule
             level: info
             message: "Enabling CFG (charge from grid)"
 
         - alias: "Enable CFG mode"
-          service: homeassistant.turn_on
+          action: homeassistant.turn_on
           target:
             entity_id: switch.enphase_cfg_mode
       else:
         - alias: "Log CFG disable"
-          service: system_log.write
+          action: system_log.write
           data:
             logger: EnphaseSchedule
             level: info
             message: "Disabling CFG (no charge schedules)"
 
         - alias: "Disable CFG mode"
-          service: homeassistant.turn_off
+          action: homeassistant.turn_off
           target:
             entity_id: switch.enphase_cfg_mode
 
@@ -280,43 +280,43 @@
           value_template: "{{ discharge_events | length > 0 }}"
       then:
         - alias: "Log DTG enable"
-          service: system_log.write
+          action: system_log.write
           data:
             logger: EnphaseSchedule
             level: info
             message: "Enabling DTG (discharge to grid)"
 
         - alias: "Enable DTG mode"
-          service: homeassistant.turn_on
+          action: homeassistant.turn_on
           target:
             entity_id: switch.enphase_dtg_mode
       else:
         - alias: "Log DTG disable"
-          service: system_log.write
+          action: system_log.write
           data:
             logger: EnphaseSchedule
             level: info
             message: "Disabling DTG (no discharge schedules)"
 
         - alias: "Disable DTG mode"
-          service: homeassistant.turn_off
+          action: homeassistant.turn_off
           target:
             entity_id: switch.enphase_dtg_mode
 
     - alias: "Force cloud refresh"
-      service: system_log.write
+      action: system_log.write
       data:
         logger: EnphaseSchedule
         level: info
         message: "Forcing cloud refresh"
 
     - alias: "Press cloud refresh button"
-      service: button.press
+      action: button.press
       target:
         entity_id: button.force_cloud_refresh
 
     - alias: "Log schedule update complete"
-      service: system_log.write
+      action: system_log.write
       data:
         logger: EnphaseSchedule
         level: info

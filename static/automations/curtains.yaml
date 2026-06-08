@@ -4,7 +4,7 @@
     - trigger: sun
       event: sunset
   action:
-    - service: cover.set_cover_position
+    - action: cover.set_cover_position
       target:
         entity_id: cover.curtains
       data:
@@ -22,7 +22,7 @@
       state: home
   action:
     - alias: "Slowly close curtains"
-      service: v6_quietdrift.set_switchbot_curtain_position
+      action: v6_quietdrift.set_switchbot_curtain_position
       data:
         position: 0
         entity_id: cover.curtains

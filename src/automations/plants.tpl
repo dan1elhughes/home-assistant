@@ -16,7 +16,7 @@
               entity_id: binary_sensor.plant_lights_disabled
               state: "on"
           sequence:
-            - service: light.turn_off
+            - action: light.turn_off
               target:
                 entity_id: "{{ plant.indicator }}"
 
@@ -24,7 +24,7 @@
             - condition: template
               value_template: '{% raw %}{{ state_attr("{% endraw %}{{ plant.entity }}{% raw %}","moisture_status") == "High" }}{% endraw %}'
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: "{{ plant.indicator }}"
               data:
@@ -37,7 +37,7 @@
               entity_id: "{{ plant.entity }}"
               state: "problem"
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: "{{ plant.indicator }}"
               data:
@@ -50,7 +50,7 @@
               entity_id: "{{ plant.entity }}"
               state: "ok"
           sequence:
-            - service: light.turn_off
+            - action: light.turn_off
               target:
                 entity_id: "{{ plant.indicator }}"
 {% endfor %}

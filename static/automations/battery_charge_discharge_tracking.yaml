@@ -21,7 +21,7 @@
               value_template: "{{ delta > 0 }}"
           sequence:
             # charged: add delta to charged accumulator
-            - service: input_number.set_value
+            - action: input_number.set_value
               target:
                 entity_id: input_number.battery_energy_charged_wh
               data:
@@ -32,7 +32,7 @@
               value_template: "{{ delta < 0 }}"
           sequence:
             # discharged: add -delta to discharged accumulator
-            - service: input_number.set_value
+            - action: input_number.set_value
               target:
                 entity_id: input_number.battery_energy_discharged_wh
               data:

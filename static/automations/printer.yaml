@@ -12,7 +12,7 @@
               entity_id: sensor.a1_current_stage
               state: "printing"
           sequence:
-            - service: notify.dan
+            - action: notify.dan
               data:
                 title: "Print finishes at {{ as_timestamp(states('sensor.a1_end_time')) | timestamp_custom('%H:%M') }}"
                 message: "{{ states('sensor.a1_print_progress') }}% complete"
@@ -28,7 +28,7 @@
               entity_id: sensor.a1_current_stage
               state: "idle"
           sequence:
-            - service: notify.dan
+            - action: notify.dan
               data:
                 title: "Printer idle"
                 # https://companion.home-assistant.io/docs/notifications/notifications-basic/#clearing
@@ -40,7 +40,7 @@
                   progress: -1
                   progress_max: 100
       default:
-        - service: notify.dan
+        - action: notify.dan
           data:
             title: "{{ states('sensor.a1_print_progress') }}% complete"
             message: "{{ states('sensor.a1_current_stage') }}"
@@ -61,7 +61,7 @@
       entity_id: select.a1_printing_speed
       state: standard
   action:
-    - service: select.select_option
+    - action: select.select_option
       target:
         entity_id: select.a1_printing_speed
       data:

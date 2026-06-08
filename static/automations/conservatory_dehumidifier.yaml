@@ -10,14 +10,14 @@
               entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
               state: "on"
           sequence:
-            - service: humidifier.set_humidity
+            - action: humidifier.set_humidity
               target:
                 entity_id: humidifier.dehumidifier
               data:
                 # Set to the Off-Peak value
                 humidity: "{{ states('input_number.dehumidifier_offpeak') | int }}"
       default:
-        - service: humidifier.set_humidity
+        - action: humidifier.set_humidity
           target:
             entity_id: humidifier.dehumidifier
           data:

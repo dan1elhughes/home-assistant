@@ -13,7 +13,7 @@
               entity_id: group.presence_home
               state: home
           sequence:
-            - service: climate.set_temperature
+            - action: climate.set_temperature
               data:
                 temperature: >
                   {{ states("input_number.thermostat_high") | float }}
@@ -24,7 +24,7 @@
               entity_id: binary_sensor.heating
               state: "off"
           sequence:
-            - service: climate.set_temperature
+            - action: climate.set_temperature
               data:
                 temperature: >
                   {{ states("input_number.thermostat_low") | float }}

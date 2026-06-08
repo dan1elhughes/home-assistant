@@ -8,7 +8,7 @@
       entity_id: sensor.homelab_ups_status_data
       state: "OB DISCHRG"
   action:
-    - service: notify.dan
+    - action: notify.dan
       data:
         title: "Homelab UPS discharging"
         message: "{{ states('sensor.homelab_ups_battery_charge')}}% remaining"
@@ -24,7 +24,7 @@
       entity_id: sensor.homelab_ups_status_data
       to: "OL"
   action:
-    - service: notify.dan
+    - action: notify.dan
       data:
         title: "Homelab UPS is online"
         message: "The UPS has switched back to grid power"

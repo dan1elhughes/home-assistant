@@ -19,7 +19,7 @@
         device_id: "{{ x.sr5br_device }}"
         command: "centre_button_hold"
   action:
-    - service: light.turn_off
+    - action: light.turn_off
       target:
         entity_id: "{{ x.light_group }}"
 
@@ -33,7 +33,7 @@
         - conditions: >
             {% raw %}{{ trigger.to_state.state == '1' }}{% endraw %}
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: "{{ x.light_1 }}"
               data:
@@ -41,7 +41,7 @@
         - conditions: >
             {% raw %}{{ trigger.to_state.state == '2' }}{% endraw %}
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: "{{ x.light_2 }}"
               data:
@@ -49,7 +49,7 @@
         - conditions: >
             {% raw %}{{ trigger.to_state.state == '3' }}{% endraw %}
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: "{{ x.light_3 }}"
               data:
@@ -57,7 +57,7 @@
         - conditions: >
             {% raw %}{{ trigger.to_state.state == '4' }}{% endraw %}
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: "{{ x.light_4 }}"
               data:

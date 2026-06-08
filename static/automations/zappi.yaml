@@ -17,7 +17,7 @@
               state: "on"
           sequence:
             - alias: "Set Zappi to Fast"
-              service: select.select_option
+              action: select.select_option
               target:
                 entity_id: select.myenergi_zappi_charge_mode
               data:
@@ -30,7 +30,7 @@
               state: "on"
           sequence:
             - alias: "Set Zappi to Stopped"
-              service: select.select_option
+              action: select.select_option
               target:
                 entity_id: select.myenergi_zappi_charge_mode
               data:
@@ -51,7 +51,7 @@
               state: "off"
           sequence:
             - alias: "Set Zappi to Fast"
-              service: select.select_option
+              action: select.select_option
               target:
                 entity_id: select.myenergi_zappi_charge_mode
               data:
@@ -70,7 +70,7 @@
               state: "Fast"
           sequence:
             - alias: "Set Zappi to Stopped"
-              service: select.select_option
+              action: select.select_option
               target:
                 entity_id: select.myenergi_zappi_charge_mode
               data:
@@ -82,7 +82,7 @@
     - platform: state
       entity_id: sensor.myenergi_zappi_plug_status
   action:
-    - service: notify.mobile_app_pixel_9
+    - action: notify.mobile_app_pixel_9
       data:
         title: "Zappi"
         message: "{{ states('sensor.myenergi_zappi_plug_status') }} at {{ now().strftime('%H:%M') }}"

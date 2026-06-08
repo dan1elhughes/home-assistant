@@ -13,7 +13,7 @@
 {%- endif -%}
 {%- endfor %}
   action:
-    - service: light.turn_on
+    - action: light.turn_on
       target:
         entity_id: light.front_lights
       data:
@@ -38,6 +38,6 @@
       entity_id: light.front_lights
       state: "on"
   action:
-    - service: light.turn_off
+    - action: light.turn_off
       target:
         entity_id: light.front_lights

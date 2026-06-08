@@ -18,7 +18,7 @@
               after: sunrise
               before: sunset
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: light.hallway_lights
               data:
@@ -33,7 +33,7 @@
               before: sunrise
               after: sunset
           sequence:
-            - service: light.turn_on
+            - action: light.turn_on
               target:
                 entity_id: light.hallway_lights
               data:
@@ -45,7 +45,7 @@
               entity_id: binary_sensor.hallway_motion_sensors
               state: "off"
           sequence:
-            - service: light.turn_off
+            - action: light.turn_off
               target:
                 entity_id: light.hallway_lights
 
@@ -55,6 +55,6 @@
     - platform: sun
       event: sunrise
   action:
-    - service: input_boolean.turn_on
+    - action: input_boolean.turn_on
       target:
         entity_id: input_boolean.motion_sensors_enabled

@@ -11,7 +11,7 @@
       entity_id: sensor.{{ room.co2_sensor }}_co2
       above: "input_number.co2_red_threshold"
   action:
-    - service: light.turn_on
+    - action: light.turn_on
       target:
         entity_id: light.{{ room.co2_sensor }}_rgb_light
       data:
@@ -30,7 +30,7 @@
       above: "input_number.co2_yellow_threshold"
       below: "input_number.co2_red_threshold"
   action:
-    - service: light.turn_on
+    - action: light.turn_on
       target:
         entity_id: light.{{ room.co2_sensor }}_rgb_light
       data:
@@ -48,7 +48,7 @@
       entity_id: sensor.{{ room.co2_sensor }}_co2
       below: "input_number.co2_yellow_threshold"
   action:
-    - service: light.turn_off
+    - action: light.turn_off
       target:
         entity_id: light.{{ room.co2_sensor }}_rgb_light
 {% endif %}

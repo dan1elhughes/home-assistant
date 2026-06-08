@@ -8,7 +8,7 @@
       from: "off"
       to: "on"
   action:
-    - service: notify.dan
+    - action: notify.dan
       data:
         message: "Leak detected in {{ sensor.name }}"
         title: "Leak detected"
@@ -24,7 +24,7 @@
       from: "on"
       to: "off"
   action:
-    - service: notify.dan
+    - action: notify.dan
       data:
         message: "Leak resolved in {{ sensor.name }}"
         title: "Leak resolved"

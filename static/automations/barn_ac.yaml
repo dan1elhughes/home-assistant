@@ -11,14 +11,14 @@
             - condition: template
               value_template: "{{ trigger.event == 'sunrise' }}"
           sequence:
-            - service: climate.set_temperature
+            - action: climate.set_temperature
               target:
                 entity_id: climate.barn_ac
               data:
                 temperature: "{{ states('input_number.barn_ac_default_temp') | float }}"
                 hvac_mode: cool
       default:
-        - service: climate.set_hvac_mode
+        - action: climate.set_hvac_mode
           target:
             entity_id: climate.barn_ac
           data:
