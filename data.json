@@ -214,7 +214,6 @@
       "other_entities": [
         "select.myenergi_zappi_charge_mode",
         "automation.zappi_control",
-        "sensor.id3_battery_level",
         "input_boolean.auto_enable_smart_charge",
         "input_datetime.smart_charge_start",
         "input_boolean.auto_disable_smart_charge",
