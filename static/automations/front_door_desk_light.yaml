@@ -8,6 +8,9 @@
     - condition: state
       entity_id: light.desk_light
       state: "on"
+    - condition: state
+      entity_id: binary_sensor.one_room_mode
+      state: "on"
   action:
     - action: light.turn_on
       target:
