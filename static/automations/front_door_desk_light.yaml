@@ -1,8 +1,8 @@
-- alias: "Front door motion sets desk light blue"
+- alias: "Front door person sets desk light blue"
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.doorbell_motion
+      entity_id: binary_sensor.doorbell_person
       to: "on"
   condition:
     - condition: state
