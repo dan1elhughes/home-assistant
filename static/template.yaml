@@ -269,6 +269,19 @@
           {% set adjusted_min_import = min_import_rate / battery_efficiency %}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
 
+          {# Saving session window: discharge slots overlapping it bypass the export-price #}
+          {# filter, because the session pays an extra top-up beyond the export rate. #}
+          {% set ns_saving = namespace(start=none, end=none) %}
+          {% set saving_start_raw = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'start_time') %}
+          {% set saving_end_raw = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'end_time') %}
+          {% if saving_start_raw and saving_end_raw %}
+            {% set saving_end = as_datetime(saving_end_raw).replace(tzinfo=tz, second=0, microsecond=0) %}
+            {% if saving_end >= current_now %}
+              {% set ns_saving.start = as_datetime(saving_start_raw).replace(tzinfo=tz, second=0, microsecond=0) %}
+              {% set ns_saving.end = saving_end %}
+            {% endif %}
+          {% endif %}
+
           {% set ns_filtered = namespace(items=[]) %}
 
           {% for e in ns_merged.items %}
@@ -281,6 +294,9 @@
               {% set slot_end = e.end %}
               {% set ns_check = namespace(can_export=true, export_rate=none) %}
 
+              {# Saving session overlap: prioritise discharge regardless of export price #}
+              {% set in_saving = ns_saving.start is not none and ns_saving.start < slot_end and ns_saving.end > slot_start %}
+
               {# Find export rate that overlaps with this slot #}
               {% for exp_rate in export_rates %}
                 {% set exp_start = as_datetime(exp_rate.start).replace(tzinfo=tz, second=0, microsecond=0) %}
@@ -291,7 +307,7 @@
                 {% endif %}
               {% endfor %}
 
-              {% if ns_check.export_rate is not none and ns_check.export_rate >= adjusted_min_import %}
+              {% if in_saving or (ns_check.export_rate is not none and ns_check.export_rate >= adjusted_min_import) %}
                 {% set ns_filtered.items = ns_filtered.items + [e] %}
               {% endif %}
             {% endif %}
@@ -324,6 +340,23 @@
           {# Get export rates for the current day #}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
 
+          {# Saving session window (single current/next window, like free electricity). #}
+          {# Minutes inside it are prioritised for discharge because the session pays an #}
+          {# extra top-up on top of the export rate that isn't reflected in export_rates. #}
+          {% set ns_saving = namespace(start=none, end=none) %}
+          {% set saving_start_raw = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'start_time') %}
+          {% set saving_end_raw = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'end_time') %}
+          {% if saving_start_raw and saving_end_raw %}
+            {% set saving_end = as_datetime(saving_end_raw).replace(tzinfo=tz, second=0, microsecond=0) %}
+            {% if saving_end >= current_now %}
+              {% set ns_saving.start = as_datetime(saving_start_raw).replace(tzinfo=tz, second=0, microsecond=0) %}
+              {% set ns_saving.end = saving_end %}
+            {% endif %}
+          {% endif %}
+          {# Boost applied to the sort key (not the stored export rate) so saving-session #}
+          {# minutes are filled first while the real export price is preserved downstream. #}
+          {% set saving_priority_boost = 10000 %}
+
           {# Step 1: Expand each rate period into individual minutes #}
           {% set ns_minutes = namespace(all=[]) %}
           {% for rate in export_rates %}
@@ -332,19 +365,24 @@
             {% if rate_end > current_now %}
               {% set current = rate_start if rate_start > current_now else current_now %}
               {% for minute in range(((rate_end - current).total_seconds() / 60) | int) %}
+                {% set minute_time = current + timedelta(minutes=minute) %}
+                {% set in_saving = ns_saving.start is not none and ns_saving.start <= minute_time < ns_saving.end %}
                 {% set ns_minutes.all = ns_minutes.all + [{
-                  'time': current + timedelta(minutes=minute),
-                  'rate': rate.value_inc_vat
+                  'time': minute_time,
+                  'rate': rate.value_inc_vat,
+                  'sort_rate': rate.value_inc_vat + saving_priority_boost if in_saving else rate.value_inc_vat
                 }] %}
               {% endfor %}
             {% endif %}
           {% endfor %}
 
-          {# Step 2: Sort by rate (highest first), then time (latest first) #}
+          {# Step 2: Sort by priority rate (highest first), then time (latest first). #}
+          {# Saving-session minutes sort to the top via sort_rate but remain tail-end-first #}
+          {# within the window because the secondary time sort is preserved. #}
           {% set ns_sorted = namespace(result=[]) %}
-          {% set sorted_rates = ns_minutes.all | map(attribute='rate') | unique | sort(reverse=true) %}
+          {% set sorted_rates = ns_minutes.all | map(attribute='sort_rate') | unique | sort(reverse=true) %}
           {% for r in sorted_rates %}
-            {% set same_rate = ns_minutes.all | selectattr('rate', 'equalto', r) | sort(attribute='time', reverse=true) %}
+            {% set same_rate = ns_minutes.all | selectattr('sort_rate', 'equalto', r) | sort(attribute='time', reverse=true) %}
             {% set ns_sorted.result = ns_sorted.result + (same_rate | list) %}
           {% endfor %}
           {% set sorted_minutes = ns_sorted.result %}
