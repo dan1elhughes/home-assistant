@@ -284,6 +284,10 @@ views:
                 name: Allow discharge
                 entity: input_boolean.allow_discharge
                 icon: mdi:battery-arrow-up-outline
+              - type: tile
+                name: Enphase control
+                entity: automation.enphase_control
+                icon: mdi:home-battery
 
               - type: markdown
                 content: >
