@@ -10,11 +10,13 @@
       data:
         position: 60
 
-- alias: "Curtains fully closed at sunrise"
+- alias: "Curtains fully closed at dawn"
   mode: single
   triggers:
-    - trigger: sun
-      event: sunrise
+    - trigger: numeric_state
+      entity_id: sun.sun
+      attribute: elevation
+      above: -6
   condition:
     - alias: "Home"
       condition: state
