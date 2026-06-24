@@ -7,14 +7,3 @@
       to: "org.jellyfin.androidtv"
   action:
     - scene: scene.movie_mode
-
-- alias: "Movie mode - deactivate"
-  mode: single
-  trigger:
-    - platform: state
-      entity_id: media_player.shield_android_tv
-      attribute: app_name
-      from: "org.jellyfin.androidtv"
-      to: "com.google.android.tvlauncher"
-  action:
-    - scene: scene.downstairs_on
