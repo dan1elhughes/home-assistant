@@ -53,8 +53,9 @@ class TestEnergyScheduleTemplates(unittest.TestCase):
             lstrip_blocks=True,
         )
 
-        # Add Home Assistant's to_json filter
+        # Add Home Assistant's custom filters
         cls.env.filters['to_json'] = lambda x: json.dumps(x)
+        cls.env.filters['combine'] = lambda a, b: {**a, **b}
 
         # Find the Energy intents sensor
         cls.energy_intents_sensor = find_sensor_template(cls.config, 'Energy intents')
@@ -204,6 +205,7 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
             lstrip_blocks=True,
         )
         cls.env.filters['to_json'] = lambda x: json.dumps(x)
+        cls.env.filters['combine'] = lambda a, b: {**a, **b}
 
         cls.energy_intents_sensor = find_sensor_template(cls.config, 'Energy intents')
         if cls.energy_intents_sensor is None:
@@ -399,6 +401,114 @@ class TestEnergyIntentsComprehensive(unittest.TestCase):
 
         assert_events_equal(self, events, expected_events)
 
+    def test_export_price_single_rate(self):
+        """Test that export_price is correctly set for a discharge slot within a single rate period."""
+        ctx = HomeAssistantContext(now=datetime(2025, 1, 14, 12, 0, 0, tzinfo=timezone.utc))
+
+        mock_attrs = {
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.start_time': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.end_time': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_start': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_end': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_start': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': None,
+            'sensor.optimal_discharge_slots.events': [
+                {'start': '2025-01-14T19:00:00+00:00', 'end': '2025-01-14T19:30:00+00:00', 'intent': 'Discharge'},
+            ],
+            'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
+                {'start': '2025-01-14T19:00:00+00:00', 'end': '2025-01-14T19:30:00+00:00', 'value_inc_vat': 15.5},
+            ],
+        }
+        mock_states = {
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '10.0',
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '10.0',
+            'input_number.battery_round_trip_efficiency': '0.9',
+            'input_boolean.allow_discharge': 'on',
+            'input_number.minimum_slot_length': '0',
+        }
+
+        result = self.render_template(self.events_template, context=ctx, **{**mock_attrs, **mock_states})
+        events = json.loads(result)
+
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]['intent'], 'Discharge')
+        self.assertEqual(events[0]['export_price'], 15.5)
+
+    def test_export_price_multiple_rates(self):
+        """Test that export_price is the time-weighted average across multiple 30-min rate periods."""
+        ctx = HomeAssistantContext(now=datetime(2025, 1, 14, 12, 0, 0, tzinfo=timezone.utc))
+
+        mock_attrs = {
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.start_time': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.end_time': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_start': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_end': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_start': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': None,
+            'sensor.optimal_discharge_slots.events': [
+                {'start': '2025-01-14T23:40:00+00:00', 'end': '2025-01-15T00:25:00+00:00', 'intent': 'Discharge'},
+            ],
+            'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
+                {'start': '2025-01-14T23:00:00+00:00', 'end': '2025-01-15T00:00:00+00:00', 'value_inc_vat': 20.0},
+                {'start': '2025-01-15T00:00:00+00:00', 'end': '2025-01-15T01:00:00+00:00', 'value_inc_vat': 10.0},
+            ],
+        }
+        mock_states = {
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '5.0',
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '5.0',
+            'input_number.battery_round_trip_efficiency': '0.9',
+            'input_boolean.allow_discharge': 'on',
+            'input_number.minimum_slot_length': '0',
+        }
+
+        result = self.render_template(self.events_template, context=ctx, **{**mock_attrs, **mock_states})
+        events = json.loads(result)
+
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]['intent'], 'Discharge')
+        # Weighted average: (20 min * 20.0 + 25 min * 10.0) / 45 min = 14.44...
+        expected_avg = (20 * 20.0 + 25 * 10.0) / 45
+        self.assertAlmostEqual(events[0]['export_price'], expected_avg, places=2)
+
+    def test_export_price_saving_session(self):
+        """Test that export_price is still calculated for a saving session bypass."""
+        ctx = HomeAssistantContext(now=datetime(2025, 1, 15, 12, 0, 0, tzinfo=timezone.utc))
+
+        mock_attrs = {
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.start_time': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session.end_time': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_start': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.current_end': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_start': None,
+            'binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak.next_end': None,
+            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.start_time': '2025-01-15T19:00:00+00:00',
+            'calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions.end_time': '2025-01-15T19:30:00+00:00',
+            'sensor.optimal_discharge_slots.events': [
+                {'start': '2025-01-15T19:00:00+00:00', 'end': '2025-01-15T19:30:00+00:00', 'intent': 'Discharge'},
+            ],
+            'event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates.rates': [
+                {'start': '2025-01-15T19:00:00+00:00', 'end': '2025-01-15T19:30:00+00:00', 'value_inc_vat': 5.0},
+            ],
+        }
+        mock_states = {
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '30.0',
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '30.0',
+            'input_number.battery_round_trip_efficiency': '0.9',
+            'input_boolean.allow_discharge': 'on',
+            'input_number.minimum_slot_length': '0',
+        }
+
+        result = self.render_template(self.events_template, context=ctx, **{**mock_attrs, **mock_states})
+        events = json.loads(result)
+
+        self.assertEqual(len(events), 1)
+        self.assertEqual(events[0]['intent'], 'Discharge')
+        self.assertEqual(events[0]['export_price'], 5.0)
+
 
 class TestCurrentEnergyIntent(unittest.TestCase):
     """Test cases for Current energy intent sensor."""
@@ -584,6 +694,7 @@ class TestOptimalDischargeSavingSession(unittest.TestCase):
             lstrip_blocks=True,
         )
         cls.env.filters['to_json'] = lambda x: json.dumps(x)
+        cls.env.filters['combine'] = lambda a, b: {**a, **b}
 
         cls.sensor = find_sensor_template(cls.config, 'Optimal discharge slots')
         if cls.sensor is None:
@@ -681,6 +792,9 @@ class TestOptimalDischargeSavingSession(unittest.TestCase):
             'sensor.power_requirement_until_cheap_slot': '15000',
             'input_number.battery_power_rate_kw': '60',
             'input_number.minimum_slot_length': '0',
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate': '10.0',
+            'sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate': '10.0',
+            'input_number.battery_round_trip_efficiency': '0.9',
         }
 
         result = self.render_template(self.events_template, context=ctx, **{**mock_attrs, **mock_states})
@@ -710,6 +824,7 @@ class TestEnergyIntentsSavingSessionFilterBypass(unittest.TestCase):
             lstrip_blocks=True,
         )
         cls.env.filters['to_json'] = lambda x: json.dumps(x)
+        cls.env.filters['combine'] = lambda a, b: {**a, **b}
 
         cls.energy_intents_sensor = find_sensor_template(cls.config, 'Energy intents')
         cls.events_template = get_template_attribute(cls.energy_intents_sensor, 'events')

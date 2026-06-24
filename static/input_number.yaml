@@ -86,12 +86,19 @@ battery_round_trip_efficiency:
   initial: 0.9
   unit_of_measurement: "%"
 
+battery_hard_lower_limit:
+  name: Battery hard lower limit
+  unit_of_measurement: "Wh"
+  min: 0
+  max: 2000
+  step: 50
+
 battery_lower_discharge_limit:
   name: Battery lower discharge limit
   unit_of_measurement: "Wh"
-  min: 750
+  min: 0
   max: 15000
-  step: 100
+  step: 50
 
 battery_upper_charge_limit:
   name: Battery upper charge limit

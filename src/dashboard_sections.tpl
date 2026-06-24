@@ -95,7 +95,6 @@ views:
             content: >
               {% raw %}
               {%- set events = state_attr('sensor.energy_intents', 'events') %}
-              {%- set export_rates = state_attr('sensor.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') %}
               {%- if events %}
                 {# Create an empty list to hold our formatted lines #}
                 {%- set ns = namespace(items=[]) %}
@@ -116,22 +115,41 @@ views:
                     {%- set day_label = '' %}
                   {%- endif %}
 
-                  {%- set max_rate = none %}
-                  {%- if export_rates and event.intent | lower == 'discharge' %}
-                    {%- for rate in export_rates %}
-                      {%- set rate_start = as_datetime(rate.start) %}
-                      {%- set rate_end = as_datetime(rate.end) %}
-                      {%- if rate_start < end_local and rate_end > start_local %}
-                        {%- if max_rate == none or rate.value_inc_vat > max_rate %}
-                          {%- set max_rate = rate.value_inc_vat %}
-                        {%- endif %}
-                      {%- endif %}
-                    {%- endfor %}
+                  {%- set intent = event.intent | lower %}
+                  {%- set import_price = event.import_price | default(none, true) %}
+                  {%- set export_price = event.export_price | default(none, true) %}
+                  {%- set current_import_rate = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float(0) %}
+
+                  {%- set op_current_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'current_start') %}
+                  {%- set op_current_end = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'current_end') %}
+                  {%- set op_next_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_start') %}
+                  {%- set op_next_end = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_end') %}
+                  {%- set is_event_off_peak = false %}
+                  {%- if op_current_start and op_current_end %}
+                    {%- set op_s = as_datetime(op_current_start) %}
+                    {%- set op_e = as_datetime(op_current_end) %}
+                    {%- if op_s <= start < op_e %}
+                      {%- set is_event_off_peak = true %}
+                    {%- endif %}
+                  {%- endif %}
+                  {%- if op_next_start and op_next_end %}
+                    {%- set op_s = as_datetime(op_next_start) %}
+                    {%- set op_e = as_datetime(op_next_end) %}
+                    {%- if op_s <= start < op_e %}
+                      {%- set is_event_off_peak = true %}
+                    {%- endif %}
                   {%- endif %}
 
-                  {# Build the string for this specific event #}
-                  {%- set rate_display = ' @ ' ~ '%.1f'|format(max_rate * 100) ~ 'p' if max_rate else '' %}
-                  {%- set line = '- ' ~ start_local.strftime('%H:%M') ~ ' - ' ~ end_local.strftime('%H:%M') ~ ': **' ~ event.intent ~ '**' ~ day_label ~ rate_display %}
+                  {%- set is_star = export_price is not none and export_price > current_import_rate and not is_event_off_peak %}
+
+                  {%- set rate_display = '' %}
+                  {%- if intent == 'charge' and import_price is not none %}
+                    {%- set rate_display = ' @ ' ~ '%.1f'|format(import_price * 100) ~ 'p' %}
+                  {%- elif intent == 'discharge' and export_price is not none %}
+                    {%- set rate_display = ' @ ' ~ '%.1f'|format(export_price * 100) ~ 'p' %}
+                  {%- endif %}
+                  {%- set star = ' ★' if is_star else '' %}
+                  {%- set line = '- ' ~ start_local.strftime('%H:%M') ~ ' - ' ~ end_local.strftime('%H:%M') ~ ': **' ~ event.intent ~ '**' ~ day_label ~ rate_display ~ star %}
 
                   {# Append it to our namespace list #}
                   {%- set ns.items = ns.items + [line] %}

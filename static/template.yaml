@@ -268,6 +268,8 @@
           {% set battery_efficiency = states('input_number.battery_round_trip_efficiency') | float(0.9) %}
           {% set adjusted_min_import = min_import_rate / battery_efficiency %}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
+          {% set import_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates', 'rates') or [] %}
+          {% set saving_sessions = state_attr('event.octopus_energy_a_fad3b08a_octoplus_saving_session_events', 'joined_events') or [] %}
 
           {# Saving session window: discharge slots overlapping it bypass the export-price #}
           {# filter, because the session pays an extra top-up beyond the export rate. #}
@@ -285,30 +287,67 @@
           {% set ns_filtered = namespace(items=[]) %}
 
           {% for e in ns_merged.items %}
-            {% if e.intent != 'Discharge' %}
-              {# Always keep non-discharge events #}
-              {% set ns_filtered.items = ns_filtered.items + [e] %}
+            {% set slot_start = e.start %}
+            {% set slot_end = e.end %}
+
+            {% if e.intent == 'Charge' %}
+              {# Calculate average import price for this charge slot #}
+              {% set ns_charge = namespace(total_weighted_rate=0, total_overlap_minutes=0) %}
+              {% for imp_rate in import_rates %}
+                {% set imp_start = as_datetime(imp_rate.start).replace(tzinfo=tz, second=0, microsecond=0) %}
+                {% set imp_end = as_datetime(imp_rate.end).replace(tzinfo=tz, second=0, microsecond=0) %}
+                {% if imp_start < slot_end and imp_end > slot_start %}
+                  {% set overlap_start = [imp_start, slot_start] | max %}
+                  {% set overlap_end = [imp_end, slot_end] | min %}
+                  {% set overlap_minutes = ((overlap_end - overlap_start).total_seconds() / 60) | int %}
+                  {% set ns_charge.total_weighted_rate = ns_charge.total_weighted_rate + (imp_rate.value_inc_vat * overlap_minutes) %}
+                  {% set ns_charge.total_overlap_minutes = ns_charge.total_overlap_minutes + overlap_minutes %}
+                {% endif %}
+              {% endfor %}
+              {% if ns_charge.total_overlap_minutes > 0 %}
+                {% set charge_price = ns_charge.total_weighted_rate / ns_charge.total_overlap_minutes %}
+                {% set ns_filtered.items = ns_filtered.items + [e | combine({'import_price': charge_price})] %}
+              {% else %}
+                {% set ns_filtered.items = ns_filtered.items + [e | combine({'import_price': none})] %}
+              {% endif %}
+
             {% else %}
-              {# Check if export rate for this slot >= min import rate #}
-              {% set slot_start = e.start %}
-              {% set slot_end = e.end %}
-              {% set ns_check = namespace(can_export=true, export_rate=none) %}
+              {# Discharge: calculate export price and saving bonus #}
+              {% set ns_check = namespace(export_rate=none, bonus_p=none, total_weighted_rate=0, total_overlap_minutes=0) %}
 
               {# Saving session overlap: prioritise discharge regardless of export price #}
               {% set in_saving = ns_saving.start is not none and ns_saving.start < slot_end and ns_saving.end > slot_start %}
 
-              {# Find export rate that overlaps with this slot #}
+              {# Calculate average export rate across all overlapping 30-min price periods #}
               {% for exp_rate in export_rates %}
                 {% set exp_start = as_datetime(exp_rate.start).replace(tzinfo=tz, second=0, microsecond=0) %}
                 {% set exp_end = as_datetime(exp_rate.end).replace(tzinfo=tz, second=0, microsecond=0) %}
-                {# Check if export rate overlaps with slot #}
                 {% if exp_start < slot_end and exp_end > slot_start %}
-                  {% set ns_check.export_rate = exp_rate.value_inc_vat %}
+                  {% set overlap_start = [exp_start, slot_start] | max %}
+                  {% set overlap_end = [exp_end, slot_end] | min %}
+                  {% set overlap_minutes = ((overlap_end - overlap_start).total_seconds() / 60) | int %}
+                  {% set ns_check.total_weighted_rate = ns_check.total_weighted_rate + (exp_rate.value_inc_vat * overlap_minutes) %}
+                  {% set ns_check.total_overlap_minutes = ns_check.total_overlap_minutes + overlap_minutes %}
+                {% endif %}
+              {% endfor %}
+
+              {% if ns_check.total_overlap_minutes > 0 %}
+                {% set ns_check.export_rate = ns_check.total_weighted_rate / ns_check.total_overlap_minutes %}
+              {% endif %}
+
+              {# Find saving session bonus (8 octopoints = 1p) #}
+              {% for session in saving_sessions %}
+                {% set session_start = as_datetime(session.start).replace(tzinfo=tz, second=0, microsecond=0) %}
+                {% set session_end = as_datetime(session.end).replace(tzinfo=tz, second=0, microsecond=0) %}
+                {% if session_start < slot_end and session_end > slot_start and session.octopoints_per_kwh is not none %}
+                  {% set ns_check.bonus_p = session.octopoints_per_kwh / 8 %}
                 {% endif %}
               {% endfor %}
 
               {% if in_saving or (ns_check.export_rate is not none and ns_check.export_rate >= adjusted_min_import) %}
-                {% set ns_filtered.items = ns_filtered.items + [e] %}
+                {# Combine export rate + saving bonus into a single price (bonus_p is in pence, export_rate is in pounds) #}
+                {% set combined_export = ns_check.export_rate + ((ns_check.bonus_p | default(0, true)) / 100) if ns_check.export_rate is not none else none %}
+                {% set ns_filtered.items = ns_filtered.items + [e | combine({'export_price': combined_export})] %}
               {% endif %}
             {% endif %}
           {% endfor %}
@@ -318,7 +357,13 @@
           {# ======================================================= #}
           {% set ns_json = namespace(output=[]) %}
           {% for e in ns_filtered.items %}
-            {% set ns_json.output = ns_json.output + [{'start': e.start.isoformat(), 'end': e.end.isoformat(), 'intent': e.intent}] %}
+            {% if e.intent == 'Charge' and e.import_price is not none %}
+              {% set ns_json.output = ns_json.output + [{'start': e.start.isoformat(), 'end': e.end.isoformat(), 'intent': e.intent, 'import_price': e.import_price}] %}
+            {% elif e.intent == 'Discharge' and e.export_price is not none %}
+              {% set ns_json.output = ns_json.output + [{'start': e.start.isoformat(), 'end': e.end.isoformat(), 'intent': e.intent, 'export_price': e.export_price}] %}
+            {% else %}
+              {% set ns_json.output = ns_json.output + [{'start': e.start.isoformat(), 'end': e.end.isoformat(), 'intent': e.intent}] %}
+            {% endif %}
           {% endfor %}
           {{ ns_json.output | to_json }}
 
@@ -334,11 +379,26 @@
           {% set battery_wh = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
           {% set battery_kwh = battery_wh / 1000 %}
           {% set min_discharge_threshold_kwh = states('sensor.power_requirement_until_cheap_slot') | float(0) / 1000 %}
-          {% set usable_kwh = [battery_kwh - min_discharge_threshold_kwh, 0] | max %}
+          {% set hard_limit_kwh = states('input_number.battery_hard_lower_limit') | float(0) / 1000 %}
           {% set discharge_rate_kw = states('input_number.battery_power_rate_kw') | float(9.6) %}
 
-          {# Get export rates for the current day #}
+          {# Get export and import rates for the current day #}
           {% set export_rates = state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or [] %}
+
+          {# Arbitrage check: if export is higher than import, we can discharge down to the hard limit #}
+          {% set current_import = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float(0) %}
+          {% set next_import = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_next_rate') | float(0) %}
+          {% set min_import_rate = [current_import, next_import] | min %}
+          {% set battery_efficiency = states('input_number.battery_round_trip_efficiency') | float(0.9) %}
+          {% set adjusted_min_import = min_import_rate / battery_efficiency %}
+
+          {% set max_export_rate = 0 %}
+          {% if export_rates %}
+            {% set max_export_rate = export_rates | map(attribute='value_inc_vat') | max %}
+          {% endif %}
+          {% set is_arbitrage = max_export_rate > adjusted_min_import %}
+
+          {% set usable_kwh = [battery_kwh - hard_limit_kwh, 0] | max if is_arbitrage else [battery_kwh - min_discharge_threshold_kwh, 0] | max %}
 
           {# Saving session window (single current/next window, like free electricity). #}
           {# Minutes inside it are prioritised for discharge because the session pays an #}
@@ -489,7 +549,8 @@
       icon: mdi:flash
       state: >
         {% set idle_power = states('input_number.idle_power_draw') | float(0) %}
-        {% set battery_minimum = states('input_number.battery_lower_discharge_limit') | float(0) %}
+        {% set soft_limit = states('input_number.battery_lower_discharge_limit') | float(0) %}
+        {% set hard_limit = states('input_number.battery_hard_lower_limit') | float(0) %}
         {% set battery_capacity = states('sensor.envoy_122322027694_battery_capacity') | float(0) %}
 
         {% set next_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_start') %}
@@ -502,12 +563,14 @@
           {# Time until cheap slot starts #}
           {% set hours_until_cheap = (next_start_dt - now_time).total_seconds() / 3600 %}
 
-          {# Calculate energy needed during this period plus battery minimum #}
-          {% set calculated = ((idle_power * hours_until_cheap) + battery_minimum) | round(0) %}
-          {{ [calculated, battery_capacity] | min }}
+          {# Calculate energy needed during this period plus soft limit, clamped to hard limit #}
+          {% set calculated = ((idle_power * hours_until_cheap) + soft_limit) | round(0) %}
+          {% set clamped = [calculated, hard_limit] | max %}
+          {{ [clamped, battery_capacity] | min }}
         {% else %}
-          {# No cheap slot found #}
-          {{ [battery_minimum, battery_capacity] | min }}
+          {# No cheap slot found — clamp soft limit to hard limit #}
+          {% set clamped = [soft_limit, hard_limit] | max %}
+          {{ [clamped, battery_capacity] | min }}
         {% endif %}
 
     - name: "Office AC power filtered"
