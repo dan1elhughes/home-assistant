@@ -127,3 +127,10 @@ minimum_slot_length:
   min: 0
   max: 60
   step: 1
+
+charge_price_threshold:
+  name: Charge price threshold
+  unit_of_measurement: "£/kWh"
+  min: 0.01
+  max: 1
+  step: 0.01
