@@ -127,14 +127,6 @@ views:
               No scheduled intents
               {%- endif %}
               {% endraw %}
-          - type: tile
-            name: Refresh schedule
-            entity: automation.unified_battery_schedule_py
-            tap_action:
-              action: perform-action
-              perform_action: automation.trigger
-              target:
-                entity_id: automation.unified_battery_schedule_py
 
       - type: grid
         cards:
