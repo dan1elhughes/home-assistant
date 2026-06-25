@@ -1,0 +1,231 @@
+- alias: "Unified battery schedule (Python)"
+  id: unified_battery_schedule_py
+  mode: single
+  description: >
+    Pre-parses live Home Assistant state into a clean data dict and calls
+    python_script.unified_battery_schedule, which computes the optimal battery
+    charge/discharge schedule and writes sensor.energy_intents_py.
+  trigger:
+    # Slow safety tick aligned to the 5-minute DP step
+    - platform: time_pattern
+      minutes: "/5"
+
+    # Export rate changes
+    - platform: state
+      entity_id:
+        - event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates
+        - event.octopus_energy_electricity_15p0706167_2000060833200_export_next_day_rates
+
+    # Import rate changes
+    - platform: state
+      entity_id:
+        - event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates
+        - event.octopus_energy_electricity_15p0706167_2000050773706_next_day_rates
+
+    # Free / saving session calendar changes
+    - platform: state
+      entity_id:
+        - calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+        - calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions
+
+    # Saving session bonus events
+    - platform: state
+      entity_id:
+        - event.octopus_energy_a_fad3b08a_octoplus_saving_session_events
+
+    # Battery state and config changes
+    - platform: state
+      entity_id:
+        - sensor.envoy_122322027694_available_battery_energy
+        - sensor.envoy_122322027694_battery_capacity
+        - input_number.idle_power_draw
+        - input_number.battery_hard_lower_limit
+        - input_number.battery_lower_discharge_limit
+        - input_number.battery_power_rate_kw
+        - input_number.battery_round_trip_efficiency
+        - input_number.minimum_slot_length
+        - input_number.charge_price_threshold
+        - input_number.discharge_price_threshold
+
+    # Allow / disallow discharge toggle
+    - platform: state
+      entity_id: input_boolean.allow_discharge
+
+  action:
+    - alias: "Build data dict for python script"
+      variables:
+        # ── Timestamps ──────────────────────────────────────────────
+        # Truncate to 5-minute boundary so DP grid aligns to step_minutes
+        now_epoch: "{{ (as_timestamp(now()) | int) // 300 * 300 }}"
+
+        # DP step size (minutes) used by the python script
+        step_minutes: 5
+
+        # ── Smart charge phantom-slot filtering ──────────────────────
+        # When smart charge is on and auto_disable_smart_charge is enabled,
+        # rates whose start falls at or after smart_charge_end_epoch are
+        # phantom dispatch slots that won't actually materialise once the
+        # smart charge session ends. We filter them out of import_rates
+        # (but NOT export_rates) below.
+        auto_disable_smart_charge: "{{ states('input_boolean.auto_disable_smart_charge') }}"
+        smart_charge_end: "{{ states('input_datetime.smart_charge_end') }}"
+        smart_charge_on: "{{ states('switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge') }}"
+
+        # Build today's epoch for the smart_charge_end time.
+        # Only computed when both conditions hold; otherwise none → no filtering.
+        smart_charge_end_epoch: >-
+          {%- if smart_charge_on == 'on' and auto_disable_smart_charge == 'on' -%}
+          {%- set today_str = now().strftime('%Y-%m-%d') -%}
+          {%- set end_dt_str = today_str ~ ' ' ~ smart_charge_end -%}
+          {{- as_timestamp(end_dt_str)|int -}}
+          {%- else -%}
+          {{- none -}}
+          {%- endif -%}
+
+        # ── Import rates (current + next day, £/kWh) ────────────────
+        # Build list of {"start": <epoch>, "end": <epoch>, "price": <float>}
+        # value_inc_vat is already in £/kWh.
+        # Only include periods whose end has not yet passed.
+        # When smart_charge_end_epoch is set, also exclude periods whose
+        # start >= smart_charge_end_epoch (phantom smart-charge dispatches).
+        import_rates: >-
+          {%- set ns = namespace(items=[]) -%}
+          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates', 'rates') or []) -%}
+          {%- if as_timestamp(r.end)|int >= now_epoch and (smart_charge_end_epoch is none or as_timestamp(r.start)|int < smart_charge_end_epoch) -%}
+          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start)|int, 'end': as_timestamp(r.end)|int, 'price': r.value_inc_vat}] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_next_day_rates', 'rates') or []) -%}
+          {%- if as_timestamp(r.end)|int >= now_epoch and (smart_charge_end_epoch is none or as_timestamp(r.start)|int < smart_charge_end_epoch) -%}
+          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start)|int, 'end': as_timestamp(r.end)|int, 'price': r.value_inc_vat}] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.items }}
+
+        # ── Export rates (current + next day, £/kWh) ────────────────
+        export_rates: >-
+          {%- set ns = namespace(items=[]) -%}
+          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or []) -%}
+          {%- if as_timestamp(r.end)|int >= now_epoch -%}
+          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start)|int, 'end': as_timestamp(r.end)|int, 'price': r.value_inc_vat}] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_next_day_rates', 'rates') or []) -%}
+          {%- if as_timestamp(r.end)|int >= now_epoch -%}
+          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start)|int, 'end': as_timestamp(r.end)|int, 'price': r.value_inc_vat}] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.items }}
+
+        # ── Planning horizon ────────────────────────────────────────
+        # End of the planning window = latest end epoch across all known
+        # rates.  Falls back to now_epoch when no rates exist.
+        horizon_end_epoch: >-
+          {%- set ends = (import_rates | map(attribute='end') | list) + (export_rates | map(attribute='end') | list) -%}
+          {%- if ends | count > 0 -%}{{- ends | max -}}{%- else -%}{{- now_epoch -}}{%- endif -%}
+
+        # ── Free electricity session ────────────────────────────────
+        # Calendar attributes start_time / end_time are datetimes or None.
+        free_sessions: >-
+          {%- set st = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session', 'start_time') -%}
+          {%- set et = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session', 'end_time') -%}
+          {%- if st is not none and et is not none -%}
+          {{- [{'start': as_timestamp(st)|int, 'end': as_timestamp(et)|int}] -}}
+          {%- else -%}
+          {{- [] -}}
+          {%- endif -%}
+
+        # ── Saving session window ───────────────────────────────────
+        saving_window: >-
+          {%- set st = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'start_time') -%}
+          {%- set et = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'end_time') -%}
+          {%- if st is not none and et is not none -%}
+          {{- {'start': as_timestamp(st)|int, 'end': as_timestamp(et)|int} -}}
+          {%- else -%}
+          {{- none -}}
+          {%- endif -%}
+
+        # ── Saving bonus events ─────────────────────────────────────
+        # octopoints_per_kwh / 8 = pence/kWh; / 100 = £/kWh.
+        # Combined division by 800 gives £/kWh (same unit as price).
+        # The key "bonus_pence" holds this £/kWh value.
+        saving_bonus_events: >-
+          {%- set ns = namespace(items=[]) -%}
+          {%- for ev in (state_attr('event.octopus_energy_a_fad3b08a_octoplus_saving_session_events', 'joined_events') or []) -%}
+          {%- if as_timestamp(ev.end)|int >= now_epoch -%}
+          {%- set ns.items = ns.items + [{'start': as_timestamp(ev.start)|int, 'end': as_timestamp(ev.end)|int, 'bonus_pence': ev.octopoints_per_kwh / 800}] -%}
+          {%- endif -%}
+          {%- endfor -%}
+          {{ ns.items }}
+
+        # ── Battery state (Wh → kWh) ────────────────────────────────
+        available_kwh: >-
+          {%- set v = states('sensor.envoy_122322027694_available_battery_energy') -%}
+          {%- if v in ('unavailable', 'unknown', 'none', '') -%}{{- none -}}{%- else -%}{{- (v | float) / 1000 -}}{%- endif -%}
+
+        capacity_kwh: >-
+          {%- set v = states('sensor.envoy_122322027694_battery_capacity') -%}
+          {%- if v in ('unavailable', 'unknown', 'none', '') -%}{{- none -}}{%- else -%}{{- (v | float) / 1000 -}}{%- endif -%}
+
+        # ── Reserve & load-aware parameters ─────────────────────────
+        # Hard floor: never discharge below this (Wh → kWh).
+        hard_lower_limit_kwh: >-
+          {%- set v = states('input_number.battery_hard_lower_limit') -%}
+          {%- if v in ('unavailable', 'unknown', 'none', '') -%}{{- none -}}{%- else -%}{{- (v | float) / 1000 -}}{%- endif -%}
+
+        # Soft buffer: extra reserve margin above hard floor (Wh → kWh).
+        lower_discharge_limit_kwh: >-
+          {%- set v = states('input_number.battery_lower_discharge_limit') -%}
+          {%- if v in ('unavailable', 'unknown', 'none', '') -%}{{- 0.0 -}}{%- else -%}{{- (v | float) / 1000 -}}{%- endif -%}
+
+        # Idle power draw: house background load in W → kW.
+        # Drives the two-pass DP load-aware reserve floor.
+        idle_power_kw: >-
+          {%- set v = states('input_number.idle_power_draw') -%}
+          {%- if v in ('unavailable', 'unknown', 'none', '') -%}{{- 0.0 -}}{%- else -%}{{- (v | float) / 1000 -}}{%- endif -%}
+
+        # Back-compat: reserve_kwh = hard_floor for callers that only
+        # read reserve. The two-pass DP adds the dynamic load floor
+        # on top of this base.
+        reserve_kwh: "{{ hard_lower_limit_kwh if hard_lower_limit_kwh is not none else 0.0 }}"
+
+        # ── Config scalars ──────────────────────────────────────────
+        power_rate_kw: "{{ states('input_number.battery_power_rate_kw') | float(9.6) }}"
+        efficiency: "{{ states('input_number.battery_round_trip_efficiency') | float(0.9) }}"
+        minimum_slot_length: "{{ states('input_number.minimum_slot_length') | int(5) }}"
+        allow_discharge: "{{ states('input_boolean.allow_discharge') == 'on' }}"
+        charge_price_threshold: "{{ states('input_number.charge_price_threshold') | float(1.0) }}"
+        discharge_price_threshold: "{{ states('input_number.discharge_price_threshold') | float(0.0) }}"
+
+        # NOTE: All templates above use Jinja whitespace-control markers
+        # ({%- ... -%}) to ensure the ONLY output is the final expression value
+        # (e.g. {{ ns.items }}) with NO surrounding whitespace or newlines.
+        # This is REQUIRED because HA native-type rendering converts the
+        # template result to a Python type ONLY when the entire output is a
+        # single pure expression — any leading/trailing whitespace makes HA
+        # treat it as a plain string, which breaks the python_script (the
+        # sandbox has no json/ast module to parse it back).
+
+    - alias: "Invoke python_script.unified_battery_schedule"
+      action: python_script.unified_battery_schedule
+      data:
+        now_epoch: "{{ now_epoch }}"
+        horizon_end_epoch: "{{ horizon_end_epoch }}"
+        step_minutes: "{{ step_minutes }}"
+        import_rates: "{{ import_rates }}"
+        export_rates: "{{ export_rates }}"
+        free_sessions: "{{ free_sessions }}"
+        saving_window: "{{ saving_window }}"
+        saving_bonus_events: "{{ saving_bonus_events }}"
+        available_kwh: "{{ available_kwh if available_kwh is not none else none }}"
+        capacity_kwh: "{{ capacity_kwh if capacity_kwh is not none else none }}"
+        reserve_kwh: "{{ reserve_kwh }}"
+        power_rate_kw: "{{ power_rate_kw }}"
+        efficiency: "{{ efficiency }}"
+        minimum_slot_length: "{{ minimum_slot_length }}"
+        allow_discharge: "{{ allow_discharge }}"
+        idle_power_kw: "{{ idle_power_kw }}"
+        hard_lower_limit_kwh: "{{ hard_lower_limit_kwh if hard_lower_limit_kwh is not none else none }}"
+        lower_discharge_limit_kwh: "{{ lower_discharge_limit_kwh }}"
+        charge_price_threshold: "{{ charge_price_threshold }}"
+        discharge_price_threshold: "{{ discharge_price_threshold }}"

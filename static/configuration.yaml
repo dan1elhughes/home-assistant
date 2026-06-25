@@ -15,6 +15,7 @@ light: !include light.yaml
 media_player: !include media_player.yaml
 scene manual: !include_dir_list scenes/
 scene ui: !include scenes.yaml
+python_script:
 script: !include scripts.yaml
 sensor: !include sensor.yaml
 template: !include template.yaml
