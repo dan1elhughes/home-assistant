@@ -94,74 +94,47 @@ views:
           - type: markdown
             content: >
               {% raw %}
-              {%- set events = state_attr('sensor.energy_intents', 'events') %}
+              {%- set events = state_attr('sensor.energy_intents_py', 'events') %}
               {%- if events %}
-                {# Create an empty list to hold our formatted lines #}
-                {%- set ns = namespace(items=[]) %}
-
-                {%- for event in events | sort(attribute='start') %}
-                  {%- set start = as_datetime(event.start) %}
-                  {%- set end = as_datetime(event.end) %}
-                  {%- set start_local = as_local(start) %}
-                  {%- set end_local = as_local(end) %}
-                  {%- set event_date = start_local.date() %}
-                  {%- set today = now().date() %}
-
-                  {%- if event_date > today %}
-                    {%- set day_label = ' (tomorrow)' %}
-                  {%- elif event_date < today %}
-                    {%- set day_label = ' (yesterday)' %}
-                  {%- else %}
-                    {%- set day_label = '' %}
-                  {%- endif %}
-
-                  {%- set intent = event.intent | lower %}
-                  {%- set import_price = event.import_price | default(none, true) %}
-                  {%- set export_price = event.export_price | default(none, true) %}
-                  {%- set current_import_rate = states('sensor.octopus_energy_electricity_15p0706167_2000050773706_current_rate') | float(0) %}
-
-                  {%- set op_current_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'current_start') %}
-                  {%- set op_current_end = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'current_end') %}
-                  {%- set op_next_start = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_start') %}
-                  {%- set op_next_end = state_attr('binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak', 'next_end') %}
-                  {%- set is_event_off_peak = false %}
-                  {%- if op_current_start and op_current_end %}
-                    {%- set op_s = as_datetime(op_current_start) %}
-                    {%- set op_e = as_datetime(op_current_end) %}
-                    {%- if op_s <= start < op_e %}
-                      {%- set is_event_off_peak = true %}
-                    {%- endif %}
-                  {%- endif %}
-                  {%- if op_next_start and op_next_end %}
-                    {%- set op_s = as_datetime(op_next_start) %}
-                    {%- set op_e = as_datetime(op_next_end) %}
-                    {%- if op_s <= start < op_e %}
-                      {%- set is_event_off_peak = true %}
-                    {%- endif %}
-                  {%- endif %}
-
-                  {%- set is_star = export_price is not none and export_price > current_import_rate and not is_event_off_peak %}
-
-                  {%- set rate_display = '' %}
-                  {%- if intent == 'charge' and import_price is not none %}
-                    {%- set rate_display = ' @ ' ~ '%.1f'|format(import_price * 100) ~ 'p' %}
-                  {%- elif intent == 'discharge' and export_price is not none %}
-                    {%- set rate_display = ' @ ' ~ '%.1f'|format(export_price * 100) ~ 'p' %}
-                  {%- endif %}
-                  {%- set star = ' ★' if is_star else '' %}
-                  {%- set line = '- ' ~ start_local.strftime('%H:%M') ~ ' - ' ~ end_local.strftime('%H:%M') ~ ': **' ~ event.intent ~ '**' ~ day_label ~ rate_display ~ star %}
-
-                  {# Append it to our namespace list #}
-                  {%- set ns.items = ns.items + [line] %}
-                {%- endfor %}
-
-                {# Print the final list all at once, separated by newlines #}
-                {{- ns.items | join('\n') }}
+              {%- set ns = namespace(items=[]) %}
+              {%- for event in events | sort(attribute='start') %}
+              {%- set start_local = as_local(as_datetime(event.start)) %}
+              {%- set end_local = as_local(as_datetime(event.end)) %}
+              {%- set intent = event.intent | lower %}
+              {%- set import_price = event.import_price | default(none, true) %}
+              {%- set export_price = event.export_price | default(none, true) %}
+              {%- set rate_display = '' %}
+              {%- if intent == 'charge' and import_price is not none %}
+              {%- set rate_display = ' @ ' ~ '%.1f'|format(import_price * 100) ~ 'p' %}
+              {%- elif intent == 'discharge' and export_price is not none %}
+              {%- set rate_display = ' @ ' ~ '%.1f'|format(export_price * 100) ~ 'p' %}
+              {%- endif %}
+              {%- set start_day = start_local.strftime('%a') %}
+              {%- set end_day = end_local.strftime('%a') %}
+              {%- set start_time = start_local.strftime('%H:%M') %}
+              {%- set end_time = end_local.strftime('%H:%M') %}
+              {%- if start_day == end_day %}
+              {%- set time_range = start_day ~ ' ' ~ start_time ~ ' - ' ~ end_time %}
+              {%- else %}
+              {%- set time_range = start_day ~ ' ' ~ start_time ~ ' - ' ~ end_day ~ ' ' ~ end_time %}
+              {%- endif %}
+              {%- set line = '- ' ~ time_range ~ ': **' ~ event.intent ~ '**' ~ rate_display %}
+              {%- set ns.items = ns.items + [line] %}
+              {%- endfor %}
+              {{- ns.items | join('\n') }}
 
               {%- else %}
-                No scheduled intents
+              No scheduled intents
               {%- endif %}
               {% endraw %}
+          - type: tile
+            name: Refresh schedule
+            entity: automation.unified_battery_schedule_py
+            tap_action:
+              action: perform-action
+              perform_action: automation.trigger
+              target:
+                entity_id: automation.unified_battery_schedule_py
 
       - type: grid
         cards:
