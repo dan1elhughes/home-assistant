@@ -289,7 +289,7 @@ views:
                   {%- if schedules %}
                     {%- set ns = namespace(items=[]) %}
 
-                    {%- for schedule in schedules | sort(attribute='start') %}
+                    {%- for schedule in schedules | sort(attribute='start') | sort(attribute='days') %}
                       {%- set day_ns = namespace(items=[]) %}
                       {%- for day in schedule.days | default([]) %}
                         {%- set day_ns.items = day_ns.items + [weekdays[day] if day >= 0 and day < weekdays | count else day] %}
