@@ -69,11 +69,14 @@ def actions_to_events(
             first_step_price = rate_at(import_rates, block_start_epoch)
             if first_step_price is not None and first_step_price < charge_price_threshold:
                 # Scan forward through steps until price goes above threshold
+                # or the DP intentionally discharges (don't override discharge).
                 last_step_in_window = block_start
                 for t in range(block_start, n):
                     step_epoch = now_epoch + t * step_seconds
                     p = rate_at(import_rates, step_epoch)
                     if p is None or p >= charge_price_threshold:
+                        break
+                    if actions[t] == "discharge":
                         break
                     last_step_in_window = t
                 block_end = last_step_in_window + 1

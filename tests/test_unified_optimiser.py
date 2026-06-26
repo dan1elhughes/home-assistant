@@ -483,6 +483,73 @@ def test_no_extension_when_price_above_threshold():
     assert charge_events == [], f"Expected no charge events above threshold: {events}"
 
 
+def test_charge_extension_does_not_cross_discharge_blocks():
+    """
+    When a profitable export window exists inside a cheap import window,
+    the DP should discharge during the export window.  The charge block
+    extension (charge_price_threshold) must NOT extend across the
+    discharge block — otherwise events overlap.
+
+    Scenario: cheap import (0.05, below 0.10 threshold) for 120 min.
+    Export is 0.50 during the middle 30 min (m(45)-m(75)), low otherwise.
+    The DP should charge before and after the export window, but discharge
+    during it.  The charge block starting at m(0) must stop at m(45), not
+    extend to the end of the cheap window.
+    """
+    import_rates = [
+        {"start": m(0),   "end": m(120), "price": 0.05},   # below threshold
+    ]
+    export_rates = [
+        {"start": m(0),   "end": m(45),  "price": 0.05},
+        {"start": m(45),  "end": m(75),  "price": 0.50},   # profitable
+        {"start": m(75),  "end": m(120), "price": 0.05},
+    ]
+    events = compute_unified_schedule(
+        now_epoch=BASE,
+        horizon_end_epoch=BASE + 86400,
+        import_rates=import_rates,
+        export_rates=export_rates,
+        free_sessions=[],
+        saving_window=None,
+        saving_bonus_events=[],
+        available_kwh=0,
+        capacity_kwh=30,
+        reserve_kwh=0,
+        power_rate_kw=60,
+        efficiency=0.9,
+        allow_discharge=True,
+        minimum_slot_length=5,
+        step_minutes=5,
+        charge_price_threshold=0.10,
+        discharge_price_threshold=0.15,
+    )
+
+    # Find charge and discharge events
+    charge_events = [e for e in events if e["intent"] == "Charge"]
+    discharge_events = [e for e in events if e["intent"] == "Discharge"]
+
+    assert len(discharge_events) >= 1, (
+        f"Expected at least one discharge event, got {events}"
+    )
+
+    # Verify discharge is in the middle window
+    discharge = discharge_events[0]
+    assert discharge["start"] >= m(45), (
+        f"Discharge should start at or after m(45), got {discharge['start']}"
+    )
+    assert discharge["end"] <= m(75), (
+        f"Discharge should end at or before m(75), got {discharge['end']}"
+    )
+
+    # Verify charge events do NOT overlap with the discharge window
+    for e in charge_events:
+        # Charge block must end before discharge starts or start after discharge ends
+        assert e["end"] <= discharge["start"] or e["start"] >= discharge["end"], (
+            f"Charge event [{e['start']}, {e['end']}) overlaps with discharge "
+            f"[{discharge['start']}, {discharge['end']}): {events}"
+        )
+
+
 def test_empty_import_rates_at_floor_returns_empty():
     """
     Regression test: when import_rates is empty (e.g. smart-charge filter
