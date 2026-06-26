@@ -1,3 +1,8 @@
+# Recorder lives in Postgres (in the homeassistant stack) rather than the
+# default SQLite-on-cephfs, which corrupts under concurrent history load.
+# postgres is an internal swarm service (not web-exposed); the password is a
+# fixed non-secret used only on the private overlay network.
+db_url: postgresql://homeassistant:POSTGRES@postgres:5432/homeassistant
 exclude:
   entities:
     - sensor.ucg_max_ucg_max_cpu_temperature

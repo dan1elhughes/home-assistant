@@ -357,6 +357,37 @@
           {{ now_epoch }}
           {%- endif -%}
 
+# ── Predbat power inputs ──────────────────────────────────────────────
+# The Envoy can't see the car (separate circuit) and its "consumption" CT
+# already nets battery charge/discharge. Predbat models the car and battery
+# separately, so it needs PURE house load and TRUE grid. We derive both:
+#   pure house  = envoy_consumption - battery_charge + battery_discharge
+#   true grid   = Zappi grid CT (the only sensor that sees the whole site)
+- sensor:
+    - name: "Predbat house load power"
+      unique_id: predbat_house_load_power
+      device_class: power
+      state_class: measurement
+      unit_of_measurement: "W"
+      availability: >
+        {{ has_value('sensor.envoy_122322027694_current_power_consumption')
+           and has_value('sensor.battery_total_charge_power')
+           and has_value('sensor.battery_total_discharge_power') }}
+      state: >
+        {% set cons = states('sensor.envoy_122322027694_current_power_consumption') | float * 1000 %}
+        {% set charge = states('sensor.battery_total_charge_power') | float(0) %}
+        {% set discharge = states('sensor.battery_total_discharge_power') | float(0) %}
+        {{ (cons - charge + discharge) | round(0) }}
+
+    - name: "Predbat grid power"
+      unique_id: predbat_grid_power
+      device_class: power
+      state_class: measurement
+      unit_of_measurement: "W"
+      availability: "{{ has_value('sensor.myenergi_zappi_power_ct_grid') }}"
+      state: >
+        {{ states('sensor.myenergi_zappi_power_ct_grid') | float | round(0) }}
+
 - binary_sensor:
     - name: One-room mode
       state: >
