@@ -97,17 +97,12 @@ def discharge_value(minute_epoch, import_rates, export_rates, saving_bonus_event
                     discharge_price_threshold=None):
     """Value of discharging ONE step.  Returns None if unavailable.
 
-    The discharged kWh can either:
-      - power the house, avoiding import at *import_price* (self-consumption),
-        or
-      - export to the grid, earning *export_price + bonus*.
-
-    We take the **higher** of the two because the battery's power displaces
-    whichever is more valuable at that minute.  In practice the import price
-    (avoided cost) is usually the binding one for a home with base load.
+    The value of discharging is the **export price** (plus any saving bonus).
+    The battery's power is exported to the grid; the import price is irrelevant
+    for this decision because the house load is already covered by the load-
+    aware reserve floor (idle_power_kw).
 
     When no export rate is known the price is treated as 0 (conservative).
-    When no import rate is known we fall back to export-only valuation.
     """
     if not allow_discharge:
         return None
@@ -116,12 +111,8 @@ def discharge_value(minute_epoch, import_rates, export_rates, saving_bonus_event
     if export_price is None:
         export_price = 0.0
 
-    import_price = rate_at(import_rates, minute_epoch)
-    if import_price is None:
-        import_price = 0.0
-
     bonus = bonus_at(saving_bonus_events, minute_epoch)
-    effective_price = max(import_price, export_price + bonus)
+    effective_price = export_price + bonus
 
     if discharge_price_threshold is not None and effective_price < discharge_price_threshold:
         return None

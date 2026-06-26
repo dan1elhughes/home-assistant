@@ -412,11 +412,15 @@ def test_price_threshold_extends_charge_block():
         {"start": m(0),  "end": m(60),  "price": 0.05},   # below threshold
         {"start": m(60), "end": m(120), "price": 0.30},  # above threshold
     ]
+    export_rates = [
+        {"start": m(0),  "end": m(60),  "price": 0.05},   # makes energy valuable
+        {"start": m(60), "end": m(120), "price": 0.30},  # above threshold
+    ]
     events = compute_unified_schedule(
         now_epoch=BASE,
         horizon_end_epoch=BASE + 86400,
         import_rates=import_rates,
-        export_rates=[],
+        export_rates=export_rates,
         free_sessions=[],
         saving_window=None,
         saving_bonus_events=[],
