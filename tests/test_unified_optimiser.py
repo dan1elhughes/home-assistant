@@ -481,3 +481,77 @@ def test_no_extension_when_price_above_threshold():
     charge_events = [e for e in events if e["intent"] == "Charge"]
     # With price above threshold throughout, no charge should be scheduled.
     assert charge_events == [], f"Expected no charge events above threshold: {events}"
+
+
+def test_empty_import_rates_at_floor_returns_empty():
+    """
+    Regression test: when import_rates is empty (e.g. smart-charge filter
+    masked all rates) and available_kwh is at the hard floor, the battery
+    cannot charge (no cheap rates) nor discharge (already at floor).  The
+    DP should return an empty event list gracefully.
+    """
+    events = compute_unified_schedule(
+        now_epoch=BASE,
+        horizon_end_epoch=BASE + 86400,
+        import_rates=[],                              # empty — smart charge filtered
+        export_rates=[
+            {"start": m(300), "end": m(330), "price": 0.30},
+        ],
+        free_sessions=[],
+        saving_window=None,
+        saving_bonus_events=[],
+        available_kwh=0.85,                             # at hard floor
+        capacity_kwh=15,
+        reserve_kwh=0.85,
+        power_rate_kw=9.6,
+        efficiency=0.9,
+        allow_discharge=True,
+        minimum_slot_length=5,
+        step_minutes=5,
+        hard_lower_limit_kwh=0.85,
+        lower_discharge_limit_kwh=1.5,
+        idle_power_kw=1.0,
+    )
+
+    assert events == [], (
+        f"Expected empty events when import_rates is empty and battery at floor, "
+        f"got {events}"
+    )
+
+
+def test_empty_import_rates_with_energy_above_floor_discharges():
+    """
+    When import_rates is empty but the battery has usable energy above the
+    hard floor, profitable export windows should still be discharged.
+    """
+    events = compute_unified_schedule(
+        now_epoch=BASE,
+        horizon_end_epoch=BASE + 86400,
+        import_rates=[],                              # empty
+        export_rates=[
+            {"start": m(300), "end": m(330), "price": 0.30},  # > 0.15 threshold
+        ],
+        free_sessions=[],
+        saving_window=None,
+        saving_bonus_events=[],
+        available_kwh=5.0,                              # above floor
+        capacity_kwh=15,
+        reserve_kwh=0.85,
+        power_rate_kw=9.6,
+        efficiency=0.9,
+        allow_discharge=True,
+        minimum_slot_length=5,
+        step_minutes=5,
+        hard_lower_limit_kwh=0.85,
+        lower_discharge_limit_kwh=1.5,
+        idle_power_kw=1.0,
+        discharge_price_threshold=0.15,
+    )
+
+    assert len(events) >= 1, (
+        f"Expected at least one event with available energy above floor, "
+        f"got {events}"
+    )
+    assert all(e["intent"] == "Discharge" for e in events), (
+        f"Expected only Discharge events when import_rates empty, got {events}"
+    )

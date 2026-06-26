@@ -233,7 +233,12 @@
           {%- if smart_charge_on == 'on' and auto_disable_smart_charge == 'on' -%}
           {%- set today_str = now().strftime('%Y-%m-%d') -%}
           {%- set end_dt_str = today_str ~ ' ' ~ smart_charge_end -%}
-          {%- set smart_charge_end_epoch = as_timestamp(end_dt_str) | int -%}
+          {%- set end_epoch = as_timestamp(end_dt_str) | int -%}
+          {%- if end_epoch > now_epoch -%}
+          {%- set smart_charge_end_epoch = end_epoch -%}
+          {%- else -%}
+          {%- set smart_charge_end_epoch = none -%}
+          {%- endif -%}
           {%- else -%}
           {%- set smart_charge_end_epoch = none -%}
           {%- endif -%}
