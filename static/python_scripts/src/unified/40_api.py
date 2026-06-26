@@ -339,6 +339,11 @@ def compute_unified_schedule(
                     idle_power_kw,
                     lower_discharge_limit_kwh,
                     step_kwh,
+                    now_epoch=now_epoch,
+                    import_rates=import_rates,
+                    export_rates=export_rates,
+                    saving_bonus_events=saving_bonus_events,
+                    efficiency=efficiency,
                 )
 
     # SLICE 4: convert DP per-step actions into merged event dicts
@@ -351,6 +356,7 @@ def compute_unified_schedule(
         free_sessions,
         saving_bonus_events,
         epoch_to_iso,
+        charge_price_threshold=charge_price_threshold,
     )
     return events
 
@@ -363,6 +369,11 @@ def compute_load_floor(
     idle_power_kw,
     lower_discharge_limit_kwh,
     step_kwh,
+    now_epoch=0,
+    import_rates=None,
+    export_rates=None,
+    saving_bonus_events=None,
+    efficiency=1.0,
 ):
     """Build per-step minimum level array for load-aware reserve.
 
@@ -370,6 +381,12 @@ def compute_load_floor(
     to keep the house running until that charge (idle draw + buffer).
     From the charge step onward the floor drops to zero (the charge
     replenishes the battery).
+
+    When the current effective export price (export + saving bonus)
+    exceeds the breakeven price (max import from now until charge +
+    replacement cost at the charge step), the floor for that step is
+    reduced to the soft buffer alone, because draining and buying back
+    yields a net profit.
 
     Parameters
     ----------
@@ -387,6 +404,17 @@ def compute_load_floor(
         Extra energy buffer in kWh above the hard floor.
     step_kwh : float
         Energy per level step in kWh.
+    now_epoch : int
+        Current time in epoch seconds (for looking up rates).
+    import_rates : list[dict] or None
+        Each dict has keys ``start``, ``end``, ``price`` (same format as
+        the top-level parameter).
+    export_rates : list[dict] or None
+        Each dict has keys ``start``, ``end``, ``price``.
+    saving_bonus_events : list[dict] or None
+        Each dict has keys ``start``, ``end``, ``bonus_pence``.
+    efficiency : float
+        Round-trip efficiency (0..1).
 
     Returns
     -------
@@ -398,24 +426,36 @@ def compute_load_floor(
     if idle_power_kw <= 0.0 and lower_discharge_limit_kwh <= 0.0:
         return floor_level
 
-    # Compute a per-step tapering floor: at each step the battery only
-    # needs to survive the REMAINING hours until the next charge
-    # (idle_power_kw * remaining_hours + lower_discharge_limit_kwh).  The floor
-    # is therefore highest at the start of the window and tapers down to
-    # the soft_buffer alone by the charge step, then drops to 0.
-    #
-    # This is physically correct: just before the charge, the battery
-    # only needs to survive a few minutes, so it may discharge more of its
-    # surplus while still protecting load.  The floor is non-increasing
-    # across the pre-charge window and is a hard per-step constraint, so
-    # the DP cannot "defer to game it" — discharging early when many
-    # hours remain is forbidden by the (higher) early floor; discharging
-    # later is permitted precisely because fewer hours of load remain.
-    # If no charge is planned in the horizon, the battery cannot reserve
-    # energy for a future charge that never arrives.  Cap the floor at the
-    # soft buffer alone so the battery still respects the comfort margin but
-    # is not forbidden from discharging by an impossibly high load reserve.
+    # Soft buffer in discrete levels (shared between branches)
+    soft_buffer_levels = 0
+    if step_kwh > 0:
+        soft_buffer_levels = ceil_div(
+            int(round(lower_discharge_limit_kwh * 1e6)),
+            int(round(step_kwh * 1e6)),
+        )
+
+    # Precompute import prices and suffix-max for the breakeven check.
+    # Only meaningful when there is a charge in the horizon.
     no_charge_in_horizon = next_charge_step >= total_steps
+    if not no_charge_in_horizon and import_rates is not None:
+        import_price_at = [0.0] * total_steps
+        for t in range(total_steps):
+            epoch = now_epoch + t * step_minutes * 60
+            p = rate_at(import_rates, epoch)
+            import_price_at[t] = p if p is not None else 0.0
+
+        # Suffix max: highest import price from t to next_charge_step - 1
+        max_import_from = [0.0] * total_steps
+        running_max = 0.0
+        for t in range(next_charge_step - 1, -1, -1):
+            running_max = max(import_price_at[t], running_max)
+            max_import_from[t] = running_max
+
+        charge_price = import_price_at[next_charge_step]
+    else:
+        # Sentinel: no breakeven check when charge_price is 0
+        # (the effective_export > breakeven comparison will be False)
+        charge_price = 0.0
 
     for t in range(total_steps):
         if t >= next_charge_step:
@@ -423,25 +463,44 @@ def compute_load_floor(
             # the charge itself replenishes SoC.
             floor_level[t] = 0
         else:
-            remaining_hours = (next_charge_step - t) * step_minutes / 60.0
-            required_kwh = idle_power_kw * remaining_hours + lower_discharge_limit_kwh
-            if step_kwh > 0:
-                floor_level[t] = min(
-                    n_levels,
-                    ceil_div(
-                        int(round(required_kwh * 1e6)),
-                        int(round(step_kwh * 1e6)),
-                    ),
-                )
+            # Determine whether the effective export price is high
+            # enough that draining the battery (selling now) and
+            # buying back later yields a net profit.
+            use_soft_buffer_only = False
+            if charge_price != 0.0:
+                epoch = now_epoch + t * step_minutes * 60
+                export_price = rate_at(export_rates, epoch)
+                if export_price is None:
+                    export_price = 0.0
+                bonus = bonus_at(saving_bonus_events, epoch) if saving_bonus_events else 0.0
+                effective_export = export_price + bonus
+                max_import = max_import_from[t]
+                breakeven = max_import + (charge_price / efficiency) if efficiency > 0 else float('inf')
+
+                if effective_export > breakeven:
+                    use_soft_buffer_only = True
+
+            if use_soft_buffer_only:
+                floor_level[t] = min(n_levels, soft_buffer_levels)
             else:
-                floor_level[t] = 0
+                # Original tapering logic: reserve enough to cover
+                # remaining hours of house load plus soft buffer.
+                remaining_hours = (next_charge_step - t) * step_minutes / 60.0
+                required_kwh = idle_power_kw * remaining_hours + lower_discharge_limit_kwh
+                if step_kwh > 0:
+                    floor_level[t] = min(
+                        n_levels,
+                        ceil_div(
+                            int(round(required_kwh * 1e6)),
+                            int(round(step_kwh * 1e6)),
+                        ),
+                    )
+                else:
+                    floor_level[t] = 0
+
             # Cap the floor at the soft buffer when there is no charge in the
             # horizon so the battery is not blocked from discharging entirely.
             if no_charge_in_horizon:
-                soft_buffer_levels = ceil_div(
-                    int(round(lower_discharge_limit_kwh * 1e6)),
-                    int(round(step_kwh * 1e6)),
-                ) if step_kwh > 0 else 0
                 if floor_level[t] > soft_buffer_levels:
                     floor_level[t] = soft_buffer_levels
 

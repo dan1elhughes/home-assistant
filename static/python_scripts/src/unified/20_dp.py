@@ -67,8 +67,8 @@ def solve_dp(
             charge_price_threshold=charge_price_threshold,
         )
         dv[t] = discharge_value(
-            epoch_t, export_rates, saving_bonus_events, efficiency,
-            step_kwh, allow_discharge,
+            epoch_t, import_rates, export_rates, saving_bonus_events,
+            efficiency, step_kwh, allow_discharge,
             discharge_price_threshold=discharge_price_threshold,
         )
 
@@ -165,16 +165,35 @@ def solve_dp(
 
                 cur[l][m] = best
 
-                # Tie-break order: idle(0) > discharge(1) > charge(2).
+                # Tie-breaking for equal-value actions.
                 #
-                # Preferring idle over discharge when both are equal defers
-                # discharge to later steps, yielding tail-end-first
-                # discharge within an equal-priced window (required by
-                # existing tests).  Preferring discharge over charge is an
-                # arbitrary stable choice since both cannot simultaneously
-                # be optimal at the same (t, l) under normal conditions.
-                if abs(idle_total - best) < EPS:
-                    a = 0
+                # Discharge vs idle: prefer idle → defers discharge to later
+                # steps, yielding tail-end-first discharge within an
+                # equal-priced window.
+                #
+                # Charge vs idle: prefer charge when there is ANY future
+                # value downstream (nxt[l][0] > 0), which signals a
+                # profitable discharge opportunity — charge early (front-
+                # first) within the charge window.  When nxt[l][0] == 0
+                # there is no profitable use for stored energy downstream,
+                # so prefer idle to avoid unnecessary cycling.
+                #
+                # This uses the idle-mode value of the CURRENT level
+                # (no mode-buffer noise) as a simple "is there anything
+                # valuable ahead?" check.
+                #
+                # Charge vs discharge: prefer discharge (arbitrary stable
+                # choice since both cannot simultaneously be optimal at the
+                # same (t, l) under normal conditions).
+                if charge_total is not None and abs(charge_total - best) < EPS:
+                    if nxt[l][0] > EPS:
+                        a = 2  # Front-first within charge window
+                    elif abs(idle_total - best) < EPS:
+                        a = 0  # No future value → idle
+                    else:
+                        a = 2  # charge > discharge (discharge not tied)
+                elif abs(idle_total - best) < EPS:
+                    a = 0  # idle > discharge
                 elif discharge_total is not None and abs(discharge_total - best) < EPS:
                     a = 1
                 else:

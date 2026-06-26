@@ -92,23 +92,41 @@ def charge_value(minute_epoch, import_rates, free_sessions, efficiency, step_kwh
     return -(import_price * (step_kwh / efficiency))
 
 
-def discharge_value(minute_epoch, export_rates, saving_bonus_events, efficiency,
-                    step_kwh, allow_discharge, discharge_price_threshold=None):
+def discharge_value(minute_epoch, import_rates, export_rates, saving_bonus_events,
+                    efficiency, step_kwh, allow_discharge,
+                    discharge_price_threshold=None):
     """Value of discharging ONE step.  Returns None if unavailable.
 
-    Revenue = (export_price + bonus) * step_kwh.
-    When no export rate is known for this minute, the price is treated as
-    0 (conservative — we do not discharge for profit into an unknown rate).
+    The discharged kWh can either:
+      - power the house, avoiding import at *import_price* (self-consumption),
+        or
+      - export to the grid, earning *export_price + bonus*.
+
+    We take the **higher** of the two because the battery's power displaces
+    whichever is more valuable at that minute.  In practice the import price
+    (avoided cost) is usually the binding one for a home with base load.
+
+    When no export rate is known the price is treated as 0 (conservative).
+    When no import rate is known we fall back to export-only valuation.
     """
     if not allow_discharge:
         return None
+
     export_price = rate_at(export_rates, minute_epoch)
     if export_price is None:
         export_price = 0.0
-    if discharge_price_threshold is not None and export_price < discharge_price_threshold:
-        return None
+
+    import_price = rate_at(import_rates, minute_epoch)
+    if import_price is None:
+        import_price = 0.0
+
     bonus = bonus_at(saving_bonus_events, minute_epoch)
-    return (export_price + bonus) * step_kwh
+    effective_price = max(import_price, export_price + bonus)
+
+    if discharge_price_threshold is not None and effective_price < discharge_price_threshold:
+        return None
+
+    return effective_price * step_kwh
 
 
 def no_opposite_adjacency(actions):

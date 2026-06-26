@@ -170,6 +170,20 @@ def main():
     # Injected callables (sandbox-safe — no imports)
     add_minutes = lambda e, n: e + n * 60
 
+    
+
+    # --- Log inputs for debugging ---
+    logger.info(
+        "unified_battery_schedule: inputs now=%s available=%.3fkWh capacity=%.3fkWh "
+        "hard_floor=%s soft_buffer=%.3fkWh idle=%.3fkW power=%.3fkW eff=%.3f "
+        "allow_discharge=%s charge_threshold=%s discharge_threshold=%s "
+        "import_rates=%d export_rates=%d free_sessions=%d bonus_events=%d",
+        now_epoch, available_kwh, capacity_kwh,
+        hard_lower_limit_kwh, lower_discharge_limit_kwh, idle_power_kw, power_rate_kw, efficiency,
+        allow_discharge, charge_price_threshold, discharge_price_threshold,
+        len(import_rates), len(export_rates), len(free_sessions), len(saving_bonus_events),
+    )
+
     try:
         events = compute_unified_schedule(
             now_epoch=now_epoch,
@@ -195,6 +209,21 @@ def main():
             charge_price_threshold=charge_price_threshold,
             discharge_price_threshold=discharge_price_threshold,
         )
+        logger.info(
+            "unified_battery_schedule: computed %d events",
+            len(events),
+        )
+        for ev in events:
+            if ev.get("intent") == "Charge":
+                logger.info(
+                    "unified_battery_schedule: event Charge %s -> %s import=%.4f",
+                    ev.get("start"), ev.get("end"), ev.get("import_price"),
+                )
+            else:
+                logger.info(
+                    "unified_battery_schedule: event Discharge %s -> %s export=%.4f",
+                    ev.get("start"), ev.get("end"), ev.get("export_price"),
+                )
     except Exception as exc:
         logger.error(
             "unified_battery_schedule: compute_unified_schedule failed: %s", exc,

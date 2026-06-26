@@ -67,13 +67,14 @@ def test_charge_value():
 
 def test_discharge_value():
     """discharge_value: revenue incl bonus, None when disallowed or no export."""
+    import_rates = []
     export_rates = [{"start": 0, "end": 600, "price": 20.0}]
     saving_bonus_events = [{"start": 0, "end": 300, "bonus_pence": 4.0}]
     efficiency = 0.9
     step_kwh = 0.1
 
     dv0 = UNIFIED.discharge_value(
-        0, export_rates, saving_bonus_events, efficiency, step_kwh, True
+        0, import_rates, export_rates, saving_bonus_events, efficiency, step_kwh, True
     )
     expected = (20.0 + 4.0) * 0.1
     assert abs(dv0 - expected) < 1e-9, (
@@ -81,7 +82,7 @@ def test_discharge_value():
     )
 
     dv300 = UNIFIED.discharge_value(
-        300, export_rates, saving_bonus_events, efficiency, step_kwh, True
+        300, import_rates, export_rates, saving_bonus_events, efficiency, step_kwh, True
     )
     expected_dv300 = 20.0 * 0.1
     assert abs(dv300 - expected_dv300) < 1e-9, (
@@ -89,7 +90,7 @@ def test_discharge_value():
     )
 
     dv_disallowed = UNIFIED.discharge_value(
-        0, export_rates, saving_bonus_events, efficiency, step_kwh, False
+        0, import_rates, export_rates, saving_bonus_events, efficiency, step_kwh, False
     )
     assert dv_disallowed is None, (
         f"discharge_value with allow_discharge=False: "
@@ -97,7 +98,7 @@ def test_discharge_value():
     )
 
     dv_no_export = UNIFIED.discharge_value(
-        5000, export_rates, saving_bonus_events, efficiency, step_kwh, True
+        5000, import_rates, export_rates, saving_bonus_events, efficiency, step_kwh, True
     )
     # With missing export rates we now conservatively return 0.0 (no profit)
     # instead of None so the DP can still evaluate charging decisions.
@@ -132,6 +133,7 @@ def test_charge_value_threshold():
 
 def test_discharge_value_threshold():
     """discharge_value respects discharge_price_threshold: blocks when price too low."""
+    import_rates = []
     export_rates = [{"start": 0, "end": 600, "price": 20.0}]
     saving_bonus_events = []
     efficiency = 0.9
@@ -139,14 +141,14 @@ def test_discharge_value_threshold():
 
     # Above threshold (15.0) — should discharge
     dv = UNIFIED.discharge_value(
-        0, export_rates, saving_bonus_events, efficiency, step_kwh, True,
+        0, import_rates, export_rates, saving_bonus_events, efficiency, step_kwh, True,
         discharge_price_threshold=15.0,
     )
     assert dv is not None, "discharge_value should allow discharge above threshold"
 
     # Below threshold (25.0) — should NOT discharge
     dv_blocked = UNIFIED.discharge_value(
-        0, export_rates, saving_bonus_events, efficiency, step_kwh, True,
+        0, import_rates, export_rates, saving_bonus_events, efficiency, step_kwh, True,
         discharge_price_threshold=25.0,
     )
     assert dv_blocked is None, (
@@ -798,7 +800,7 @@ def test_compute_unified_schedule_smoke():
     )
 
 
-def testcompute_load_floor_tapers():
+def test_compute_load_floor_tapers():
     """Tapering floor: reserves only the remaining hours of load per step.
 
     Regression: compute_load_floor used to produce a flat floor
@@ -823,6 +825,11 @@ def testcompute_load_floor_tapers():
         idle_power_kw,
         lower_discharge_limit_kwh,
         step_kwh,
+        now_epoch=0,
+        import_rates=[],
+        export_rates=[],
+        saving_bonus_events=[],
+        efficiency=1.0,
     )
 
     # Step 0: must survive full 12 steps = 60 min = 1.0 h
@@ -849,4 +856,139 @@ def testcompute_load_floor_tapers():
 
     # Full expected list
     expected = [6, 6, 6, 5, 5, 5, 4, 4, 4, 3, 3, 3] + [0] * 12
+    assert floor == expected, f"floor {floor} != expected {expected}"
+
+
+def test_compute_load_floor_reduces_when_export_beats_import():
+    """When export + bonus > breakeven, floor drops to soft buffer only."""
+    step = 5
+    total_steps = 12
+    next_charge_step = 6
+    n_levels = 20
+    idle_power_kw = 0.75
+    lower_discharge_limit_kwh = 0.5
+    step_kwh = 0.25
+    now_epoch = 0
+    efficiency = 0.9
+
+    import_rates = [
+        {"start": 0, "end": 1800, "price": 0.292},
+        {"start": 1800, "end": 3600, "price": 0.04},
+    ]
+    export_rates = [
+        {"start": 0, "end": 1800, "price": 0.24},
+        {"start": 1800, "end": 3600, "price": 0.161},
+    ]
+    saving_bonus_events = [
+        {"start": 0, "end": 1800, "bonus_pence": 0.135},
+    ]
+
+    floor = UNIFIED.compute_load_floor(
+        total_steps,
+        next_charge_step,
+        n_levels,
+        step,
+        idle_power_kw,
+        lower_discharge_limit_kwh,
+        step_kwh,
+        now_epoch=now_epoch,
+        import_rates=import_rates,
+        export_rates=export_rates,
+        saving_bonus_events=saving_bonus_events,
+        efficiency=efficiency,
+    )
+
+    # Steps 0-5: effective_export = 0.24 + 0.135 = 0.375,
+    #   max_import = 0.292 (all steps in [0, 1800)),
+    #   charge_price = 0.04, breakeven = 0.292 + 0.04/0.9 = 0.3364...
+    #   Since 0.375 > 0.3364, floor should be soft buffer only
+    #   = ceil(0.5 / 0.25) = 2 levels.
+    expected_soft_buffer = 2
+    for t in range(6):
+        assert floor[t] == expected_soft_buffer, (
+            f"floor[{t}] {floor[t]} != {expected_soft_buffer}"
+        )
+
+    # Steps 6-11: after charge, floor = 0.
+    for t in range(6, 12):
+        assert floor[t] == 0, f"floor[{t}] {floor[t]} != 0"
+
+    # All entries in [0, n_levels]
+    for i, f in enumerate(floor):
+        assert 0 <= f <= n_levels, (
+            f"floor[{i}] {f} out of bounds [0, {n_levels}]"
+        )
+
+    expected = [2, 2, 2, 2, 2, 2, 0, 0, 0, 0, 0, 0]
+    assert floor == expected, f"floor {floor} != expected {expected}"
+
+
+def test_compute_load_floor_keeps_when_export_below_breakeven():
+    """When export < breakeven, floor uses original tapering logic."""
+    step = 5
+    total_steps = 12
+    next_charge_step = 6
+    n_levels = 20
+    idle_power_kw = 0.75
+    lower_discharge_limit_kwh = 0.5
+    step_kwh = 0.25
+    now_epoch = 0
+    efficiency = 0.9
+
+    import_rates = [
+        {"start": 0, "end": 1800, "price": 0.292},
+        {"start": 1800, "end": 3600, "price": 0.04},
+    ]
+    # No bonus this time — export = 0.24 < breakeven = 0.3364...
+    export_rates = [
+        {"start": 0, "end": 1800, "price": 0.24},
+        {"start": 1800, "end": 3600, "price": 0.161},
+    ]
+    saving_bonus_events = []
+
+    floor = UNIFIED.compute_load_floor(
+        total_steps,
+        next_charge_step,
+        n_levels,
+        step,
+        idle_power_kw,
+        lower_discharge_limit_kwh,
+        step_kwh,
+        now_epoch=now_epoch,
+        import_rates=import_rates,
+        export_rates=export_rates,
+        saving_bonus_events=saving_bonus_events,
+        efficiency=efficiency,
+    )
+
+    # Original tapering with idle_power_kw=0.75, step_kwh=0.25:
+    # Step 0: remaining 6 steps = 30 min = 0.5 h
+    #   required = 0.75 * 0.5 + 0.5 = 0.875 -> ceil(0.875/0.25)=4
+    assert floor[0] == 4, f"floor[0] {floor[0]} != 4"
+    # Step 1: remaining 5 steps = 25 min = 25/60 h
+    #   required = 0.75*25/60 + 0.5 = 0.8125 -> ceil(0.8125/0.25)=4
+    assert floor[1] == 4, f"floor[1] {floor[1]} != 4"
+    # Step 2: remaining 4 steps = 20 min = 20/60 h
+    #   required = 0.75*20/60 + 0.5 = 0.75 -> ceil(0.75/0.25)=3
+    assert floor[2] == 3, f"floor[2] {floor[2]} != 3"
+    # Step 3: remaining 3 steps = 15 min = 15/60 h
+    #   required = 0.75*15/60 + 0.5 = 0.6875 -> ceil(0.6875/0.25)=3
+    assert floor[3] == 3, f"floor[3] {floor[3]} != 3"
+    # Step 4: remaining 2 steps = 10 min = 10/60 h
+    #   required = 0.75*10/60 + 0.5 = 0.625 -> ceil(0.625/0.25)=3
+    assert floor[4] == 3, f"floor[4] {floor[4]} != 3"
+    # Step 5: remaining 1 step = 5 min = 5/60 h
+    #   required = 0.75*5/60 + 0.5 = 0.5625 -> ceil(0.5625/0.25)=3
+    assert floor[5] == 3, f"floor[5] {floor[5]} != 3"
+    # Steps 6-11: after charge, floor = 0
+    for t in range(6, 12):
+        assert floor[t] == 0, f"floor[{t}] {floor[t]} != 0"
+
+    # All entries in [0, n_levels]
+    for i, f in enumerate(floor):
+        assert 0 <= f <= n_levels, (
+            f"floor[{i}] {f} out of bounds [0, {n_levels}]"
+        )
+
+    expected = [4, 4, 3, 3, 3, 3, 0, 0, 0, 0, 0, 0]
     assert floor == expected, f"floor {floor} != expected {expected}"

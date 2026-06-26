@@ -12,17 +12,27 @@ def actions_to_events(
     free_sessions,
     saving_bonus_events,
     epoch_to_iso,
+    charge_price_threshold=None,
 ):
     """Convert DP per-step action strings into merged event dicts.
 
     Groups maximal runs of the same non-idle intent into blocks, computes
     time-weighted average prices for each block, and serialises times.
 
+    When a charge block starts during a below-threshold price period,
+    extends the block to the end of the cheap window.  This prevents
+    step-by-step re-evaluation oscillation at near-100% SoC where the
+    DP would charge one step, hit the ceiling, idle, drain slightly,
+    then charge one step again.
+
     Parameters
     ----------
     epoch_to_iso : callable or None
         If None (self-test mode), emit raw epoch integers instead of ISO
         strings so the function is testable without a formatter.
+    charge_price_threshold : float or None
+        If a charge block starts at a price below this threshold, extend
+        the block to the end of the continuous cheap window.
 
     Returns
     -------
@@ -49,6 +59,25 @@ def actions_to_events(
 
         block_start_epoch = now_epoch + block_start * step_seconds
         block_end_epoch = now_epoch + block_end * step_seconds
+
+        # When a charge block starts at a price below threshold, extend it
+        # to the end of the cheap window so the DP doesn't re-evaluate
+        # step-by-step and oscillate at near-100% SoC.
+        if (intent == "charge"
+            and charge_price_threshold is not None
+            and charge_price_threshold > 0):
+            first_step_price = rate_at(import_rates, block_start_epoch)
+            if first_step_price is not None and first_step_price < charge_price_threshold:
+                # Scan forward through steps until price goes above threshold
+                last_step_in_window = block_start
+                for t in range(block_start, n):
+                    step_epoch = now_epoch + t * step_seconds
+                    p = rate_at(import_rates, step_epoch)
+                    if p is None or p >= charge_price_threshold:
+                        break
+                    last_step_in_window = t
+                block_end = last_step_in_window + 1
+                block_end_epoch = now_epoch + block_end * step_seconds
 
         # Compute time-weighted average representative price
         prices = []

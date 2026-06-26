@@ -334,3 +334,146 @@ def test_min_slot_via_step_size():
             f"Event {e['intent']} [{e['start']}, {e['end']}) "
             f"is only {duration}s (< {5*60}s = 5 min)"
         )
+
+
+def test_charge_front_first_discharge_tail_end():
+    """
+    Charge fills from start of cheap window; discharge from end of export.
+
+    Free session (40 min = 8 steps at 5 min) is longer than the 6 charge
+    steps needed to fill the battery.  With front-first tie-breaking the
+    charge block should occupy the first 30 min (m(0) → m(30)).
+
+    Export window (40 min = 8 steps) is longer than the 6 discharge steps
+    needed.  With tail-end-first tie-breaking the discharge block should
+    occupy the last 30 min (m(90) → m(120)).
+
+    step_kwh = 60 * 5/60 = 5.0,  capacity = 30 → n_levels = 6, start = 0.
+    """
+    events = compute_unified_schedule(
+        now_epoch=BASE,
+        horizon_end_epoch=BASE + 86400,
+        import_rates=[],
+        export_rates=[
+            {"start": m(80), "end": m(120), "price": 0.50},
+        ],
+        free_sessions=[
+            {"start": m(0), "end": m(40)},
+        ],
+        saving_window=None,
+        saving_bonus_events=[],
+        available_kwh=0,
+        capacity_kwh=30,
+        reserve_kwh=0,
+        power_rate_kw=60,   # step_kwh = 5.0
+        efficiency=0.9,
+        allow_discharge=True,
+        minimum_slot_length=0,
+        step_minutes=5,
+    )
+
+    charge_blocks = [e for e in events if e["intent"] == "Charge"]
+    discharge_blocks = [e for e in events if e["intent"] == "Discharge"]
+
+    assert len(charge_blocks) >= 1, f"No Charge events: {events}"
+    assert len(discharge_blocks) >= 1, f"No Discharge events: {events}"
+
+    # Charge starts at the start of the free-session window
+    first = charge_blocks[0]
+    assert first["start"] == m(0), (
+        f"Expected charge to start at m(0), got {first['start']}"
+    )
+
+    # Discharge ends at the end of the export window
+    last = discharge_blocks[-1]
+    assert last["end"] == m(120), (
+        f"Expected discharge to end at m(120), got {last['end']}"
+    )
+
+    # Discharge also starts at m(90) (last 30 min of a 40 min export window)
+    assert last["start"] == m(90), (
+        f"Expected discharge to start at m(90), got {last['start']}"
+    )
+
+
+def test_price_threshold_extends_charge_block():
+    """
+    When charge_price_threshold is set and a charge block starts during
+    a below-threshold price window, the block is extended to the end of
+    the continuous cheap window.  This prevents step-by-step re-evaluation
+    oscillation at near-100% SoC.
+
+    Scenario: cheap import (0.05, below 0.10 threshold) for 60 min, then
+    expensive (0.30, above threshold).  Battery empty → DP would charge 6
+    steps (30 kWh) which fits in the cheap window.  The charge block must
+    cover the FULL cheap window [m(0), m(60)], not stop after step 1.
+    """
+    import_rates = [
+        {"start": m(0),  "end": m(60),  "price": 0.05},   # below threshold
+        {"start": m(60), "end": m(120), "price": 0.30},  # above threshold
+    ]
+    events = compute_unified_schedule(
+        now_epoch=BASE,
+        horizon_end_epoch=BASE + 86400,
+        import_rates=import_rates,
+        export_rates=[],
+        free_sessions=[],
+        saving_window=None,
+        saving_bonus_events=[],
+        available_kwh=0,
+        capacity_kwh=30,
+        reserve_kwh=0,
+        power_rate_kw=60,
+        efficiency=0.9,
+        allow_discharge=True,
+        minimum_slot_length=5,
+        step_minutes=5,
+        charge_price_threshold=0.10,
+    )
+
+    charge_events = [e for e in events if e["intent"] == "Charge"]
+    assert len(charge_events) >= 1, f"No Charge event found: {events}"
+
+    # The charge block should span the entire cheap window [m(0), m(60)],
+    # not stop at the first DP step.
+    cheap_blocks = [
+        e for e in charge_events
+        if e["start"] == m(0) and e["end"] == m(60)
+    ]
+    assert len(cheap_blocks) >= 1, (
+        f"No Charge event exactly covering cheap window [m(0), m(60)]: "
+        f"{charge_events}"
+    )
+
+
+def test_no_extension_when_price_above_threshold():
+    """
+    When the import price is above charge_price_threshold throughout,
+    no charge events are scheduled at all (charge_value returns None).
+    """
+    import_rates = [
+        {"start": m(0),  "end": m(60),  "price": 0.30},  # above threshold
+        {"start": m(60), "end": m(120), "price": 0.30},
+    ]
+    events = compute_unified_schedule(
+        now_epoch=BASE,
+        horizon_end_epoch=BASE + 86400,
+        import_rates=import_rates,
+        export_rates=[],
+        free_sessions=[],
+        saving_window=None,
+        saving_bonus_events=[],
+        available_kwh=0,
+        capacity_kwh=30,
+        reserve_kwh=0,
+        power_rate_kw=60,
+        efficiency=0.9,
+        allow_discharge=True,
+        minimum_slot_length=5,
+        step_minutes=5,
+        charge_price_threshold=0.10,
+    )
+
+    charge_events = [e for e in events if e["intent"] == "Charge"]
+    # With price above threshold throughout, no charge should be scheduled.
+    assert charge_events == [], f"Expected no charge events above threshold: {events}"
