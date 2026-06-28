@@ -4,3 +4,30 @@
   filters:
     - filter: time_throttle
       window_size: "00:01"
+
+# ── Predbat pure-house-load energy (Riemann integration) ──────────────
+# Integrates sensor.predbat_house_load_power (pure house = envoy_consumption
+# - battery_charge + battery_discharge) into a cumulative kWh counter. This is
+# the ENERGY basis for the daily load_today Predbat reads -- the Envoy's own
+# energy_consumption_today counter is unusable because it BUNDLES battery
+# charging into "consumption" (proven: a 9.5 kW overnight battery charge shows
+# up as a phantom ~12 kW house-load spike in Predbat's plan).
+#
+# method: left (not trapezoidal): predbat_house_load_power is spiky and its
+# inputs update asynchronously (Envoy CT ~60s vs the 3 Encharge power sensors),
+# so the instantaneous subtraction transiently over/undershoots. Left-Riemann
+# holds each sample for its real duration instead of smearing adjacent spikes;
+# over a day the symmetric jitter cancels (verified: ~16.4 kWh/day, ~0.7 kW
+# mean, clamping negatives changes it by <0.1 kWh). max_sub_interval caps how
+# long a stale spike value can be integrated if the source stops updating.
+- platform: integration
+  name: "Predbat house load energy"
+  unique_id: predbat_house_load_energy
+  source: sensor.predbat_house_load_power
+  method: left
+  unit_prefix: k
+  unit_time: h
+  max_sub_interval:
+    minutes: 1
+  round: 3
+

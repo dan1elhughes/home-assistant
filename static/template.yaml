@@ -362,7 +362,8 @@
 # already nets battery charge/discharge. Predbat models the car and battery
 # separately, so it needs PURE house load and TRUE grid. We derive both:
 #   pure house  = envoy_consumption - battery_charge + battery_discharge
-#   true grid   = Zappi grid CT (the only sensor that sees the whole site)
+#   true grid   = myenergi hub import - export (meter-side, signed:
+#                 +ve = import, -ve = export, matching Predbat's convention)
 - sensor:
     - name: "Predbat house load power"
       unique_id: predbat_house_load_power
@@ -384,9 +385,17 @@
       device_class: power
       state_class: measurement
       unit_of_measurement: "W"
-      availability: "{{ has_value('sensor.myenergi_zappi_power_ct_grid') }}"
+      availability: >
+        {{ has_value('sensor.myenergi_myenergi_hub_power_import')
+           and has_value('sensor.myenergi_myenergi_hub_power_export') }}
       state: >
-        {{ states('sensor.myenergi_zappi_power_ct_grid') | float | round(0) }}
+        {# Predbat convention: grid_power +ve = import, -ve = export. The myenergi
+           hub (meter-side CT, sees the whole site incl. the car) reports import
+           and export as separate always-positive sensors, so we combine them
+           into one signed value. Cleaner/unambiguous vs the raw Zappi grid CT. #}
+        {% set imp = states('sensor.myenergi_myenergi_hub_power_import') | float(0) %}
+        {% set exp = states('sensor.myenergi_myenergi_hub_power_export') | float(0) %}
+        {{ (imp - exp) | round(0) }}
 
 - binary_sensor:
     - name: One-room mode
