@@ -3,7 +3,7 @@
   trigger:
     - platform: state
       entity_id:
-        - sensor.current_energy_intent
+        - sensor.predbat_intent
         - select.myenergi_zappi_charge_mode
         - switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
         - input_boolean.auto_enable_smart_charge
@@ -37,10 +37,9 @@
                 option: "Stopped"
         - alias: "Charge"
           conditions:
-            - alias: "Current energy intent is Charge"
-              condition: state
-              entity_id: sensor.current_energy_intent
-              state: "Charge"
+            - alias: "Predbat is charging battery"
+              condition: template
+              value_template: "{{ states('sensor.predbat_intent') is match('Chrg') }}"
             - alias: "Zappi currently stopped"
               condition: state
               entity_id: select.myenergi_zappi_charge_mode
@@ -58,12 +57,9 @@
                 option: "Fast"
         - alias: "Stop"
           conditions:
-            - alias: "Current energy intent is not Charge"
-              condition: not
-              conditions:
-                - condition: state
-                  entity_id: sensor.current_energy_intent
-                  state: "Charge"
+            - alias: "Predbat is not charging battery"
+              condition: template
+              value_template: "{{ states('sensor.predbat_intent') is not match('^(Chrg|FrzChrg)') }}"
             - alias: "Zappi currently fast"
               condition: state
               entity_id: select.myenergi_zappi_charge_mode
