@@ -49,70 +49,21 @@
       state: >
         {{ state_attr('weather.home', 'humidity') }}
 
-    - name: "Current energy intent"
-      icon: mdi:lightning-bolt
-      state: >
-        {% set events = state_attr('sensor.energy_intents_py', 'events') or [] %}
-        {% set now_time = now() %}
-        {% set ns = namespace(current_intent='Idle') %}
-        {# Sort events by start time to ensure deterministic ordering #}
-        {% set sorted_events = events | sort(attribute='start') %}
-        {% for event in sorted_events %}
-          {% if event.start and event.end %}
-            {% set start_dt = as_datetime(event.start) %}
-            {% set end_dt = as_datetime(event.end) %}
-            {# Use strict boundary: start <= now < end to avoid overlap at boundaries #}
-            {% if start_dt <= now_time < end_dt %}
-              {# Charge wins over Discharge on overlap (consistent with Energy intents) #}
-              {% if event.intent == 'Charge' or ns.current_intent == 'Idle' %}
-                {% set ns.current_intent = event.intent %}
-              {% endif %}
-            {% endif %}
-          {% endif %}
-        {% endfor %}
-        {{ ns.current_intent }}
-
-    - name: "Next energy intent"
+    - name: "Predbat intent"
       icon: mdi:calendar-clock
       state: >
-        {% set events = state_attr('sensor.energy_intents_py', 'events') or [] %}
-        {% set now_time = now() %}
-        {% set ns = namespace(found=false, intent='', start='', end='', is_current=false) %}
-
-        {# Sort events by start time to ensure deterministic ordering #}
-        {% set sorted_events = events | sort(attribute='start') %}
-
-        {% for event in sorted_events %}
-          {% if event.start %}
-            {% set start_dt = as_datetime(event.start) %}
-            {% set end_dt = as_datetime(event.end) if event.end is defined else None %}
-
-            {# current intent #}
-            {% if not ns.found and start_dt <= now_time and (end_dt is none or now_time < end_dt) %}
-              {% set ns.intent = event.intent %}
-              {% set ns.start = start_dt %}
-              {% set ns.end = end_dt %}
-              {% set ns.found = true %}
-              {% set ns.is_current = true %}
-            {% endif %}
-
-            {# next intent — only look at events that start after "now" #}
-            {% if not ns.found and start_dt > now_time %}
-              {% set ns.intent = event.intent %}
-              {% set ns.start = start_dt %}
-              {% set ns.found = true %}
-            {% endif %}
+        {% set rows = (state_attr('predbat.plan_html', 'raw') or {}).get('rows', []) %}
+        {% if rows and rows | length > 0 %}
+          {% set r = rows[0] %}
+          {% set st = r.state %}
+          {% set target = r.state_target | string %}
+          {% set ns = namespace(out=st) %}
+          {% if target and target | trim | length > 0 %}
+            {% set ns.out = st + ' → ' + target + '%' %}
           {% endif %}
-        {% endfor %}
-
-        {% if ns.found %}
-          {% if ns.is_current %}
-            {{ ns.intent }} until {{ ns.end.strftime('%H:%M') if ns.end else '?' }}
-          {% else %}
-            {{ ns.intent }} at {{ ns.start.strftime('%H:%M') }}
-          {% endif %}
+          {{ ns.out }}
         {% else %}
-          None
+          No plan
         {% endif %}
 
     - name: "Battery total power"
@@ -160,50 +111,6 @@
       state: >
         {{ (states('input_number.battery_energy_discharged_wh') | float(0)) / 1000 }}
 
-    - name: "Exportable battery"
-      unit_of_measurement: "Wh"
-      icon: mdi:battery-arrow-up-outline
-      state: >
-        {% set available = states('sensor.envoy_122322027694_available_battery_energy') | float(0) %}
-        {% set needed = states('sensor.power_requirement_until_cheap_slot') | float(0) %}
-        {% set diff = available - needed %}
-        {{ diff if diff > 0 else 0 }}
-
-    - name: "Power requirement until cheap slot"
-      unit_of_measurement: "Wh"
-      icon: mdi:flash
-      state: >
-        {% set idle_power = states('input_number.idle_power_draw') | float(0) %}
-        {% set soft_limit = states('input_number.battery_lower_discharge_limit') | float(0) %}
-        {% set hard_limit = states('input_number.battery_hard_lower_limit') | float(0) %}
-        {% set battery_capacity = states('sensor.envoy_122322027694_battery_capacity') | float(0) %}
-
-        {% set now_time = now() %}
-
-        {# Find the next charge slot from optimal_charge_slots #}
-        {% set charge_events = state_attr('sensor.optimal_charge_slots', 'events') or [] %}
-        {% set ns_cheap = namespace(next_start=none) %}
-        {% for event in charge_events %}
-          {% set event_start = as_datetime(event.start) %}
-          {% if event_start > now_time and ns_cheap.next_start is none %}
-            {% set ns_cheap.next_start = event_start %}
-          {% endif %}
-        {% endfor %}
-
-        {% if ns_cheap.next_start %}
-          {# Time until cheap slot starts #}
-          {% set hours_until_cheap = (ns_cheap.next_start - now_time).total_seconds() / 3600 %}
-
-          {# Calculate energy needed during this period plus soft limit, clamped to hard limit #}
-          {% set calculated = ((idle_power * hours_until_cheap) + soft_limit) | round(0) %}
-          {% set clamped = [calculated, hard_limit] | max %}
-          {{ [clamped, battery_capacity] | min }}
-        {% else %}
-          {# No cheap slot found — clamp soft limit to hard limit #}
-          {% set clamped = [soft_limit, hard_limit] | max %}
-          {{ [clamped, battery_capacity] | min }}
-        {% endif %}
-
     - name: "Office AC power filtered"
       unit_of_measurement: "W"
       device_class: power
@@ -214,148 +121,6 @@
         {% else %}
           0
         {% endif %}
-
-    - name: "Unified battery schedule inputs"
-      icon: mdi:code-json
-      state: >
-        {{ (state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates', 'rates') or []) | count }}
-      attributes:
-        now_epoch: >
-          {{ (as_timestamp(now()) | int) // 300 * 300 }}
-        step_minutes: >
-          {{ 5 }}
-        import_rates: >
-          {%- set ns = namespace(items=[]) -%}
-          {%- set now_epoch = (as_timestamp(now()) | int) // 300 * 300 -%}
-          {%- set auto_disable_smart_charge = states('input_boolean.auto_disable_smart_charge') -%}
-          {%- set smart_charge_end = states('input_datetime.smart_charge_end') -%}
-          {%- set smart_charge_on = states('switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge') -%}
-          {%- if smart_charge_on == 'on' and auto_disable_smart_charge == 'on' -%}
-          {%- set today_str = now().strftime('%Y-%m-%d') -%}
-          {%- set end_dt_str = today_str ~ ' ' ~ smart_charge_end -%}
-          {%- set end_epoch = as_timestamp(end_dt_str) | int -%}
-          {%- if end_epoch > now_epoch -%}
-          {%- set smart_charge_end_epoch = end_epoch -%}
-          {%- else -%}
-          {%- set smart_charge_end_epoch = none -%}
-          {%- endif -%}
-          {%- else -%}
-          {%- set smart_charge_end_epoch = none -%}
-          {%- endif -%}
-          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates', 'rates') or []) -%}
-          {%- if as_timestamp(r.end) | int >= now_epoch and (smart_charge_end_epoch is none or as_timestamp(r.start) | int < smart_charge_end_epoch) -%}
-          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start) | int, 'end': as_timestamp(r.end) | int, 'price': r.value_inc_vat}] -%}
-          {%- endif -%}
-          {%- endfor -%}
-          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_next_day_rates', 'rates') or []) -%}
-          {%- if as_timestamp(r.end) | int >= now_epoch and (smart_charge_end_epoch is none or as_timestamp(r.start) | int < smart_charge_end_epoch) -%}
-          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start) | int, 'end': as_timestamp(r.end) | int, 'price': r.value_inc_vat}] -%}
-          {%- endif -%}
-          {%- endfor -%}
-          {{ ns.items }}
-        export_rates: >
-          {%- set ns = namespace(items=[]) -%}
-          {%- set now_epoch = (as_timestamp(now()) | int) // 300 * 300 -%}
-          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or []) -%}
-          {%- if as_timestamp(r.end) | int >= now_epoch -%}
-          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start) | int, 'end': as_timestamp(r.end) | int, 'price': r.value_inc_vat}] -%}
-          {%- endif -%}
-          {%- endfor -%}
-          {%- for r in (state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_next_day_rates', 'rates') or []) -%}
-          {%- if as_timestamp(r.end) | int >= now_epoch -%}
-          {%- set ns.items = ns.items + [{'start': as_timestamp(r.start) | int, 'end': as_timestamp(r.end) | int, 'price': r.value_inc_vat}] -%}
-          {%- endif -%}
-          {%- endfor -%}
-          {{ ns.items }}
-        free_sessions: >
-          {%- set st = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session', 'start_time') -%}
-          {%- set et = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session', 'end_time') -%}
-          {%- if st is not none and et is not none -%}
-          {{ [{'start': as_timestamp(st) | int, 'end': as_timestamp(et) | int}] }}
-          {%- else -%}
-          {{ [] }}
-          {%- endif -%}
-        saving_window: >
-          {%- set st = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'start_time') -%}
-          {%- set et = state_attr('calendar.octopus_energy_a_fad3b08a_octoplus_saving_sessions', 'end_time') -%}
-          {%- if st is not none and et is not none -%}
-          {{ {'start': as_timestamp(st) | int, 'end': as_timestamp(et) | int} }}
-          {%- else -%}
-          {{ none }}
-          {%- endif -%}
-        saving_bonus_events: >
-          {%- set ns = namespace(items=[]) -%}
-          {%- set now_epoch = (as_timestamp(now()) | int) // 300 * 300 -%}
-          {%- for ev in (state_attr('event.octopus_energy_a_fad3b08a_octoplus_saving_session_events', 'joined_events') or []) -%}
-          {%- if as_timestamp(ev.end) | int >= now_epoch -%}
-          {%- set ns.items = ns.items + [{'start': as_timestamp(ev.start) | int, 'end': as_timestamp(ev.end) | int, 'bonus_pence': ev.octopoints_per_kwh / 800}] -%}
-          {%- endif -%}
-          {%- endfor -%}
-          {{ ns.items }}
-        available_kwh: >
-          {%- set v = states('sensor.envoy_122322027694_available_battery_energy') -%}
-          {%- if v in ('unavailable', 'unknown', 'none', '') -%}
-          {{ none }}
-          {%- else -%}
-          {{ (v | float) / 1000 }}
-          {%- endif -%}
-        capacity_kwh: >
-          {%- set v = states('sensor.envoy_122322027694_battery_capacity') -%}
-          {%- if v in ('unavailable', 'unknown', 'none', '') -%}
-          {{ none }}
-          {%- else -%}
-          {{ (v | float) / 1000 }}
-          {%- endif -%}
-        hard_lower_limit_kwh: >
-          {%- set v = states('input_number.battery_hard_lower_limit') -%}
-          {%- if v in ('unavailable', 'unknown', 'none', '') -%}
-          {{ none }}
-          {%- else -%}
-          {{ (v | float) / 1000 }}
-          {%- endif -%}
-        lower_discharge_limit_kwh: >
-          {%- set v = states('input_number.battery_lower_discharge_limit') -%}
-          {%- if v in ('unavailable', 'unknown', 'none', '') -%}
-          {{ 0.0 }}
-          {%- else -%}
-          {{ (v | float) / 1000 }}
-          {%- endif -%}
-        idle_power_kw: >
-          {%- set v = states('input_number.idle_power_draw') -%}
-          {%- if v in ('unavailable', 'unknown', 'none', '') -%}
-          {{ 0.0 }}
-          {%- else -%}
-          {{ (v | float) / 1000 }}
-          {%- endif -%}
-        reserve_kwh: >
-          {%- set v = states('input_number.battery_hard_lower_limit') -%}
-          {%- if v in ('unavailable', 'unknown', 'none', '') -%}
-          {{ 0.0 }}
-          {%- else -%}
-          {{ (v | float) / 1000 }}
-          {%- endif -%}
-        power_rate_kw: >
-          {{ states('input_number.battery_power_rate_kw') | float(9.6) }}
-        efficiency: >
-          {{ states('input_number.battery_round_trip_efficiency') | float(0.9) }}
-        minimum_slot_length: >
-          {{ states('input_number.minimum_slot_length') | int(5) }}
-        allow_discharge: >
-          {{ states('input_boolean.allow_discharge') == 'on' }}
-        charge_price_threshold: >
-          {{ states('input_number.charge_price_threshold') | float(1.0) }}
-        discharge_price_threshold: >
-          {{ states('input_number.discharge_price_threshold') | float(0.0) }}
-        horizon_end_epoch: >
-          {%- set now_epoch = (as_timestamp(now()) | int) // 300 * 300 -%}
-          {%- set import_rates = (state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_current_day_rates', 'rates') or []) + (state_attr('event.octopus_energy_electricity_15p0706167_2000050773706_next_day_rates', 'rates') or []) -%}
-          {%- set export_rates = (state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_current_day_rates', 'rates') or []) + (state_attr('event.octopus_energy_electricity_15p0706167_2000060833200_export_next_day_rates', 'rates') or []) -%}
-          {%- set ends = (import_rates | map(attribute='end') | map('as_timestamp') | map('int') | list) + (export_rates | map(attribute='end') | map('as_timestamp') | map('int') | list) -%}
-          {%- if ends | count > 0 -%}
-          {{ ends | max }}
-          {%- else -%}
-          {{ now_epoch }}
-          {%- endif -%}
 
 # ── Predbat power inputs ──────────────────────────────────────────────
 # The Envoy can't see the car (separate circuit) and its "consumption" CT

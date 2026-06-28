@@ -79,7 +79,7 @@ views:
                 entity: sensor.envoy_122322027694_battery
                 show_icon: false
               - type: entity
-                entity: sensor.next_energy_intent
+                entity: sensor.predbat_intent
                 show_icon: false
           - type: sensor
             name: Power
@@ -91,42 +91,6 @@ views:
             entity: sensor.envoy_122322027694_available_battery_energy
             graph: line
             detail: 2
-          - type: markdown
-            content: >
-              {% raw %}
-              {%- set events = state_attr('sensor.energy_intents_py', 'events') %}
-              {%- if events %}
-              {%- set ns = namespace(items=[]) %}
-              {%- for event in events | sort(attribute='start') %}
-              {%- set start_local = as_local(as_datetime(event.start)) %}
-              {%- set end_local = as_local(as_datetime(event.end)) %}
-              {%- set intent = event.intent | lower %}
-              {%- set import_price = event.import_price | default(none, true) %}
-              {%- set export_price = event.export_price | default(none, true) %}
-              {%- set rate_display = '' %}
-              {%- if intent == 'charge' and import_price is not none %}
-              {%- set rate_display = ' @ ' ~ '%.1f'|format(import_price * 100) ~ 'p' %}
-              {%- elif intent == 'discharge' and export_price is not none %}
-              {%- set rate_display = ' @ ' ~ '%.1f'|format(export_price * 100) ~ 'p' %}
-              {%- endif %}
-              {%- set start_day = start_local.strftime('%a') %}
-              {%- set end_day = end_local.strftime('%a') %}
-              {%- set start_time = start_local.strftime('%H:%M') %}
-              {%- set end_time = end_local.strftime('%H:%M') %}
-              {%- if start_day == end_day %}
-              {%- set time_range = start_day ~ ' ' ~ start_time ~ ' - ' ~ end_time %}
-              {%- else %}
-              {%- set time_range = start_day ~ ' ' ~ start_time ~ ' - ' ~ end_day ~ ' ' ~ end_time %}
-              {%- endif %}
-              {%- set line = '- ' ~ time_range ~ ': **' ~ event.intent ~ '**' ~ rate_display %}
-              {%- set ns.items = ns.items + [line] %}
-              {%- endfor %}
-              {{- ns.items | join('\n') }}
-
-              {%- else %}
-              No scheduled intents
-              {%- endif %}
-              {% endraw %}
 
       - type: grid
         cards:
@@ -228,15 +192,6 @@ views:
             heading: Battery management
             heading_style: title
             icon: mdi:battery
-          - type: history-graph
-            hours_to_show: 10
-            entities:
-              - entity: sensor.power_requirement_until_cheap_slot
-                name: Energy needed
-              - entity: sensor.envoy_122322027694_available_battery_energy
-                name: Energy available
-            max_y_axis: 15000
-            min_y_axis: 0
           - type: vertical-stack
             cards:
               - type: tile
