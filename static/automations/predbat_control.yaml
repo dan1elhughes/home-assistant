@@ -1,0 +1,319 @@
+- alias: "Predbat control"
+  mode: single
+  description: "Reads Predbat's charge/export plan and updates Enphase battery schedules via enphase_envoy_cloud_control."
+  trigger:
+    - platform: state
+      entity_id: predbat.best_charge_start
+    - platform: state
+      entity_id: predbat.best_charge_end
+    - platform: state
+      entity_id: predbat.best_charge_limit
+    - platform: state
+      entity_id: predbat.best_export_start
+    - platform: state
+      entity_id: predbat.best_export_end
+    - platform: state
+      entity_id: predbat.best_export_limit
+  condition:
+    - condition: not
+      conditions:
+        - condition: state
+          entity_id: sensor.enphase_schedules_summary
+          state: unavailable
+  action:
+    - alias: "Extract Predbat plan"
+      variables:
+        charge_start_raw: "{{ states('predbat.best_charge_start') }}"
+        charge_end_raw: "{{ states('predbat.best_charge_end') }}"
+        charge_limit_raw: "{{ states('predbat.best_charge_limit') }}"
+        export_start_raw: "{{ states('predbat.best_export_start') }}"
+        export_end_raw: "{{ states('predbat.best_export_end') }}"
+        export_limit_raw: "{{ states('predbat.best_export_limit') }}"
+        current_schedules: "{{ state_attr('sensor.enphase_schedules_summary', 'schedules') or [] }}"
+
+    - alias: "Build desired schedules from Predbat plan"
+      variables:
+        desired_schedules: >
+          {% set ns = namespace(list=[]) %}
+          {% set charge_start_ts = state_attr('predbat.best_charge_start', 'timestamp') %}
+          {% set charge_end_ts = state_attr('predbat.best_charge_end', 'timestamp') %}
+          {% if charge_start_raw not in ['unknown','unavailable','23:59:00'] and charge_end_raw not in ['unknown','unavailable','23:59:00'] and charge_start_ts and charge_end_ts %}
+            {% set d = as_datetime(charge_start_ts).isoweekday() %}
+            {% set ss = as_datetime(charge_start_ts).strftime('%H:%M') %}
+            {% set se = as_datetime(charge_end_ts).strftime('%H:%M') %}
+            {% set l = charge_limit_raw | int %}
+            {% if l > 0 %}
+              {% set ns.list = ns.list + [{'type': 'cfg', 'day': d, 'start_time': ss, 'end_time': se, 'limit': l}] %}
+            {% endif %}
+          {% endif %}
+          {% set export_start_ts = state_attr('predbat.best_export_start', 'timestamp') %}
+          {% set export_end_ts = state_attr('predbat.best_export_end', 'timestamp') %}
+          {% if export_start_raw not in ['unknown','unavailable','23:59:00'] and export_end_raw not in ['unknown','unavailable','23:59:00'] and export_start_ts and export_end_ts %}
+            {% set d = as_datetime(export_start_ts).isoweekday() %}
+            {% set ss = as_datetime(export_start_ts).strftime('%H:%M') %}
+            {% set se = as_datetime(export_end_ts).strftime('%H:%M') %}
+            {% set l = export_limit_raw | int %}
+            {% if l > 0 %}
+              {% set ns.list = ns.list + [{'type': 'dtg', 'day': d, 'start_time': ss, 'end_time': se, 'limit': l}] %}
+            {% endif %}
+          {% endif %}
+          {{ ns.list }}
+
+        charge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'cfg') | list | length > 0 }}"
+        discharge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'dtg') | list | length > 0 }}"
+
+    - alias: "Compute schedule mutation plan"
+      variables:
+        mutation_plan: >
+          {% set ns = namespace(used_ids=[], to_update=[], to_add=[], to_delete=[]) %}
+          {% for desired in desired_schedules %}
+            {% set best_match = none %}
+            {% for existing in current_schedules %}
+              {% if existing.id not in ns.used_ids and existing.type == desired.type %}
+                {% for day in existing.days %}
+                  {% if day == desired.day and best_match is none %}
+                    {% set best_match = existing %}
+                  {% endif %}
+                {% endfor %}
+              {% endif %}
+            {% endfor %}
+            {% if best_match is not none %}
+              {% set ns.used_ids = ns.used_ids + [best_match.id] %}
+              {% if best_match.start != desired.start_time or best_match.end != desired.end_time or (best_match.limit | string) != (desired.limit | string) %}
+                {% set ns.to_update = ns.to_update + [{'existing_id': best_match.id, 'desired': desired}] %}
+              {% endif %}
+            {% else %}
+              {% set ns.to_add = ns.to_add + [desired] %}
+            {% endif %}
+          {% endfor %}
+          {% for existing in current_schedules %}
+            {% if existing.id not in ns.used_ids %}
+              {% set ns.to_delete = ns.to_delete + [existing] %}
+            {% endif %}
+          {% endfor %}
+          {{ {
+            'to_update': ns.to_update,
+            'to_add': ns.to_add,
+            'to_delete': ns.to_delete
+          } }}
+
+    - alias: "Log Predbat plan"
+      action: system_log.write
+      data:
+        logger: PredbatControl
+        level: info
+        message: >-
+          Predbat plan: {{ charge_start_raw }}-{{ charge_end_raw }} (charge to {{ charge_limit_raw }}%),
+          {{ export_start_raw }}-{{ export_end_raw }} (export to {{ export_limit_raw }}%);
+          existing schedules: {{ current_schedules | length }}, desired: {{ desired_schedules | length }};
+          updates: {{ mutation_plan.to_update | length }}, adds: {{ mutation_plan.to_add | length }}, deletes: {{ mutation_plan.to_delete | length }}
+
+    - alias: "Update existing schedules"
+      repeat:
+        for_each: "{{ mutation_plan.to_update }}"
+        sequence:
+          - alias: "Log schedule update"
+            action: system_log.write
+            data:
+              logger: PredbatControl
+              level: info
+              message: >-
+                Updating schedule {{ repeat.item.existing_id }}:
+                {{ repeat.item.desired.type }} day {{ repeat.item.desired.day }},
+                {{ repeat.item.desired.start_time }}-{{ repeat.item.desired.end_time }} ({{ repeat.item.desired.limit }})
+
+          - alias: "Update schedule via service"
+            action: enphase_envoy_cloud_control.update_schedule
+            data:
+              schedule_id: "{{ repeat.item.existing_id }}"
+              schedule_type: "{{ repeat.item.desired.type }}"
+              start_time: "{{ repeat.item.desired.start_time }}"
+              end_time: "{{ repeat.item.desired.end_time }}"
+              limit: "{{ repeat.item.desired.limit }}"
+              days:
+                - "{{ repeat.item.desired.day }}"
+              confirm: true
+
+          - delay: "00:00:02"
+
+    - alias: "Delete unused schedules"
+      repeat:
+        for_each: "{{ mutation_plan.to_delete }}"
+        sequence:
+          - alias: "Log schedule deletion"
+            action: system_log.write
+            data:
+              logger: PredbatControl
+              level: info
+              message: "Deleting schedule {{ repeat.item.id }}: {{ repeat.item.type }}"
+
+          - alias: "Select schedule to delete"
+            action: select.select_option
+            target:
+              entity_id: select.enphase_schedule_selected
+            data:
+              option: "{{ repeat.item.id }}"
+
+          - delay: "00:00:01"
+
+          - alias: "Delete selected schedule"
+            action: button.press
+            target:
+              entity_id: button.schedule_delete
+
+          - delay: "00:00:01"
+
+    - alias: "Add new schedules"
+      repeat:
+        for_each: "{{ mutation_plan.to_add }}"
+        sequence:
+          - alias: "Log schedule creation"
+            action: system_log.write
+            data:
+              logger: PredbatControl
+              level: info
+              message: >-
+                Adding {{ repeat.item.type }} schedule:
+                {{ repeat.item.start_time }}-{{ repeat.item.end_time }}
+                (limit {{ repeat.item.limit }}, day {{ repeat.item.day }})
+
+          - alias: "Set schedule type"
+            action: select.select_option
+            target:
+              entity_id: select.enphase_new_schedule_type
+            data:
+              option: "{{ repeat.item.type }}"
+
+          - alias: "Set start time"
+            action: time.set_value
+            target:
+              entity_id: time.enphase_new_schedule_start
+            data:
+              time: "{{ repeat.item.start_time }}"
+
+          - alias: "Set end time"
+            action: time.set_value
+            target:
+              entity_id: time.enphase_new_schedule_end
+            data:
+              time: "{{ repeat.item.end_time }}"
+
+          - alias: "Set limit"
+            action: number.set_value
+            target:
+              entity_id: number.enphase_new_schedule_limit
+            data:
+              value: "{{ repeat.item.limit }}"
+
+          - alias: "Disable all weekday switches"
+            action: homeassistant.turn_off
+            target:
+              entity_id:
+                - switch.enphase_new_schedule_mon
+                - switch.enphase_new_schedule_tue
+                - switch.enphase_new_schedule_wed
+                - switch.enphase_new_schedule_thu
+                - switch.enphase_new_schedule_fri
+                - switch.enphase_new_schedule_sat
+                - switch.enphase_new_schedule_sun
+
+          - alias: "Enable selected weekday"
+            action: homeassistant.turn_on
+            target:
+              entity_id: >
+                {% set day_entities = {
+                  0: 'switch.enphase_new_schedule_mon',
+                  1: 'switch.enphase_new_schedule_tue',
+                  2: 'switch.enphase_new_schedule_wed',
+                  3: 'switch.enphase_new_schedule_thu',
+                  4: 'switch.enphase_new_schedule_fri',
+                  5: 'switch.enphase_new_schedule_sat',
+                  6: 'switch.enphase_new_schedule_sun'
+                } %}
+                {{ [day_entities[repeat.item.day - 1]] }}
+
+          - delay: "00:00:02"
+
+          - alias: "Add the schedule"
+            action: button.press
+            target:
+              entity_id: button.new_schedule_add
+
+          - delay: "00:00:02"
+
+    - alias: "Enable/disable CFG based on charge plan"
+      if:
+        - condition: template
+          value_template: "{{ charge_exists }}"
+      then:
+        - alias: "Log CFG enable"
+          action: system_log.write
+          data:
+            logger: PredbatControl
+            level: info
+            message: "Enabling CFG (charge from grid)"
+
+        - alias: "Enable CFG mode"
+          action: homeassistant.turn_on
+          target:
+            entity_id: switch.enphase_cfg_mode
+      else:
+        - alias: "Log CFG disable"
+          action: system_log.write
+          data:
+            logger: PredbatControl
+            level: info
+            message: "Disabling CFG (no charge scheduled)"
+
+        - alias: "Disable CFG mode"
+          action: homeassistant.turn_off
+          target:
+            entity_id: switch.enphase_cfg_mode
+
+    - alias: "Enable/disable DTG based on export plan"
+      if:
+        - condition: template
+          value_template: "{{ discharge_exists }}"
+      then:
+        - alias: "Log DTG enable"
+          action: system_log.write
+          data:
+            logger: PredbatControl
+            level: info
+            message: "Enabling DTG (discharge to grid)"
+
+        - alias: "Enable DTG mode"
+          action: homeassistant.turn_on
+          target:
+            entity_id: switch.enphase_dtg_mode
+      else:
+        - alias: "Log DTG disable"
+          action: system_log.write
+          data:
+            logger: PredbatControl
+            level: info
+            message: "Disabling DTG (no export scheduled)"
+
+        - alias: "Disable DTG mode"
+          action: homeassistant.turn_off
+          target:
+            entity_id: switch.enphase_dtg_mode
+
+    - alias: "Force cloud refresh"
+      action: system_log.write
+      data:
+        logger: PredbatControl
+        level: info
+        message: "Forcing cloud refresh"
+
+    - alias: "Press cloud refresh button"
+      action: button.press
+      target:
+        entity_id: button.force_cloud_refresh
+
+    - alias: "Log schedule update complete"
+      action: system_log.write
+      data:
+        logger: PredbatControl
+        level: info
+        message: "Predbat schedule update complete"

@@ -271,6 +271,10 @@ views:
                 name: Enphase control
                 entity: automation.enphase_control
                 icon: mdi:home-battery
+              - type: tile
+                name: Predbat control
+                entity: automation.predbat_control
+                icon: mdi:robot
 
               - type: markdown
                 content: >
