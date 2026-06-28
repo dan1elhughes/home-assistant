@@ -28,7 +28,7 @@
         charge_limit_raw: "{{ states('predbat.best_charge_limit') }}"
         export_start_raw: "{{ states('predbat.best_export_start') }}"
         export_end_raw: "{{ states('predbat.best_export_end') }}"
-        export_limit_raw: "{{ states('predbat.best_export_limit') }}"
+        soc_kw_results: "{{ state_attr('predbat.soc_kw_best', 'results') or {} }}"
         current_schedules: "{{ state_attr('sensor.enphase_schedules_summary', 'schedules') or [] }}"
 
     - alias: "Build desired schedules from Predbat plan"
@@ -52,7 +52,12 @@
             {% set d = as_datetime(export_start_ts).isoweekday() %}
             {% set ss = as_datetime(export_start_ts).strftime('%H:%M') %}
             {% set se = as_datetime(export_end_ts).strftime('%H:%M') %}
-            {% set l = export_limit_raw | int %}
+            {% if soc_kw_results is mapping and export_end_ts in soc_kw_results %}
+              {% set soc_at_end = soc_kw_results[export_end_ts] | float(0) %}
+            {% else %}
+              {% set soc_at_end = 0 %}
+            {% endif %}
+            {% set l = (soc_at_end / 15.0 * 100) | round(0) | int %}
             {% if l > 0 %}
               {% set ns.list = ns.list + [{'type': 'dtg', 'day': d, 'start_time': ss, 'end_time': se, 'limit': l}] %}
             {% endif %}
