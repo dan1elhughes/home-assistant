@@ -20,7 +20,6 @@ script: !include scripts.yaml
 sensor: !include sensor.yaml
 template: !include template.yaml
 timer: !include timer.yaml
-utility_meter: !include utility_meter.yaml
 
 frontend:
   themes: !include_dir_merge_named themes
