@@ -362,6 +362,19 @@ views:
               {% endif %}
               {% endraw %}
 
+  - type: panel
+    title: Predbat
+    path: predbat
+    icon: mdi:chart-bell-curve
+    cards:
+      - type: custom:html-template-card
+        title: Battery plan
+        ignore_line_breaks: true
+        content: |
+          {% raw %}
+          {{ state_attr('predbat.plan_html', 'html') }}
+          {% endraw %}
+
   - type: sections
     max_columns: 4
     title: Devices
