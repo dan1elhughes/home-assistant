@@ -19,21 +19,6 @@ thermostat_low:
   max: 18
   step: 0.5
 
-battery_power_rate_kw:
-  name: Battery power rate
-  min: 0
-  max: 20
-  step: 0.1
-  initial: 9.6
-  unit_of_measurement: "kW"
-
-idle_power_draw:
-  name: Idle power draw
-  unit_of_measurement: "W"
-  min: 0
-  max: 2000
-  step: 50
-
 co2_yellow_threshold:
   name: CO2 yellow threshold
   min: 0
@@ -78,35 +63,6 @@ battery_energy_discharged_wh:
   step: 0.1
   mode: box
 
-battery_round_trip_efficiency:
-  name: Battery round trip efficiency
-  min: 0.5
-  max: 1.0
-  step: 0.01
-  initial: 0.9
-  unit_of_measurement: "%"
-
-battery_hard_lower_limit:
-  name: Battery hard lower limit
-  unit_of_measurement: "Wh"
-  min: 0
-  max: 2000
-  step: 50
-
-battery_lower_discharge_limit:
-  name: Battery lower discharge limit
-  unit_of_measurement: "Wh"
-  min: 0
-  max: 15000
-  step: 50
-
-battery_upper_charge_limit:
-  name: Battery upper charge limit
-  unit_of_measurement: "%"
-  min: 0
-  max: 100
-  step: 1
-
 barn_ac_default_temp:
   name: Barn AC default temperature
   unit_of_measurement: "°C"
@@ -121,23 +77,4 @@ office_ac_default_temp:
   max: 30
   step: 1
 
-minimum_slot_length:
-  name: Minimum slot length
-  unit_of_measurement: min
-  min: 0
-  max: 60
-  step: 1
-
-charge_price_threshold:
-  name: Charge price threshold
-  unit_of_measurement: "£/kWh"
-  min: 0.01
-  max: 1
-  step: 0.01
-
-discharge_price_threshold:
-  name: Discharge price threshold
-  unit_of_measurement: "£/kWh"
-  min: 0.01
-  max: 1
-  step: 0.01
+# ── End of battery optimiser inputs ──

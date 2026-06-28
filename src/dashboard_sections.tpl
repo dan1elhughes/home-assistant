@@ -195,38 +195,6 @@ views:
           - type: vertical-stack
             cards:
               - type: tile
-                name: Idle power draw
-                entity: input_number.idle_power_draw
-                icon: mdi:power-plug-outline
-                features:
-                  - style: buttons
-                    type: numeric-input
-                features_position: inline
-              - type: tile
-                name: Charge limit
-                entity: input_number.battery_upper_charge_limit
-                icon: mdi:home-battery
-                features:
-                  - style: buttons
-                    type: numeric-input
-                features_position: inline
-              - type: tile
-                name: Discharge limit
-                entity: input_number.battery_lower_discharge_limit
-                icon: mdi:home-battery-outline
-                features:
-                  - style: buttons
-                    type: numeric-input
-                features_position: inline
-              - type: tile
-                name: Allow discharge
-                entity: input_boolean.allow_discharge
-                icon: mdi:battery-arrow-up-outline
-              - type: tile
-                name: Enphase control
-                entity: automation.enphase_control
-                icon: mdi:home-battery
-              - type: tile
                 name: Predbat control
                 entity: automation.predbat_control
                 icon: mdi:robot
