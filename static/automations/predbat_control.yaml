@@ -14,6 +14,8 @@
       entity_id: predbat.best_export_end
     - platform: state
       entity_id: predbat.best_export_limit
+    - platform: time_pattern
+      minutes: "/15"
   condition:
     - condition: not
       conditions:
