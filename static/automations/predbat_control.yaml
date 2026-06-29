@@ -149,6 +149,33 @@
           existing: {{ current_schedules | length }}, desired: {{ desired_schedules | length }};
           updates: {{ mutation_plan.to_update | length }}, adds: {{ mutation_plan.to_add | length }}, deletes: {{ mutation_plan.to_delete | length }}
 
+    - alias: "Delete unused schedules"
+      repeat:
+        for_each: "{{ mutation_plan.to_delete }}"
+        sequence:
+          - alias: "Log schedule deletion"
+            action: system_log.write
+            data:
+              logger: PredbatControl
+              level: info
+              message: "Deleting schedule {{ repeat.item.id }}: {{ repeat.item.type }}"
+
+          - alias: "Select schedule to delete"
+            action: select.select_option
+            target:
+              entity_id: select.enphase_schedule_selected
+            data:
+              option: "{{ repeat.item.id }}"
+
+          - delay: "00:00:01"
+
+          - alias: "Delete selected schedule"
+            action: button.press
+            target:
+              entity_id: button.schedule_delete
+
+          - delay: "00:00:01"
+
     - alias: "Update existing schedules"
       repeat:
         for_each: "{{ mutation_plan.to_update }}"
@@ -176,33 +203,6 @@
               confirm: true
 
           - delay: "00:00:02"
-
-    - alias: "Delete unused schedules"
-      repeat:
-        for_each: "{{ mutation_plan.to_delete }}"
-        sequence:
-          - alias: "Log schedule deletion"
-            action: system_log.write
-            data:
-              logger: PredbatControl
-              level: info
-              message: "Deleting schedule {{ repeat.item.id }}: {{ repeat.item.type }}"
-
-          - alias: "Select schedule to delete"
-            action: select.select_option
-            target:
-              entity_id: select.enphase_schedule_selected
-            data:
-              option: "{{ repeat.item.id }}"
-
-          - delay: "00:00:01"
-
-          - alias: "Delete selected schedule"
-            action: button.press
-            target:
-              entity_id: button.schedule_delete
-
-          - delay: "00:00:01"
 
     - alias: "Add new schedules"
       repeat:
