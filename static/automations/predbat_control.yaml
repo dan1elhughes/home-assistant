@@ -36,6 +36,7 @@
                   'start_time': as_datetime(r.time).strftime('%H:%M'),
                   'end_time': (as_datetime(r.time) + timedelta(minutes=30)).strftime('%H:%M'),
                   'limit': (r.state_target | string) | int(0),
+                  'first_time': r.time,
                   'last_time': r.time
                 } %}
               {% elif ns.current_group.type == block_type %}
@@ -54,6 +55,7 @@
                     'start_time': row_ts.strftime('%H:%M'),
                     'end_time': (row_ts + timedelta(minutes=30)).strftime('%H:%M'),
                     'limit': (r.state_target | string) | int(0),
+                    'first_time': r.time,
                     'last_time': r.time
                   } %}
                 {% endif %}
@@ -67,6 +69,7 @@
                   'start_time': as_datetime(r.time).strftime('%H:%M'),
                   'end_time': (as_datetime(r.time) + timedelta(minutes=30)).strftime('%H:%M'),
                   'limit': (r.state_target | string) | int(0),
+                  'first_time': r.time,
                   'last_time': r.time
                 } %}
               {% endif %}
@@ -79,11 +82,20 @@
           {% for i in range(ns.list | length) %}
             {% set sched = ns.list[i] %}
             {% if i > 0 and ns.list[i-1].type != sched.type %}
-              {% set prev = ns2.list[-1] %}
-              {% set prev_end_dt = as_datetime(prev.last_time) + timedelta(minutes=25) %}
-              {% set prev_new_end = prev_end_dt.strftime('%H:%M') %}
-              {% set updated_prev = dict(prev, end_time=prev_new_end) %}
-              {% set ns2.list = ns2.list[:-1] + [updated_prev] %}
+              {# Only shorten when the previous schedule ends exactly when the
+                 current one starts — i.e. they're truly back-to-back and the
+                 inverter needs a gap to switch modes. Non-adjacent schedules
+                 (e.g. charge ends 05:30, discharge starts 18:30) already have
+                 a natural gap and must not be shortened. #}
+              {% set prev_end = as_datetime(ns.list[i-1].last_time) + timedelta(minutes=30) %}
+              {% set curr_start = as_datetime(sched.first_time) %}
+              {% if prev_end == curr_start %}
+                {% set prev = ns2.list[-1] %}
+                {% set prev_end_dt = as_datetime(prev.last_time) + timedelta(minutes=25) %}
+                {% set prev_new_end = prev_end_dt.strftime('%H:%M') %}
+                {% set updated_prev = dict(prev, end_time=prev_new_end) %}
+                {% set ns2.list = ns2.list[:-1] + [updated_prev] %}
+              {% endif %}
             {% endif %}
             {% set ns2.list = ns2.list + [sched] %}
           {% endfor %}
