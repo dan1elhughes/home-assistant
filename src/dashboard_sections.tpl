@@ -295,11 +295,11 @@ views:
     path: predbat
     icon: mdi:chart-bell-curve
     sections:
-      # ── Status row ───────────────────────────────────────────────
+      # ── Status + controls ──────────────────────────────────────────
       - type: grid
         cards:
           - type: heading
-            heading: Status
+            heading: Predbat
             heading_style: title
           - type: tile
             entity: sensor.predbat_intent
@@ -309,82 +309,14 @@ views:
               - state
               - last-changed
           - type: tile
-            entity: predbat.soc_kw_h0
-            name: Battery
-            icon: mdi:home-battery
-            state_content: state
-          - type: tile
             entity: select.predbat_mode
             name: Mode
             icon: mdi:cog
             state_content: state
           - type: tile
-            entity: predbat.cost_today
-            name: Cost today
-            icon: mdi:cash
-            state_content: state
-          - type: tile
-            entity: predbat.savings_yesterday_predbat
-            name: Saved yesterday
-            icon: mdi:piggy-bank-outline
-            state_content: state
-
-      # ── Forecast ─────────────────────────────────────────────────
-      - type: grid
-        cards:
-          - type: heading
-            heading: Forecast
-            heading_style: title
-          - type: tile
-            entity: sensor.predbat_pv_today
-            name: PV today
-            icon: mdi:solar-power
-            state_content: state
-          - type: tile
-            entity: sensor.predbat_pv_tomorrow
-            name: PV tomorrow
-            icon: mdi:solar-power-variant
-            state_content: state
-          - type: tile
-            entity: predbat.load_energy
-            name: House load
-            icon: mdi:home-lightning-bolt
-            state_content: state
-          - type: tile
-            entity: predbat.import_energy
-            name: Grid import
-            icon: mdi:transmission-tower-import
-            state_content: state
-          - type: tile
-            entity: predbat.best_export_energy
-            name: Grid export
-            icon: mdi:transmission-tower-export
-            state_content: state
-
-      # ── Controls ─────────────────────────────────────────────────
-      - type: grid
-        cards:
-          - type: heading
-            heading: Controls
-            heading_style: title
-          - type: tile
             entity: input_number.predbat_holiday_days_left
             name: Holiday days
             icon: mdi:beach
-            state_content:
-              - state
-              - last-changed
-          - type: tile
-            entity: switch.predbat_set_read_only
-            name: Read only
-            icon: mdi:lock
-            state_content:
-              - state
-              - last-changed
-          - type: tile
-            entity: switch.predbat_active
-            name: Recalculating
-            icon: mdi:refresh
             state_content:
               - state
               - last-changed
@@ -402,11 +334,17 @@ views:
             state_content:
               - state
               - last-changed
+          - type: markdown
+            content: >
+              {% raw %}
+              Last plan: **{{ relative_time(states('predbat.last_started')) }}**
+              {% endraw %}
+
       # ── Full plan ────────────────────────────────────────────────
       - type: grid
         cards:
           - type: heading
-            heading: Battery plan
+            heading: Schedule
             heading_style: title
           - type: custom:html-template-card
             ignore_line_breaks: true
@@ -414,6 +352,8 @@ views:
               {% raw %}
               {{ state_attr('predbat.plan_html', 'html') }}
               {% endraw %}
+            grid_options:
+              columns: full
 
   - type: sections
     max_columns: 4
