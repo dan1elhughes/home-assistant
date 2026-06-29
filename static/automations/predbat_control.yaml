@@ -1,6 +1,6 @@
 - alias: "Predbat control"
   mode: single
-  description: "Reads Predbat's charge/export plan and updates Enphase battery schedules via enphase_envoy_cloud_control."
+  description: "Reads Predbat's charge/export plan and updates Enphase battery schedules via enphase_envoy_cloud_control. Mutates existing schedules in-place where possible to avoid mode toggling and API churn."
   trigger:
     - platform: state
       entity_id: predbat.plan_html
@@ -97,20 +97,20 @@
         mutation_plan: >
           {% set ns = namespace(used_ids=[], to_update=[], to_add=[], to_delete=[]) %}
           {% for desired in desired_schedules %}
-            {% set best_match = none %}
+            {% set match_ns = namespace(best_match=none) %}
             {% for existing in current_schedules %}
               {% if existing.id not in ns.used_ids and existing.type == desired.type %}
                 {% for day in existing.days %}
-                  {% if day == desired.day and best_match is none %}
-                    {% set best_match = existing %}
+                  {% if day == desired.day and match_ns.best_match is none %}
+                    {% set match_ns.best_match = existing %}
                   {% endif %}
                 {% endfor %}
               {% endif %}
             {% endfor %}
-            {% if best_match is not none %}
-              {% set ns.used_ids = ns.used_ids + [best_match.id] %}
-              {% if best_match.start != desired.start_time or best_match.end != desired.end_time or (best_match.limit | string) != (desired.limit | string) %}
-                {% set ns.to_update = ns.to_update + [{'existing_id': best_match.id, 'desired': desired}] %}
+            {% if match_ns.best_match is not none %}
+              {% set ns.used_ids = ns.used_ids + [match_ns.best_match.id] %}
+              {% if match_ns.best_match.start != desired.start_time or match_ns.best_match.end != desired.end_time or (match_ns.best_match.limit | string) != (desired.limit | string) %}
+                {% set ns.to_update = ns.to_update + [{'existing_id': match_ns.best_match.id, 'desired': desired}] %}
               {% endif %}
             {% else %}
               {% set ns.to_add = ns.to_add + [desired] %}
@@ -149,7 +149,7 @@
               message: >-
                 Updating schedule {{ repeat.item.existing_id }}:
                 {{ repeat.item.desired.type }} day {{ repeat.item.desired.day }},
-                {{ repeat.item.desired.start_time }}-{{ repeat.item.desired.end_time }} ({{ repeat.item.desired.limit }})
+                {{ repeat.item.desired.start_time }}-{{ repeat.item.desired.end_time }} (limit {{ repeat.item.desired.limit }})
 
           - alias: "Update schedule via service"
             action: enphase_envoy_cloud_control.update_schedule
@@ -163,7 +163,7 @@
                 - "{{ repeat.item.desired.day }}"
               confirm: true
 
-          - delay: "00:00:05"
+          - delay: "00:00:02"
 
     - alias: "Delete unused schedules"
       repeat:
@@ -261,7 +261,7 @@
                 } %}
                 {{ [day_entities[repeat.item.day - 1]] }}
 
-          - delay: "00:00:05"
+          - delay: "00:00:02"
 
           - alias: "Add the schedule"
             action: button.press
