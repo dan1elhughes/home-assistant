@@ -25,45 +25,30 @@
   action:
     - alias: "Extract Predbat plan"
       variables:
-        charge_start_raw: "{{ states('predbat.best_charge_start') }}"
-        charge_end_raw: "{{ states('predbat.best_charge_end') }}"
-        charge_limit_raw: "{{ states('predbat.best_charge_limit') }}"
-        export_start_raw: "{{ states('predbat.best_export_start') }}"
-        export_end_raw: "{{ states('predbat.best_export_end') }}"
-        soc_kw_results: "{{ state_attr('predbat.soc_kw_best', 'results') or {} }}"
+        raw_plan: "{{ state_attr('predbat.plan_html', 'raw') or {} }}"
         current_schedules: "{{ state_attr('sensor.enphase_schedules_summary', 'schedules') or [] }}"
 
     - alias: "Build desired schedules from Predbat plan"
       variables:
         desired_schedules: >
+          {% set raw = state_attr('predbat.plan_html', 'raw') or {} %}
+          {% set rows = raw.get('rows', []) %}
           {% set ns = namespace(list=[]) %}
-          {% set charge_start_ts = state_attr('predbat.best_charge_start', 'timestamp') %}
-          {% set charge_end_ts = state_attr('predbat.best_charge_end', 'timestamp') %}
-          {% if charge_start_raw not in ['unknown','unavailable','23:59:00'] and charge_end_raw not in ['unknown','unavailable','23:59:00'] and charge_start_ts and charge_end_ts %}
-            {% set d = as_datetime(charge_start_ts).isoweekday() %}
-            {% set ss = as_datetime(charge_start_ts).strftime('%H:%M') %}
-            {% set se = as_datetime(charge_end_ts).strftime('%H:%M') %}
-            {% set l = charge_limit_raw | int %}
-            {% if l > 0 %}
-              {% set ns.list = ns.list + [{'type': 'cfg', 'day': d, 'start_time': ss, 'end_time': se, 'limit': l}] %}
+          {% for r in rows %}
+            {% set state = r.state %}
+            {% if state in ['Chrg', 'Exp'] %}
+              {% set block_type = 'cfg' if state == 'Chrg' else 'dtg' %}
+              {% set start_ts = as_datetime(r.time) %}
+              {% set end_ts = start_ts + timedelta(minutes=30) %}
+              {% set d = start_ts.isoweekday() %}
+              {% set ss = start_ts.strftime('%H:%M') %}
+              {% set se = end_ts.strftime('%H:%M') %}
+              {% set l = (r.state_target | string) | int(0) %}
+              {% if l > 0 %}
+                {% set ns.list = ns.list + [{'type': block_type, 'day': d, 'start_time': ss, 'end_time': se, 'limit': l}] %}
+              {% endif %}
             {% endif %}
-          {% endif %}
-          {% set export_start_ts = state_attr('predbat.best_export_start', 'timestamp') %}
-          {% set export_end_ts = state_attr('predbat.best_export_end', 'timestamp') %}
-          {% if export_start_raw not in ['unknown','unavailable','23:59:00'] and export_end_raw not in ['unknown','unavailable','23:59:00'] and export_start_ts and export_end_ts %}
-            {% set d = as_datetime(export_start_ts).isoweekday() %}
-            {% set ss = as_datetime(export_start_ts).strftime('%H:%M') %}
-            {% set se = as_datetime(export_end_ts).strftime('%H:%M') %}
-            {% if soc_kw_results is mapping and export_end_ts in soc_kw_results %}
-              {% set soc_at_end = soc_kw_results[export_end_ts] | float(0) %}
-            {% else %}
-              {% set soc_at_end = 0 %}
-            {% endif %}
-            {% set l = (soc_at_end / 15.0 * 100) | round(0) | int %}
-            {% if l > 0 %}
-              {% set ns.list = ns.list + [{'type': 'dtg', 'day': d, 'start_time': ss, 'end_time': se, 'limit': l}] %}
-            {% endif %}
-          {% endif %}
+          {% endfor %}
           {{ ns.list }}
 
         charge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'cfg') | list | length > 0 }}"
@@ -110,9 +95,8 @@
         logger: PredbatControl
         level: info
         message: >-
-          Predbat plan: {{ charge_start_raw }}-{{ charge_end_raw }} (charge to {{ charge_limit_raw }}%),
-          {{ export_start_raw }}-{{ export_end_raw }} (export to {{ export_limit_raw }}%);
-          existing schedules: {{ current_schedules | length }}, desired: {{ desired_schedules | length }};
+          Predbat plan: {{ desired_schedules }};
+          existing: {{ current_schedules | length }}, desired: {{ desired_schedules | length }};
           updates: {{ mutation_plan.to_update | length }}, adds: {{ mutation_plan.to_add | length }}, deletes: {{ mutation_plan.to_delete | length }}
 
     - alias: "Update existing schedules"
