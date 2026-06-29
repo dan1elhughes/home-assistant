@@ -3,19 +3,7 @@
   description: "Reads Predbat's charge/export plan and updates Enphase battery schedules via enphase_envoy_cloud_control."
   trigger:
     - platform: state
-      entity_id: predbat.best_charge_start
-    - platform: state
-      entity_id: predbat.best_charge_end
-    - platform: state
-      entity_id: predbat.best_charge_limit
-    - platform: state
-      entity_id: predbat.best_export_start
-    - platform: state
-      entity_id: predbat.best_export_end
-    - platform: state
-      entity_id: predbat.best_export_limit
-    - platform: time_pattern
-      minutes: "/15"
+      entity_id: predbat.plan_html
   condition:
     - condition: not
       conditions:
@@ -34,22 +22,72 @@
           {% set raw = state_attr('predbat.plan_html', 'raw') or {} %}
           {% set rows = raw.get('rows', []) %}
           {% set ns = namespace(list=[]) %}
+          {% set ns.current_group = none %}
           {% for r in rows %}
             {% set state = r.state %}
-            {% if state in ['Chrg', 'Exp'] %}
-              {% set block_type = 'cfg' if state == 'Chrg' else 'dtg' %}
-              {% set start_ts = as_datetime(r.time) %}
-              {% set end_ts = start_ts + timedelta(minutes=30) %}
-              {% set d = start_ts.isoweekday() %}
-              {% set ss = start_ts.strftime('%H:%M') %}
-              {% set se = end_ts.strftime('%H:%M') %}
-              {% set l = (r.state_target | string) | int(0) %}
-              {% if l > 0 %}
-                {% set ns.list = ns.list + [{'type': block_type, 'day': d, 'start_time': ss, 'end_time': se, 'limit': l}] %}
+            {% set is_charge = state in ['Chrg', 'HoldChrg'] %}
+            {% set is_export = state == 'Exp' %}
+            {% if is_charge or is_export %}
+              {% set block_type = 'cfg' if is_charge else 'dtg' %}
+              {% if ns.current_group is none %}
+                {% set ns.current_group = {
+                  'type': block_type,
+                  'day': as_datetime(r.time).isoweekday(),
+                  'start_time': as_datetime(r.time).strftime('%H:%M'),
+                  'end_time': (as_datetime(r.time) + timedelta(minutes=30)).strftime('%H:%M'),
+                  'limit': (r.state_target | string) | int(0),
+                  'last_time': r.time
+                } %}
+              {% elif ns.current_group.type == block_type %}
+                {% set row_ts = as_datetime(r.time) %}
+                {% set expected_next = as_datetime(ns.current_group.last_time) + timedelta(minutes=30) %}
+                {% if row_ts == expected_next %}
+                  {% set new_end = (row_ts + timedelta(minutes=30)).strftime('%H:%M') %}
+                  {% set ns.current_group = dict(ns.current_group, end_time=new_end, limit=(r.state_target | string) | int(0), last_time=r.time) %}
+                {% else %}
+                  {% if ns.current_group.limit > 0 %}
+                    {% set ns.list = ns.list + [ns.current_group] %}
+                  {% endif %}
+                  {% set ns.current_group = {
+                    'type': block_type,
+                    'day': row_ts.isoweekday(),
+                    'start_time': row_ts.strftime('%H:%M'),
+                    'end_time': (row_ts + timedelta(minutes=30)).strftime('%H:%M'),
+                    'limit': (r.state_target | string) | int(0),
+                    'last_time': r.time
+                  } %}
+                {% endif %}
+              {% else %}
+                {% if ns.current_group.limit > 0 %}
+                  {% set ns.list = ns.list + [ns.current_group] %}
+                {% endif %}
+                {% set ns.current_group = {
+                  'type': block_type,
+                  'day': as_datetime(r.time).isoweekday(),
+                  'start_time': as_datetime(r.time).strftime('%H:%M'),
+                  'end_time': (as_datetime(r.time) + timedelta(minutes=30)).strftime('%H:%M'),
+                  'limit': (r.state_target | string) | int(0),
+                  'last_time': r.time
+                } %}
               {% endif %}
             {% endif %}
           {% endfor %}
-          {{ ns.list }}
+          {% if ns.current_group is not none and ns.current_group.limit > 0 %}
+            {% set ns.list = ns.list + [ns.current_group] %}
+          {% endif %}
+          {% set ns2 = namespace(list=[]) %}
+          {% for i in range(ns.list | length) %}
+            {% set sched = ns.list[i] %}
+            {% if i > 0 and ns.list[i-1].type != sched.type %}
+              {% set prev = ns2.list[-1] %}
+              {% set prev_end_dt = as_datetime(prev.last_time) + timedelta(minutes=25) %}
+              {% set prev_new_end = prev_end_dt.strftime('%H:%M') %}
+              {% set updated_prev = dict(prev, end_time=prev_new_end) %}
+              {% set ns2.list = ns2.list[:-1] + [updated_prev] %}
+            {% endif %}
+            {% set ns2.list = ns2.list + [sched] %}
+          {% endfor %}
+          {{ ns2.list }}
 
         charge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'cfg') | list | length > 0 }}"
         discharge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'dtg') | list | length > 0 }}"
@@ -125,7 +163,7 @@
                 - "{{ repeat.item.desired.day }}"
               confirm: true
 
-          - delay: "00:00:02"
+          - delay: "00:00:05"
 
     - alias: "Delete unused schedules"
       repeat:
@@ -223,7 +261,7 @@
                 } %}
                 {{ [day_entities[repeat.item.day - 1]] }}
 
-          - delay: "00:00:02"
+          - delay: "00:00:05"
 
           - alias: "Add the schedule"
             action: button.press
