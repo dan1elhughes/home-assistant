@@ -1,0 +1,15 @@
+- alias: "Vacuum upstairs at 11am if not in office"
+  mode: single
+  trigger:
+    - platform: time
+      at: "11:00:00"
+  condition:
+    - condition: not
+      conditions:
+        - condition: state
+          entity_id: input_select.active_room
+          state: "office"
+  action:
+    - action: vacuum.start
+      target:
+        entity_id: vacuum.upstairs
