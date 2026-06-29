@@ -289,71 +289,62 @@ views:
               {% endif %}
               {% endraw %}
 
-  - type: sections
-    max_columns: 4
+  - type: sidebar
     title: Predbat
     path: predbat
     icon: mdi:chart-bell-curve
-    sections:
-      # ── Status + controls ──────────────────────────────────────────
-      - type: grid
-        cards:
-          - type: heading
-            heading: Predbat
-            heading_style: title
-          - type: tile
-            entity: sensor.predbat_intent
-            name: Intent
-            icon: mdi:robot-outline
-            state_content:
-              - state
-              - last-changed
-          - type: tile
-            entity: select.predbat_mode
-            name: Mode
-            icon: mdi:cog
-            state_content: state
-          - type: tile
-            entity: input_number.predbat_holiday_days_left
-            name: Holiday days
-            icon: mdi:beach
-            state_content:
-              - state
-              - last-changed
-          - type: tile
-            entity: select.predbat_manual_charge
-            name: Force charge
-            icon: mdi:battery-charging-100
-            state_content:
-              - state
-              - last-changed
-          - type: tile
-            entity: select.predbat_manual_export
-            name: Force export
-            icon: mdi:battery-arrow-down-outline
-            state_content:
-              - state
-              - last-changed
-          - type: markdown
-            content: >
-              {% raw %}
-              Last plan: **{{ relative_time(states('predbat.last_started')) }}**
-              {% endraw %}
+    cards:
+      - type: custom:html-template-card
+        ignore_line_breaks: true
+        content: |
+          {% raw %}
+          {{ state_attr('predbat.plan_html', 'html') }}
+          {% endraw %}
+        view_layout:
+          position: main
 
-      # ── Full plan ────────────────────────────────────────────────
-      - type: grid
-        cards:
-          - type: heading
-            heading: Schedule
-            heading_style: title
-          - type: custom:html-template-card
-            ignore_line_breaks: true
-            content: |
-              {% raw %}
-              {{ state_attr('predbat.plan_html', 'html') }}
-              {% endraw %}
-            grid_options:
-              columns: full
+      - type: tile
+        entity: sensor.predbat_intent
+        name: Intent
+        icon: mdi:robot-outline
+        view_layout:
+          position: sidebar
+
+      - type: tile
+        entity: select.predbat_mode
+        name: Mode
+        icon: mdi:cog
+        view_layout:
+          position: sidebar
+
+      - type: tile
+        entity: input_number.predbat_holiday_days_left
+        name: Holiday days
+        icon: mdi:beach
+        view_layout:
+          position: sidebar
+
+      - type: tile
+        entity: select.predbat_manual_charge
+        name: Force charge
+        icon: mdi:battery-charging-100
+        view_layout:
+          position: sidebar
+
+      - type: tile
+        entity: select.predbat_manual_export
+        name: Force export
+        icon: mdi:battery-arrow-down-outline
+        view_layout:
+          position: sidebar
+
+      - type: markdown
+        content: >
+          {% raw %}
+          Last plan: **{{ relative_time(states('predbat.last_started')) }}**
+          {% endraw %}
+        view_layout:
+          position: sidebar
 
   - type: sections
     max_columns: 4
