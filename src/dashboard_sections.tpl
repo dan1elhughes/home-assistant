@@ -402,15 +402,6 @@ views:
             state_content:
               - state
               - last-changed
-          - type: markdown
-            content: >
-              {% raw %}
-              **Inverter** &mdash; {{ states('predbat.status') }}
-              **Cost / kWh:** {{ states('predbat.ppkwh_today') }}p
-              **Low rate:** {{ states('predbat.low_rate_cost') }}p
-              **High export:** {{ states('predbat.high_rate_export_cost') }}p
-              {% endraw %}
-
       # ── Full plan ────────────────────────────────────────────────
       - type: grid
         cards:
