@@ -329,50 +329,6 @@ views:
             icon: mdi:piggy-bank-outline
             state_content: state
 
-      # ── Plan summary ─────────────────────────────────────────────
-      - type: grid
-        cards:
-          - type: heading
-            heading: Best plan
-            heading_style: title
-            badges:
-              - type: entity
-                entity: predbat.best_metric
-                show_icon: false
-          - type: tile
-            entity: predbat.best_charge_limit
-            name: Charge target
-            icon: mdi:battery-charging
-            state_content:
-              - state
-              - last-changed
-          - type: tile
-            entity: predbat.best_export_limit
-            name: Export floor
-            icon: mdi:battery-arrow-down
-            state_content:
-              - state
-              - last-changed
-          - type: markdown
-            content: >
-              {% raw %}
-              {%- set cs = states('predbat.best_charge_limit') | int(0) -%}
-              {%- set es = states('predbat.best_export_limit') | int(0) -%}
-              {%- set lp = states('predbat.charge_limit') | int(0) -%}
-              {%- if cs > 0 %}
-              Charge: {{ states('predbat.best_charge_start') }} → {{ states('predbat.best_charge_end') }}
-              **{{ cs }}%** ({{ states('predbat.best_charge_limit_kw') }}&hairsp;kWh)
-              {%- else %}No charge planned
-              {%- endif %}
-              {%- if es > 0 %}
-              Export: {{ states('predbat.best_export_start') }} → {{ states('predbat.best_export_end') }}
-              **{{ es }}%** ({{ states('predbat.best_export_limit_kw') }}&hairsp;kWh)
-              {%- else %}No export planned
-              {%- endif %}
-              **Next low rate:** {{ states('predbat.low_rate_start') }} → {{ states('predbat.low_rate_end') }} @ {{ states('predbat.low_rate_cost') }}p
-              **Next high export:** {{ states('predbat.high_rate_export_start') }} → {{ states('predbat.high_rate_export_end') }} @ {{ states('predbat.high_rate_export_cost') }}p
-              {% endraw %}
-
       # ── Forecast ─────────────────────────────────────────────────
       - type: grid
         cards:
