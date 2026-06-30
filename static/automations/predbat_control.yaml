@@ -29,36 +29,40 @@
           {% set rows = raw.get('rows', []) %}
           {% set ns = namespace(list=[]) %}
           {% set ns.group = none %}
-          {% for r in rows %}
+          {% for i in range(rows | length) %}
+            {% set r = rows[i] %}
+            {% set row_ts = as_datetime(r.time) %}
+            {% if i + 1 < (rows | length) %}
+              {% set slot_end_ts = as_datetime(rows[i + 1].time) %}
+            {% else %}
+              {% set slot_end_ts = row_ts + timedelta(minutes=30) %}
+            {% endif %}
             {% set state = r.state %}
             {% set is_charge = state in ['Chrg', 'HoldChrg'] %}
             {% set is_export = state == 'Exp' %}
             {% if is_charge or is_export %}
               {% set intent = 'cfg' if is_charge else 'dtg' %}
               {% if ns.group is none %}
-                {% set row_ts = as_datetime(r.time) %}
                 {% set ns.group = {
                   'type': intent,
                   'day': row_ts.isoweekday(),
                   'start_time': row_ts.strftime('%H:%M'),
-                  'end_time': (row_ts + timedelta(minutes=30)).strftime('%H:%M'),
+                  'end_time': slot_end_ts.strftime('%H:%M'),
                   'limit': (r.state_target | string) | int(0),
                   'first_time': r.time,
                   'last_time': r.time
                 } %}
               {% elif ns.group.type == intent %}
-                {% set row_ts = as_datetime(r.time) %}
-                {% set ns.group = dict(ns.group, end_time=(row_ts + timedelta(minutes=30)).strftime('%H:%M'), limit=(r.state_target | string) | int(0), last_time=r.time) %}
+                {% set ns.group = dict(ns.group, end_time=slot_end_ts.strftime('%H:%M'), limit=(r.state_target | string) | int(0), last_time=r.time) %}
               {% else %}
                 {% if ns.group.limit > 0 %}
                   {% set ns.list = ns.list + [ns.group] %}
                 {% endif %}
-                {% set row_ts = as_datetime(r.time) %}
                 {% set ns.group = {
                   'type': intent,
                   'day': row_ts.isoweekday(),
                   'start_time': row_ts.strftime('%H:%M'),
-                  'end_time': (row_ts + timedelta(minutes=30)).strftime('%H:%M'),
+                  'end_time': slot_end_ts.strftime('%H:%M'),
                   'limit': (r.state_target | string) | int(0),
                   'first_time': r.time,
                   'last_time': r.time
