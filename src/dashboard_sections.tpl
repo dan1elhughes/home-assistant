@@ -303,75 +303,48 @@ views:
         view_layout:
           position: main
 
-      - type: tile
-        entity: switch.predbat_active
-        name: Active
-        icon: mdi:robot-outline
-        state_content:
-          - last-changed
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: sensor.predbat_intent
-        name: Intent
-        icon: mdi:robot-outline
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: select.predbat_mode
-        name: Mode
-        icon: mdi:cog
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: input_number.predbat_holiday_days_left
-        name: Holiday days
-        icon: mdi:beach
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: select.predbat_manual_charge
-        name: Force charge
-        icon: mdi:battery-arrow-up
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: select.predbat_manual_export
-        name: Force export
-        icon: mdi:battery-arrow-down
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: select.predbat_manual_demand
-        name: Force demand
-        icon: mdi:home-battery
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: switch.predbat_combine_charge_slots
-        name: Combine charge
-        icon: mdi:vector-combine
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: switch.predbat_combine_export_slots
-        name: Combine export
-        icon: mdi:vector-combine
-        view_layout:
-          position: sidebar
-
-      - type: tile
-        entity: input_number.predbat_metric_battery_cycle
-        name: Cycle cost
-        icon: mdi:currency-gbp
+      - type: entities
+        show_header_toggle: false
+        entities:
+          - type: section
+            label: State
+          - entity: switch.predbat_active
+            name: Active
+            icon: mdi:robot-outline
+            secondary_info: last-changed
+          - entity: sensor.predbat_intent
+            name: Intent
+            icon: mdi:robot-outline
+          - entity: select.predbat_mode
+            name: Mode
+            icon: mdi:cog
+          - type: section
+            label: Overrides
+          - entity: select.predbat_manual_charge
+            name: Force charge
+            icon: mdi:battery-arrow-up
+          - entity: select.predbat_manual_export
+            name: Force export
+            icon: mdi:battery-arrow-down
+          - entity: select.predbat_manual_demand
+            name: Force demand
+            icon: mdi:home-battery
+          - type: section
+            label: Combine slots
+          - entity: switch.predbat_combine_charge_slots
+            name: Combine charge
+            icon: mdi:vector-combine
+          - entity: switch.predbat_combine_export_slots
+            name: Combine export
+            icon: mdi:vector-combine
+          - type: section
+            label: Cost
+          - entity: input_number.predbat_metric_battery_cycle
+            name: Cycle cost
+            icon: mdi:currency-gbp
+          - entity: input_number.predbat_holiday_days_left
+            name: Holiday days
+            icon: mdi:beach
         view_layout:
           position: sidebar
 
