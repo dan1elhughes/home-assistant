@@ -304,6 +304,15 @@ views:
           position: main
 
       - type: tile
+        entity: switch.predbat_active
+        name: Active
+        icon: mdi:robot-outline
+        state_content:
+          - last-changed
+        view_layout:
+          position: sidebar
+
+      - type: tile
         entity: sensor.predbat_intent
         name: Intent
         icon: mdi:robot-outline
@@ -327,24 +336,25 @@ views:
       - type: tile
         entity: select.predbat_manual_charge
         name: Force charge
-        icon: mdi:battery-charging-100
+        icon: mdi:battery-arrow-up
         view_layout:
           position: sidebar
 
       - type: tile
         entity: select.predbat_manual_export
         name: Force export
-        icon: mdi:battery-arrow-down-outline
+        icon: mdi:battery-arrow-down
         view_layout:
           position: sidebar
 
-      - type: markdown
-        content: >
-          {% raw %}
-          Last plan: **{{ relative_time(states('predbat.last_started')) }}**
-          {% endraw %}
+      - type: tile
+        entity: select.predbat_manual_demand
+        name: Force demand
+        icon: mdi:home-battery
         view_layout:
           position: sidebar
+
+      
 
   - type: sections
     max_columns: 4
