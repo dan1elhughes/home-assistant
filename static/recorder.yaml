@@ -3,6 +3,7 @@
 # postgres is an internal swarm service (not web-exposed); the password is a
 # fixed non-secret used only on the private overlay network.
 db_url: postgresql://homeassistant:POSTGRES@postgres:5432/homeassistant
+purge_keep_days: 21
 exclude:
   entities:
     - sensor.ucg_max_ucg_max_cpu_temperature
