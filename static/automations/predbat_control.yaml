@@ -101,9 +101,14 @@
             {% endif %}
             {% set ns2.list = ns2.list + [sched] %}
           {% endfor %}
-          {# Enphase has a 12-schedule hard cap — keep only future schedules and cap via input_number. #}
+          {# Enphase has a 12-schedule hard cap — keep active + future schedules
+             and cap via input_number. A slot is still active if its last 30-min
+             row hasn't ended yet (last_time + 30min > now), i.e. last_time is
+             within the last 30 minutes. This prevents the current in-progress
+             charge/export slot from being dropped. #}
           {% set max_schedules = states('input_number.predbat_max_enphase_schedules') | int(12) %}
-          {% set future = ns2.list | selectattr('first_time', 'ge', now().isoformat()) | list %}
+          {% set active_cutoff = (now() - timedelta(minutes=30)).isoformat() %}
+          {% set future = ns2.list | selectattr('last_time', 'ge', active_cutoff) | list %}
           {{ future[:max_schedules] }}
 
         charge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'cfg') | list | length > 0 }}"
