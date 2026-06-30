@@ -187,7 +187,8 @@
       "icon": "mdi:door",
       "name": "Hallway",
       "ceiling": ["light.hallway_ceiling_light"],
-      "badges": ["sensor.hallway_motion_sensor_temperature"]
+      "badges": ["sensor.hallway_motion_sensor_temperature"],
+      "other_entities": ["input_boolean.motion_sensors_enabled"]
     },
     {
       "id": "landing",
