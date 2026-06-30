@@ -354,6 +354,27 @@ views:
         view_layout:
           position: sidebar
 
+      - type: tile
+        entity: switch.predbat_combine_charge_slots
+        name: Combine charge
+        icon: mdi:vector-combine
+        view_layout:
+          position: sidebar
+
+      - type: tile
+        entity: switch.predbat_combine_export_slots
+        name: Combine export
+        icon: mdi:vector-combine
+        view_layout:
+          position: sidebar
+
+      - type: tile
+        entity: input_number.predbat_metric_battery_cycle
+        name: Cycle cost
+        icon: mdi:currency-gbp
+        view_layout:
+          position: sidebar
+
       
 
   - type: sections
