@@ -11,6 +11,12 @@
           entity_id: sensor.enphase_schedules_summary
           state: unavailable
   action:
+    - alias: "Log automation start"
+      action: system_log.write
+      data:
+        logger: PredbatControl
+        level: info
+        message: "Automation triggered - reading plan and schedules"
     - alias: "Extract Predbat plan"
       variables:
         raw_plan: "{{ state_attr('predbat.plan_html', 'raw') or {} }}"
@@ -22,61 +28,51 @@
           {% set raw = state_attr('predbat.plan_html', 'raw') or {} %}
           {% set rows = raw.get('rows', []) %}
           {% set ns = namespace(list=[]) %}
-          {% set ns.current_group = none %}
+          {% set ns.group = none %}
           {% for r in rows %}
             {% set state = r.state %}
             {% set is_charge = state in ['Chrg', 'HoldChrg'] %}
             {% set is_export = state == 'Exp' %}
             {% if is_charge or is_export %}
-              {% set block_type = 'cfg' if is_charge else 'dtg' %}
-              {% if ns.current_group is none %}
-                {% set ns.current_group = {
-                  'type': block_type,
-                  'day': as_datetime(r.time).isoweekday(),
-                  'start_time': as_datetime(r.time).strftime('%H:%M'),
-                  'end_time': (as_datetime(r.time) + timedelta(minutes=30)).strftime('%H:%M'),
+              {% set intent = 'cfg' if is_charge else 'dtg' %}
+              {% if ns.group is none %}
+                {% set row_ts = as_datetime(r.time) %}
+                {% set ns.group = {
+                  'type': intent,
+                  'day': row_ts.isoweekday(),
+                  'start_time': row_ts.strftime('%H:%M'),
+                  'end_time': (row_ts + timedelta(minutes=30)).strftime('%H:%M'),
                   'limit': (r.state_target | string) | int(0),
                   'first_time': r.time,
                   'last_time': r.time
                 } %}
-              {% elif ns.current_group.type == block_type %}
+              {% elif ns.group.type == intent %}
                 {% set row_ts = as_datetime(r.time) %}
-                {% set expected_next = as_datetime(ns.current_group.last_time) + timedelta(minutes=30) %}
-                {% if row_ts == expected_next %}
-                  {% set new_end = (row_ts + timedelta(minutes=30)).strftime('%H:%M') %}
-                  {% set ns.current_group = dict(ns.current_group, end_time=new_end, limit=(r.state_target | string) | int(0), last_time=r.time) %}
-                {% else %}
-                  {% if ns.current_group.limit > 0 %}
-                    {% set ns.list = ns.list + [ns.current_group] %}
-                  {% endif %}
-                  {% set ns.current_group = {
-                    'type': block_type,
-                    'day': row_ts.isoweekday(),
-                    'start_time': row_ts.strftime('%H:%M'),
-                    'end_time': (row_ts + timedelta(minutes=30)).strftime('%H:%M'),
-                    'limit': (r.state_target | string) | int(0),
-                    'first_time': r.time,
-                    'last_time': r.time
-                  } %}
-                {% endif %}
+                {% set ns.group = dict(ns.group, end_time=(row_ts + timedelta(minutes=30)).strftime('%H:%M'), limit=(r.state_target | string) | int(0), last_time=r.time) %}
               {% else %}
-                {% if ns.current_group.limit > 0 %}
-                  {% set ns.list = ns.list + [ns.current_group] %}
+                {% if ns.group.limit > 0 %}
+                  {% set ns.list = ns.list + [ns.group] %}
                 {% endif %}
-                {% set ns.current_group = {
-                  'type': block_type,
-                  'day': as_datetime(r.time).isoweekday(),
-                  'start_time': as_datetime(r.time).strftime('%H:%M'),
-                  'end_time': (as_datetime(r.time) + timedelta(minutes=30)).strftime('%H:%M'),
+                {% set row_ts = as_datetime(r.time) %}
+                {% set ns.group = {
+                  'type': intent,
+                  'day': row_ts.isoweekday(),
+                  'start_time': row_ts.strftime('%H:%M'),
+                  'end_time': (row_ts + timedelta(minutes=30)).strftime('%H:%M'),
                   'limit': (r.state_target | string) | int(0),
                   'first_time': r.time,
                   'last_time': r.time
                 } %}
               {% endif %}
+            {% elif ns.group is not none %}
+              {% if ns.group.limit > 0 %}
+                {% set ns.list = ns.list + [ns.group] %}
+              {% endif %}
+              {% set ns.group = none %}
             {% endif %}
           {% endfor %}
-          {% if ns.current_group is not none and ns.current_group.limit > 0 %}
-            {% set ns.list = ns.list + [ns.current_group] %}
+          {% if ns.group is not none and ns.group.limit > 0 %}
+            {% set ns.list = ns.list + [ns.group] %}
           {% endif %}
           {% set ns2 = namespace(list=[]) %}
           {% for i in range(ns.list | length) %}
@@ -109,12 +105,19 @@
         mutation_plan: >
           {% set ns = namespace(used_ids=[], to_update=[], to_add=[], to_delete=[]) %}
           {% for desired in desired_schedules %}
-            {% set match_ns = namespace(best_match=none) %}
+            {% set d_min = (desired.start_time[:2] | int) * 60 + (desired.start_time[3:5] | int) %}
+            {% set match_ns = namespace(best_match=none, best_diff=9999) %}
             {% for existing in current_schedules %}
               {% if existing.id not in ns.used_ids and existing.type == desired.type %}
                 {% for day in existing.days %}
-                  {% if day == desired.day and match_ns.best_match is none %}
-                    {% set match_ns.best_match = existing %}
+                  {% if day == desired.day %}
+                    {% set c_min = (existing.start[:2] | int) * 60 + (existing.start[3:5] | int) %}
+                    {% set diff = d_min - c_min %}
+                    {% if diff < 0 %}{% set diff = -diff %}{% endif %}
+                    {% if diff < match_ns.best_diff %}
+                      {% set match_ns.best_match = existing %}
+                      {% set match_ns.best_diff = diff %}
+                    {% endif %}
                   {% endif %}
                 {% endfor %}
               {% endif %}
@@ -133,10 +136,103 @@
               {% set ns.to_delete = ns.to_delete + [existing] %}
             {% endif %}
           {% endfor %}
+          {#
+            Order updates by the schedules that currently occupy each target
+            interval.  If update i wants a target interval that overlaps the
+            current interval of update j, then j must move before i.
+
+            Intervals are treated as half-open weekly ranges [start, end), so
+            adjacent schedules such as 07:35-08:05 and 08:05-08:35 do not
+            overlap.  Overnight schedules are split at the end of the week when
+            needed so Sunday -> Monday ranges compare correctly.
+          #}
+          {% set updates_with_old = namespace(list=[]) %}
+          {% for update in ns.to_update %}
+            {% for existing in current_schedules %}
+              {% if existing.id == update.existing_id %}
+                {% set updates_with_old.list = updates_with_old.list + [dict(update, old=existing)] %}
+              {% endif %}
+            {% endfor %}
+          {% endfor %}
+          {% set order = namespace(remaining=updates_with_old.list, ordered=[], cycle_detected=false) %}
+          {% for _ in range(updates_with_old.list | length) %}
+            {% set pick = namespace(update=none) %}
+            {% for update in order.remaining %}
+              {% if pick.update is none %}
+                {% set blocked = namespace(value=false) %}
+                {% set new_start_min = (update.desired.start_time[:2] | int) * 60 + (update.desired.start_time[3:5] | int) %}
+                {% set new_end_min = (update.desired.end_time[:2] | int) * 60 + (update.desired.end_time[3:5] | int) %}
+                {% set new_abs_start = (update.desired.day - 1) * 1440 + new_start_min %}
+                {% set new_abs_end = (update.desired.day - 1) * 1440 + new_end_min %}
+                {% if new_end_min <= new_start_min %}
+                  {% set new_abs_end = new_abs_end + 1440 %}
+                {% endif %}
+                {% set new_ranges = namespace(list=[]) %}
+                {% if new_abs_end > 10080 %}
+                  {% set new_ranges.list = [[new_abs_start, 10080], [0, new_abs_end - 10080]] %}
+                {% else %}
+                  {% set new_ranges.list = [[new_abs_start, new_abs_end]] %}
+                {% endif %}
+                {% for other in order.remaining %}
+                  {% if other.existing_id != update.existing_id %}
+                    {% set old_start_min = (other.old.start[:2] | int) * 60 + (other.old.start[3:5] | int) %}
+                    {% set old_end_min = (other.old.end[:2] | int) * 60 + (other.old.end[3:5] | int) %}
+                    {% for old_day in other.old.days %}
+                      {% set old_abs_start = (old_day - 1) * 1440 + old_start_min %}
+                      {% set old_abs_end = (old_day - 1) * 1440 + old_end_min %}
+                      {% if old_end_min <= old_start_min %}
+                        {% set old_abs_end = old_abs_end + 1440 %}
+                      {% endif %}
+                      {% set old_ranges = namespace(list=[]) %}
+                      {% if old_abs_end > 10080 %}
+                        {% set old_ranges.list = [[old_abs_start, 10080], [0, old_abs_end - 10080]] %}
+                      {% else %}
+                        {% set old_ranges.list = [[old_abs_start, old_abs_end]] %}
+                      {% endif %}
+                      {% for new_range in new_ranges.list %}
+                        {% for old_range in old_ranges.list %}
+                          {% if new_range[0] < old_range[1] and new_range[1] > old_range[0] %}
+                            {% set blocked.value = true %}
+                          {% endif %}
+                        {% endfor %}
+                      {% endfor %}
+                    {% endfor %}
+                  {% endif %}
+                {% endfor %}
+                {% if not blocked.value %}
+                  {% set pick.update = update %}
+                {% endif %}
+              {% endif %}
+            {% endfor %}
+            {% if pick.update is none %}
+              {% set order.cycle_detected = true %}
+            {% else %}
+              {% set order.ordered = order.ordered + [pick.update] %}
+              {% set next_remaining = namespace(list=[]) %}
+              {% for update in order.remaining %}
+                {% if update.existing_id != pick.update.existing_id %}
+                  {% set next_remaining.list = next_remaining.list + [update] %}
+                {% endif %}
+              {% endfor %}
+              {% set order.remaining = next_remaining.list %}
+            {% endif %}
+          {% endfor %}
+          {% set changes = namespace(list=[]) %}
+          {% for existing in ns.to_delete %}
+            {% set changes.list = changes.list + [{'action': 'delete', 'existing': existing}] %}
+          {% endfor %}
+          {% for update in order.ordered + order.remaining %}
+            {% set changes.list = changes.list + [{'action': 'update', 'existing_id': update.existing_id, 'desired': update.desired}] %}
+          {% endfor %}
+          {% for desired in ns.to_add %}
+            {% set changes.list = changes.list + [{'action': 'add', 'desired': desired}] %}
+          {% endfor %}
           {{ {
-            'to_update': ns.to_update,
+            'changes': changes.list,
+            'to_update': order.ordered + order.remaining,
             'to_add': ns.to_add,
-            'to_delete': ns.to_delete
+            'to_delete': ns.to_delete,
+            'cycle_detected': order.cycle_detected
           } }}
 
     - alias: "Log Predbat plan"
@@ -145,142 +241,146 @@
         logger: PredbatControl
         level: info
         message: >-
-          Predbat plan: {{ desired_schedules }};
-          existing: {{ current_schedules | length }}, desired: {{ desired_schedules | length }};
-          updates: {{ mutation_plan.to_update | length }}, adds: {{ mutation_plan.to_add | length }}, deletes: {{ mutation_plan.to_delete | length }}
+          Desired: {{ desired_schedules | tojson }};
+          Mutation: {{ mutation_plan | tojson }}
 
-    - alias: "Delete unused schedules"
+    - alias: "Apply ordered schedule changes"
       repeat:
-        for_each: "{{ mutation_plan.to_delete }}"
+        for_each: "{{ mutation_plan.changes }}"
         sequence:
-          - alias: "Log schedule deletion"
-            action: system_log.write
-            data:
-              logger: PredbatControl
-              level: info
-              message: "Deleting schedule {{ repeat.item.id }}: {{ repeat.item.type }}"
+          - choose:
+              - conditions:
+                  - condition: template
+                    value_template: "{{ repeat.item.action == 'delete' }}"
+                sequence:
+                  - alias: "Log schedule deletion"
+                    action: system_log.write
+                    data:
+                      logger: PredbatControl
+                      level: info
+                      message: "Deleting schedule {{ repeat.item.existing.id }}: {{ repeat.item.existing.type }}"
 
-          - alias: "Select schedule to delete"
-            action: select.select_option
-            target:
-              entity_id: select.enphase_schedule_selected
-            data:
-              option: "{{ repeat.item.id }}"
+                  - alias: "Select schedule to delete"
+                    action: select.select_option
+                    target:
+                      entity_id: select.enphase_schedule_selected
+                    data:
+                      option: "{{ repeat.item.existing.id }}"
 
-          - delay: "00:00:01"
+                  - delay: "00:00:01"
 
-          - alias: "Delete selected schedule"
-            action: button.press
-            target:
-              entity_id: button.schedule_delete
+                  - alias: "Delete selected schedule"
+                    action: button.press
+                    target:
+                      entity_id: button.schedule_delete
 
-          - delay: "00:00:01"
+                  - delay: "00:00:01"
 
-    - alias: "Update existing schedules"
-      repeat:
-        for_each: "{{ mutation_plan.to_update }}"
-        sequence:
-          - alias: "Log schedule update"
-            action: system_log.write
-            data:
-              logger: PredbatControl
-              level: info
-              message: >-
-                Updating schedule {{ repeat.item.existing_id }}:
-                {{ repeat.item.desired.type }} day {{ repeat.item.desired.day }},
-                {{ repeat.item.desired.start_time }}-{{ repeat.item.desired.end_time }} (limit {{ repeat.item.desired.limit }})
+              - conditions:
+                  - condition: template
+                    value_template: "{{ repeat.item.action == 'update' }}"
+                sequence:
+                  - alias: "Log schedule update"
+                    action: system_log.write
+                    data:
+                      logger: PredbatControl
+                      level: info
+                      message: >-
+                        Updating schedule {{ repeat.item.existing_id }}:
+                        {{ repeat.item.desired.type }} day {{ repeat.item.desired.day }},
+                        {{ repeat.item.desired.start_time }}-{{ repeat.item.desired.end_time }} (limit {{ repeat.item.desired.limit }})
 
-          - alias: "Update schedule via service"
-            action: enphase_envoy_cloud_control.update_schedule
-            data:
-              schedule_id: "{{ repeat.item.existing_id }}"
-              schedule_type: "{{ repeat.item.desired.type }}"
-              start_time: "{{ repeat.item.desired.start_time }}"
-              end_time: "{{ repeat.item.desired.end_time }}"
-              limit: "{{ repeat.item.desired.limit }}"
-              days:
-                - "{{ repeat.item.desired.day }}"
-              confirm: true
+                  - alias: "Update schedule via service"
+                    action: enphase_envoy_cloud_control.update_schedule
+                    data:
+                      schedule_id: "{{ repeat.item.existing_id }}"
+                      schedule_type: "{{ repeat.item.desired.type }}"
+                      start_time: "{{ repeat.item.desired.start_time }}"
+                      end_time: "{{ repeat.item.desired.end_time }}"
+                      limit: "{{ repeat.item.desired.limit }}"
+                      days:
+                        - "{{ repeat.item.desired.day }}"
+                      confirm: true
 
-          - delay: "00:00:02"
+                  - delay: "00:00:02"
 
-    - alias: "Add new schedules"
-      repeat:
-        for_each: "{{ mutation_plan.to_add }}"
-        sequence:
-          - alias: "Log schedule creation"
-            action: system_log.write
-            data:
-              logger: PredbatControl
-              level: info
-              message: >-
-                Adding {{ repeat.item.type }} schedule:
-                {{ repeat.item.start_time }}-{{ repeat.item.end_time }}
-                (limit {{ repeat.item.limit }}, day {{ repeat.item.day }})
+              - conditions:
+                  - condition: template
+                    value_template: "{{ repeat.item.action == 'add' }}"
+                sequence:
+                  - alias: "Log schedule creation"
+                    action: system_log.write
+                    data:
+                      logger: PredbatControl
+                      level: info
+                      message: >-
+                        Adding {{ repeat.item.desired.type }} schedule:
+                        {{ repeat.item.desired.start_time }}-{{ repeat.item.desired.end_time }}
+                        (limit {{ repeat.item.desired.limit }}, day {{ repeat.item.desired.day }})
 
-          - alias: "Set schedule type"
-            action: select.select_option
-            target:
-              entity_id: select.enphase_new_schedule_type
-            data:
-              option: "{{ repeat.item.type }}"
+                  - alias: "Set schedule type"
+                    action: select.select_option
+                    target:
+                      entity_id: select.enphase_new_schedule_type
+                    data:
+                      option: "{{ repeat.item.desired.type }}"
 
-          - alias: "Set start time"
-            action: time.set_value
-            target:
-              entity_id: time.enphase_new_schedule_start
-            data:
-              time: "{{ repeat.item.start_time }}"
+                  - alias: "Set start time"
+                    action: time.set_value
+                    target:
+                      entity_id: time.enphase_new_schedule_start
+                    data:
+                      time: "{{ repeat.item.desired.start_time }}"
 
-          - alias: "Set end time"
-            action: time.set_value
-            target:
-              entity_id: time.enphase_new_schedule_end
-            data:
-              time: "{{ repeat.item.end_time }}"
+                  - alias: "Set end time"
+                    action: time.set_value
+                    target:
+                      entity_id: time.enphase_new_schedule_end
+                    data:
+                      time: "{{ repeat.item.desired.end_time }}"
 
-          - alias: "Set limit"
-            action: number.set_value
-            target:
-              entity_id: number.enphase_new_schedule_limit
-            data:
-              value: "{{ repeat.item.limit }}"
+                  - alias: "Set limit"
+                    action: number.set_value
+                    target:
+                      entity_id: number.enphase_new_schedule_limit
+                    data:
+                      value: "{{ repeat.item.desired.limit }}"
 
-          - alias: "Disable all weekday switches"
-            action: homeassistant.turn_off
-            target:
-              entity_id:
-                - switch.enphase_new_schedule_mon
-                - switch.enphase_new_schedule_tue
-                - switch.enphase_new_schedule_wed
-                - switch.enphase_new_schedule_thu
-                - switch.enphase_new_schedule_fri
-                - switch.enphase_new_schedule_sat
-                - switch.enphase_new_schedule_sun
+                  - alias: "Disable all weekday switches"
+                    action: homeassistant.turn_off
+                    target:
+                      entity_id:
+                        - switch.enphase_new_schedule_mon
+                        - switch.enphase_new_schedule_tue
+                        - switch.enphase_new_schedule_wed
+                        - switch.enphase_new_schedule_thu
+                        - switch.enphase_new_schedule_fri
+                        - switch.enphase_new_schedule_sat
+                        - switch.enphase_new_schedule_sun
 
-          - alias: "Enable selected weekday"
-            action: homeassistant.turn_on
-            target:
-              entity_id: >
-                {% set day_entities = {
-                  0: 'switch.enphase_new_schedule_mon',
-                  1: 'switch.enphase_new_schedule_tue',
-                  2: 'switch.enphase_new_schedule_wed',
-                  3: 'switch.enphase_new_schedule_thu',
-                  4: 'switch.enphase_new_schedule_fri',
-                  5: 'switch.enphase_new_schedule_sat',
-                  6: 'switch.enphase_new_schedule_sun'
-                } %}
-                {{ [day_entities[repeat.item.day - 1]] }}
+                  - alias: "Enable selected weekday"
+                    action: homeassistant.turn_on
+                    target:
+                      entity_id: >
+                        {% set day_entities = {
+                          0: 'switch.enphase_new_schedule_mon',
+                          1: 'switch.enphase_new_schedule_tue',
+                          2: 'switch.enphase_new_schedule_wed',
+                          3: 'switch.enphase_new_schedule_thu',
+                          4: 'switch.enphase_new_schedule_fri',
+                          5: 'switch.enphase_new_schedule_sat',
+                          6: 'switch.enphase_new_schedule_sun'
+                        } %}
+                        {{ [day_entities[repeat.item.desired.day - 1]] }}
 
-          - delay: "00:00:02"
+                  - delay: "00:00:02"
 
-          - alias: "Add the schedule"
-            action: button.press
-            target:
-              entity_id: button.new_schedule_add
+                  - alias: "Add the schedule"
+                    action: button.press
+                    target:
+                      entity_id: button.new_schedule_add
 
-          - delay: "00:00:02"
+                  - delay: "00:00:02"
 
     - alias: "Enable/disable CFG based on charge plan"
       if:
@@ -357,4 +457,4 @@
       data:
         logger: PredbatControl
         level: info
-        message: "Predbat schedule update complete"
+        message: "Predbat complete - to_update:{{ mutation_plan.to_update | length }} to_add:{{ mutation_plan.to_add | length }} to_delete:{{ mutation_plan.to_delete | length }}"
