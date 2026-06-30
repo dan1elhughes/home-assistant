@@ -145,6 +145,10 @@
             adjacent schedules such as 07:35-08:05 and 08:05-08:35 do not
             overlap.  Overnight schedules are split at the end of the week when
             needed so Sunday -> Monday ranges compare correctly.
+
+            If no update is ready, the remaining updates are in a swap/cycle.
+            Break that cycle by deleting one schedule and recreating it at the
+            end, so the other schedule(s) can vacate their old intervals first.
           #}
           {% set updates_with_old = namespace(list=[]) %}
           {% for update in ns.to_update %}
@@ -154,7 +158,7 @@
               {% endif %}
             {% endfor %}
           {% endfor %}
-          {% set order = namespace(remaining=updates_with_old.list, ordered=[], cycle_detected=false) %}
+          {% set order = namespace(remaining=updates_with_old.list, ordered=[], cycle_deletes=[], cycle_adds=[], cycle_detected=false) %}
           {% for _ in range(updates_with_old.list | length) %}
             {% set pick = namespace(update=none) %}
             {% for update in order.remaining %}
@@ -206,6 +210,18 @@
             {% endfor %}
             {% if pick.update is none %}
               {% set order.cycle_detected = true %}
+              {% if order.remaining | length > 0 %}
+                {% set victim = order.remaining[0] %}
+                {% set order.cycle_deletes = order.cycle_deletes + [victim.old] %}
+                {% set order.cycle_adds = order.cycle_adds + [victim.desired] %}
+                {% set next_remaining = namespace(list=[]) %}
+                {% for update in order.remaining %}
+                  {% if update.existing_id != victim.existing_id %}
+                    {% set next_remaining.list = next_remaining.list + [update] %}
+                  {% endif %}
+                {% endfor %}
+                {% set order.remaining = next_remaining.list %}
+              {% endif %}
             {% else %}
               {% set order.ordered = order.ordered + [pick.update] %}
               {% set next_remaining = namespace(list=[]) %}
@@ -221,17 +237,24 @@
           {% for existing in ns.to_delete %}
             {% set changes.list = changes.list + [{'action': 'delete', 'existing': existing}] %}
           {% endfor %}
+          {% for existing in order.cycle_deletes %}
+            {% set changes.list = changes.list + [{'action': 'delete', 'existing': existing, 'reason': 'cycle_break'}] %}
+          {% endfor %}
           {% for update in order.ordered + order.remaining %}
             {% set changes.list = changes.list + [{'action': 'update', 'existing_id': update.existing_id, 'desired': update.desired}] %}
           {% endfor %}
           {% for desired in ns.to_add %}
             {% set changes.list = changes.list + [{'action': 'add', 'desired': desired}] %}
           {% endfor %}
+          {% for desired in order.cycle_adds %}
+            {% set changes.list = changes.list + [{'action': 'add', 'desired': desired, 'reason': 'cycle_break'}] %}
+          {% endfor %}
           {{ {
             'changes': changes.list,
             'to_update': order.ordered + order.remaining,
-            'to_add': ns.to_add,
-            'to_delete': ns.to_delete,
+            'to_add': ns.to_add + order.cycle_adds,
+            'to_delete': ns.to_delete + order.cycle_deletes,
+            'cycle_recreate': order.cycle_adds,
             'cycle_detected': order.cycle_detected
           } }}
 
