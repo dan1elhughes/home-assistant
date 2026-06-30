@@ -77,4 +77,9 @@ office_ac_default_temp:
   max: 30
   step: 1
 
-# ── End of battery optimiser inputs ──
+predbat_max_enphase_schedules:
+  name: Max Enphase schedules
+  min: 1
+  max: 12
+  step: 1
+  icon: mdi:calendar-sync

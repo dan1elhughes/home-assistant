@@ -4,6 +4,8 @@
   trigger:
     - platform: state
       entity_id: predbat.plan_html
+    - platform: state
+      entity_id: input_number.predbat_max_enphase_schedules
   condition:
     - condition: not
       conditions:
@@ -99,7 +101,10 @@
             {% endif %}
             {% set ns2.list = ns2.list + [sched] %}
           {% endfor %}
-          {{ ns2.list }}
+          {# Enphase has a 12-schedule hard cap — keep only future schedules and cap via input_number. #}
+          {% set max_schedules = states('input_number.predbat_max_enphase_schedules') | int(12) %}
+          {% set future = ns2.list | selectattr('first_time', 'ge', now().isoformat()) | list %}
+          {{ future[:max_schedules] }}
 
         charge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'cfg') | list | length > 0 }}"
         discharge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'dtg') | list | length > 0 }}"
