@@ -29,8 +29,8 @@
         desired_schedules: >
           {% set raw = state_attr('predbat.plan_html', 'raw') or {} %}
           {% set rows = raw.get('rows', []) %}
-          {% set ns = namespace(list=[]) %}
-          {% set ns.group = none %}
+          {# One Enphase slot per Predbat plan row — no grouping. #}
+          {% set slots = namespace(list=[]) %}
           {% for i in range(rows | length) %}
             {% set r = rows[i] %}
             {% set row_ts = as_datetime(r.time) %}
@@ -44,71 +44,42 @@
             {% set is_export = state == 'Exp' %}
             {% if is_charge or is_export %}
               {% set intent = 'cfg' if is_charge else 'dtg' %}
-              {% if ns.group is none %}
-                {% set ns.group = {
+              {% set target = (r.state_target | string) | int(0) %}
+              {% if target > 0 %}
+                {% set slots.list = slots.list + [{
                   'type': intent,
                   'day': row_ts.isoweekday(),
                   'start_time': row_ts.strftime('%H:%M'),
                   'end_time': slot_end_ts.strftime('%H:%M'),
-                  'limit': (r.state_target | string) | int(0),
+                  'limit': target,
                   'first_time': r.time,
                   'last_time': r.time
-                } %}
-              {% elif ns.group.type == intent %}
-                {% set ns.group = dict(ns.group, end_time=slot_end_ts.strftime('%H:%M'), limit=(r.state_target | string) | int(0), last_time=r.time) %}
-              {% else %}
-                {% if ns.group.limit > 0 %}
-                  {% set ns.list = ns.list + [ns.group] %}
-                {% endif %}
-                {% set ns.group = {
-                  'type': intent,
-                  'day': row_ts.isoweekday(),
-                  'start_time': row_ts.strftime('%H:%M'),
-                  'end_time': slot_end_ts.strftime('%H:%M'),
-                  'limit': (r.state_target | string) | int(0),
-                  'first_time': r.time,
-                  'last_time': r.time
-                } %}
+                }] %}
               {% endif %}
-            {% elif ns.group is not none %}
-              {% if ns.group.limit > 0 %}
-                {% set ns.list = ns.list + [ns.group] %}
-              {% endif %}
-              {% set ns.group = none %}
             {% endif %}
           {% endfor %}
-          {% if ns.group is not none and ns.group.limit > 0 %}
-            {% set ns.list = ns.list + [ns.group] %}
-          {% endif %}
-          {% set ns2 = namespace(list=[]) %}
-          {% for i in range(ns.list | length) %}
-            {% set sched = ns.list[i] %}
-            {% if i > 0 and ns.list[i-1].type != sched.type %}
-              {# Only shorten when the previous schedule ends exactly when the
-                 current one starts — i.e. they're truly back-to-back and the
-                 inverter needs a gap to switch modes. Non-adjacent schedules
-                 (e.g. charge ends 05:30, discharge starts 18:30) already have
-                 a natural gap and must not be shortened. #}
-              {% set prev_end = as_datetime(ns.list[i-1].last_time) + timedelta(minutes=30) %}
+          {# Trim 5 min from back-to-back different-type slots so the inverter
+             has a gap to switch modes. Non-adjacent slots already have a gap. #}
+          {% set trimmed = namespace(list=[]) %}
+          {% for i in range(slots.list | length) %}
+            {% set sched = slots.list[i] %}
+            {% if i > 0 and slots.list[i-1].type != sched.type %}
+              {% set prev_end = as_datetime(slots.list[i-1].last_time) + timedelta(minutes=30) %}
               {% set curr_start = as_datetime(sched.first_time) %}
               {% if prev_end == curr_start %}
-                {% set prev = ns2.list[-1] %}
+                {% set prev = trimmed.list[-1] %}
                 {% set prev_end_dt = as_datetime(prev.last_time) + timedelta(minutes=25) %}
                 {% set prev_new_end = prev_end_dt.strftime('%H:%M') %}
                 {% set updated_prev = dict(prev, end_time=prev_new_end) %}
-                {% set ns2.list = ns2.list[:-1] + [updated_prev] %}
+                {% set trimmed.list = trimmed.list[:-1] + [updated_prev] %}
               {% endif %}
             {% endif %}
-            {% set ns2.list = ns2.list + [sched] %}
+            {% set trimmed.list = trimmed.list + [sched] %}
           {% endfor %}
-          {# Enphase has a 12-schedule hard cap — keep active + future schedules
-             and cap via input_number. A slot is still active if its last 30-min
-             row hasn't ended yet (last_time + 30min > now), i.e. last_time is
-             within the last 30 minutes. This prevents the current in-progress
-             charge/export slot from being dropped. #}
+          {# Enphase schedule cap — keep active + future, trim furthest-future. #}
           {% set max_schedules = states('input_number.predbat_max_enphase_schedules') | int(12) %}
           {% set active_cutoff = (now() - timedelta(minutes=30)).isoformat() %}
-          {% set future = ns2.list | selectattr('last_time', 'ge', active_cutoff) | list %}
+          {% set future = trimmed.list | selectattr('last_time', 'ge', active_cutoff) | list %}
           {{ future[:max_schedules] }}
 
         charge_exists: "{{ desired_schedules | selectattr('type', 'equalto', 'cfg') | list | length > 0 }}"
