@@ -342,6 +342,9 @@ views:
           - entity: input_number.predbat_metric_battery_cycle
             name: Cycle cost
             icon: mdi:currency-gbp
+          - entity: input_number.predbat_carbon_metric
+            name: Carbon metric
+            icon: mdi:molecule-co2
           - entity: input_number.predbat_holiday_days_left
             name: Holiday days
             icon: mdi:beach
