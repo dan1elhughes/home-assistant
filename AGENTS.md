@@ -15,6 +15,12 @@ op run --environment q5pfvfpsh44h7xywiqys2ff5ma \
 ```
 
 - `GET /api/states` returns all entities; `GET /api/states/<entity_id>` returns one.
+- `POST /api/template` renders a Jinja2 template against the live instance.
+  Send a JSON body `{"template": "{{ ... }}"}`; the response is
+  `{"template": "<rendered result>"}`. Use this to verify `value_template`
+  logic, regex `is match` behavior, and `states(...)` lookups against real
+  data before relying on them in an automation. Redirect the curl output to a
+  file (`-o file`) inside the `bash -c` to avoid the 1Password redaction issue.
 - `op run` redacts any stdout that matches a secret value (shows
   `<concealed by 1Password>`), which corrupts JSON. **Redirect the curl output
   to a file inside the `bash -c`** (`-o file` or `> file`) so the secret

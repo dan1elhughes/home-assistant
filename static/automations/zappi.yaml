@@ -37,9 +37,9 @@
                 option: "Stopped"
         - alias: "Charge"
           conditions:
-            - alias: "Predbat is charging battery"
+            - alias: "Predbat is charging or holding battery charge"
               condition: template
-              value_template: "{{ states('sensor.predbat_intent') is match('Chrg') }}"
+              value_template: "{{ states('sensor.predbat_intent') is match('^(Chrg|HoldChrg)') }}"
             - alias: "Zappi currently stopped"
               condition: state
               entity_id: select.myenergi_zappi_charge_mode
@@ -57,9 +57,9 @@
                 option: "Fast"
         - alias: "Stop"
           conditions:
-            - alias: "Predbat is not charging battery"
+            - alias: "Predbat is not charging or holding battery charge"
               condition: template
-              value_template: "{{ states('sensor.predbat_intent') is not match('^(Chrg|FrzChrg)') }}"
+              value_template: "{{ states('sensor.predbat_intent') is not match('^(Chrg|HoldChrg|FrzChrg)') }}"
             - alias: "Zappi currently fast"
               condition: state
               entity_id: select.myenergi_zappi_charge_mode
