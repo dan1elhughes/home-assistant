@@ -39,6 +39,28 @@ views:
             show_location: true
 
       - type: grid
+        visibility:
+          - condition: or
+            conditions:
+              - condition: state
+                entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
+                state: "on"
+              - condition: state
+                entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+                state: "on"
+        cards:
+          - type: heading
+            heading: Octopus events
+            heading_style: title
+            icon: mdi:gift
+          - type: entity
+            entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
+            name: Saving session
+          - type: entity
+            entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+            name: Free electricity
+
+      - type: grid
         cards:
           {% for room in rooms|sort(attribute='id') %}
           - type: button
@@ -62,232 +84,6 @@ views:
               columns: 3
               rows: 2
           {% endfor %}
-
-  - title: Energy
-    path: energy
-    icon: mdi:lightning-bolt
-    type: sections
-    sections:
-      - type: grid
-        cards:
-          - type: heading
-            heading: Battery
-            heading_style: title
-            icon: mdi:home-battery
-            badges:
-              - type: entity
-                entity: sensor.envoy_122322027694_battery
-                show_icon: false
-              - type: entity
-                entity: sensor.predbat_intent
-                show_icon: false
-          - type: sensor
-            name: Power
-            entity: sensor.battery_total_power
-            graph: line
-            detail: 2
-          - type: sensor
-            name: Energy
-            entity: sensor.envoy_122322027694_available_battery_energy
-            graph: line
-            detail: 2
-
-      - type: grid
-        cards:
-          - type: heading
-            heading: Import
-            heading_style: title
-            icon: mdi:transmission-tower-import
-            badges:
-              - type: entity
-                entity: sensor.accumulative_electricity_cost_without_standing_charge
-                show_icon: false
-          - type: sensor
-            icon: mdi:transmission-tower-import
-            name: Import now
-            entity: sensor.myenergi_myenergi_hub_power_import
-            graph: line
-            detail: 2
-          - type: sensor
-            icon: mdi:transmission-tower-import
-            name: Import today
-            entity: sensor.myenergi_myenergi_hub_grid_import_today
-            graph: none
-
-      - type: grid
-        cards:
-          - type: heading
-            heading: Export
-            heading_style: title
-            icon: mdi:transmission-tower-export
-            badges:
-              - type: entity
-                entity: sensor.export_paid
-                show_icon: false
-          - type: sensor
-            name: Export now
-            entity: sensor.myenergi_myenergi_hub_power_export
-            icon: mdi:transmission-tower-export
-            graph: line
-            detail: 2
-          - type: sensor
-            name: Export today
-            entity: sensor.myenergi_myenergi_hub_grid_export_today
-            icon: mdi:transmission-tower-export
-            graph: none
-
-      - type: grid
-        cards:
-          - type: heading
-            heading: Solar
-            heading_style: title
-            icon: mdi:solar-power
-            badges:
-              - type: entity
-                entity: sensor.solar_power_generation_paid
-                show_icon: false
-              - type: entity
-                entity: sensor.energy_production_today
-                show_icon: false
-          - type: sensor
-            name: Generation
-            icon: mdi:solar-power-variant
-            entity: sensor.solar_power_generation
-            graph: line
-            detail: 2
-          - type: sensor
-            name: Generation today
-            icon: mdi:solar-power-variant
-            entity: sensor.myenergi_myenergi_hub_generated_today
-            graph: none
-
-      - type: grid
-        cards:
-          - type: heading
-            heading: Gas
-            heading_style: title
-            icon: mdi:fire
-            badges:
-              - type: entity
-                entity: sensor.accumulative_gas_cost_without_standing_charge
-                show_icon: false
-              - type: entity
-                entity: sensor.central_heating_controller_wiser_heating
-                show_icon: false
-          - type: sensor
-            name: Import now
-            icon: mdi:gas-burner
-            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_consumption
-            graph: line
-            detail: 2
-          - type: sensor
-            name: Import today
-            icon: mdi:gas-burner
-            entity: sensor.octopus_energy_gas_g4p07003781500_7475340302_current_accumulative_consumption_kwh
-            graph: none
-
-      - type: grid
-        cards:
-          - type: heading
-            heading: Battery management
-            heading_style: title
-            icon: mdi:battery
-          - type: vertical-stack
-            cards:
-              - type: tile
-                name: Predbat control
-                entity: automation.predbat_control
-                icon: mdi:robot
-
-              - type: markdown
-                content: >
-                  {% raw %}
-                  {%- set schedules = state_attr('sensor.enphase_schedules_summary', 'schedules') %}
-                  {%- set weekdays = ['', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-                  **Battery schedule**
-                  {%- if schedules %}
-                    {%- set ns = namespace(items=[]) %}
-
-                    {%- for schedule in schedules | sort(attribute='start') | sort(attribute='days') %}
-                      {%- set day_ns = namespace(items=[]) %}
-                      {%- for day in schedule.days | default([]) %}
-                        {%- set day_ns.items = day_ns.items + [weekdays[day] if day >= 0 and day < weekdays | count else day] %}
-                      {%- endfor %}
-
-                      {%- if schedule.type | lower == 'cfg' %}
-                        {%- set action = 'Charge from grid' %}
-                      {%- elif schedule.type | lower == 'dtg' %}
-                        {%- set action = 'Discharge to grid' %}
-                      {%- else %}
-                        {%- set action = schedule.type | upper %}
-                      {%- endif %}
-
-                      {%- set days_label = ' (' ~ day_ns.items | join(', ') ~ ')' if day_ns.items else '' %}
-                      {%- set line = '- ' ~ schedule.start ~ ' - ' ~ schedule.end ~ ': **' ~ action ~ '** to ' ~ schedule.limit ~ '%' ~ days_label %}
-                      {%- set ns.items = ns.items + [line] %}
-                    {%- endfor %}
-
-                    {{ '\n' ~ ns.items | join('\n') }}
-                  {%- else %}
-                    {{ '\nNo battery schedule configured' }}
-                  {%- endif %}
-                  {% endraw %}
-
-      - type: grid
-        visibility:
-          - condition: or
-            conditions:
-              - condition: state
-                entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
-                state: "on"
-              - condition: state
-                entity: input_boolean.auto_enable_smart_charge
-                state: "on"
-        cards:
-          - type: heading
-            heading: Smart charge
-            heading_style: title
-            icon: mdi:ev-station
-          - type: tile
-            entity: number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target
-            name: Target
-          - type: tile
-            entity: select.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_target_time
-            name: Time
-          - type: markdown
-            content: >+
-              {% raw %}
-              {% set dispatches = state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'planned_dispatches') %}
-              {% if dispatches %}
-              {% set ns = namespace(merged=[], current_start=none, current_end=none) %}
-
-              {% for d in dispatches %}
-              {% set start = as_local(d.start) %}
-              {% set end = as_local(d.end) %}
-
-              {% if ns.current_start == none %}
-              {% set ns.current_start = start %}
-              {% set ns.current_end = end %}
-              {% elif start == ns.current_end %}
-              {% set ns.current_end = end %}
-              {% else %}
-              {% set ns.merged = ns.merged + [(ns.current_start, ns.current_end)] %}
-              {% set ns.current_start = start %}
-              {% set ns.current_end = end %}
-              {% endif %}
-              {% endfor %}
-
-              {# Append the last interval #}
-              {% set ns.merged = ns.merged + [(ns.current_start, ns.current_end)] %}
-
-              {% for start, end in ns.merged %}
-              - {{ start.strftime('%H:%M') }} to {{ end.strftime('%H:%M') }}
-
-              {% endfor %}
-              {% else %}
-              Dispatches not yet scheduled.
-              {% endif %}
-              {% endraw %}
 
   - type: sidebar
     title: Predbat
