@@ -217,22 +217,15 @@
         "input_boolean.auto_enable_smart_charge",
         "input_datetime.smart_charge_start",
         "input_boolean.auto_disable_smart_charge",
-        "input_datetime.smart_charge_end",
-        "sensor.wp22lxc_battery"
+        "input_datetime.smart_charge_end"
       ]
     },
     {
       "id": "garage",
       "icon": "mdi:garage",
       "name": "Garage",
-      "badges": [
-        "sensor.garage_sensor_temperature",
-        "sensor.garage_sensor_humidity"
-      ],
-      "other_entities": [
-        "sensor.predbat_intent",
-        "automation.predbat_control"
-      ]
+      "badges": ["sensor.envoy_122322027694_available_battery_energy"],
+      "other_entities": ["sensor.predbat_intent", "automation.predbat_control"]
     }
   ],
   "leak_sensors": [
