@@ -147,6 +147,40 @@ views:
         view_layout:
           position: sidebar
 
+      - type: markdown
+        title: Enphase schedule
+        content: |
+          {% raw %}
+          {%- set schedules = state_attr('sensor.enphase_schedules_summary', 'schedules') %}
+          {%- set weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
+          {%- if schedules %}
+          {%- set ns = namespace(items=[]) %}
+          {%- for schedule in schedules | sort(attribute='start') | sort(attribute='days') %}
+            {%- set day_ns = namespace(items=[]) %}
+            {%- for day in schedule.days | default([]) %}
+              {%- set day_ns.items = day_ns.items + [weekdays[day - 1] if day >= 1 and day <= 7 else day] %}
+            {%- endfor %}
+
+            {%- if schedule.type | lower == 'cfg' %}
+              {%- set action = '⚡ Charge' %}
+            {%- elif schedule.type | lower == 'dtg' %}
+              {%- set action = '🔋 Export' %}
+            {%- else %}
+              {%- set action = schedule.type | upper %}
+            {%- endif %}
+
+            {%- set days_label = ' (' ~ day_ns.items | join(', ') ~ ')' if day_ns.items else '' %}
+            {%- set line = '- ' ~ schedule.start ~ ' – ' ~ schedule.end ~ ': **' ~ action ~ '** ' ~ schedule.limit ~ '%' ~ days_label %}
+            {%- set ns.items = ns.items + [line] %}
+          {%- endfor %}
+          {{ ns.items | join('\n') }}
+          {%- else %}
+          No battery schedule
+          {%- endif %}
+          {% endraw %}
+        view_layout:
+          position: sidebar
+
       
 
   - type: sections
