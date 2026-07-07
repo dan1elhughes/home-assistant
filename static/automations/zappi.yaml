@@ -84,3 +84,37 @@
         message: "{{ states('sensor.myenergi_zappi_plug_status') }} at {{ now().strftime('%H:%M') }}"
         data:
           tag: "zappi-plug-status"
+
+- alias: "Disable smart charge on disconnect"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: sensor.myenergi_zappi_plug_status
+      to: "EV Disconnected"
+  condition:
+    - alias: "Smart charge currently on"
+      condition: state
+      entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+      state: "on"
+  action:
+    - alias: "Disable smart charge"
+      action: switch.turn_off
+      target:
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - alias: "Stop scheduled start re-enabling it"
+      action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.auto_enable_smart_charge
+    - alias: "Stop scheduled end disabling it"
+      action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.auto_disable_smart_charge
+    - alias: "Notify Dan"
+      action: notify.dan
+      data:
+        title: "Smart charge"
+        message: "Auto-disabled: EV disconnected"
+        data:
+          notification_icon: "mdi:car-electric"
+          channel: "smart_charge"
+          tag: "smart_charge_disconnected"
