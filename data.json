@@ -137,7 +137,8 @@
         "light.homelab_power_printer",
         "light.desk_lights",
         "switch.office",
-        "vacuum.upstairs"
+        "vacuum.upstairs",
+        "automation.ac_control"
       ],
       "badges": ["climate.office_ac"],
       "co2_sensor": "apollo_msr_2_1517ac"

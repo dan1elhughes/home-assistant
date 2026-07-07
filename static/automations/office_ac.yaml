@@ -1,4 +1,4 @@
-- alias: "Office AC when active room is office"
+- alias: "AC control"
   mode: single
   trigger:
     - platform: state
