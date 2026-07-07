@@ -10,7 +10,7 @@
       data:
         position: 50
 
-- alias: "Curtains fully closed at dawn"
+- alias: "Dawn actions"
   mode: single
   triggers:
     - trigger: numeric_state
@@ -29,3 +29,7 @@
         position: 0
         entity_id: cover.curtains
         speed: 1
+    - alias: "Enable hallway motion sensors"
+      action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.motion_sensors_enabled
