@@ -28,9 +28,9 @@
     - platform: time
       at: input_datetime.smart_charge_end
   condition:
-    - alias: "Auto enable smart charge enabled"
+    - alias: "Auto disable smart charge enabled"
       condition: state
-      entity_id: input_boolean.auto_enable_smart_charge
+      entity_id: input_boolean.auto_disable_smart_charge
       state: "on"
   action:
     - alias: "Disable smart charge"
