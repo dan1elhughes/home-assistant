@@ -158,7 +158,9 @@ views:
           {%- for schedule in schedules | sort(attribute='start') | sort(attribute='days') %}
             {%- set day_ns = namespace(items=[]) %}
             {%- for day in schedule.days | default([]) %}
-              {%- set day_ns.items = day_ns.items + [weekdays[day - 1] if day >= 1 and day <= 7 else day] %}
+              {%- if day != now().isoweekday() %}
+                {%- set day_ns.items = day_ns.items + [weekdays[day - 1] if day >= 1 and day <= 7 else day] %}
+              {%- endif %}
             {%- endfor %}
 
             {%- if schedule.type | lower == 'cfg' %}
@@ -186,6 +188,7 @@ views:
         content: |
           {% raw %}
           {%- set entity = 'binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching' %}
+          {%- set weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
           {%- set planned = state_attr(entity, 'planned_dispatches') | default([]) %}
           {%- if planned %}
           {%- set ns = namespace(items=[]) %}
@@ -197,7 +200,12 @@ views:
               {%- set active = now() >= s and now() < e %}
               {%- set icon = '⚡' if active else '🕐' %}
               {%- set status = 'Charging' if active else 'Scheduled' %}
-              {%- set line = '- ' ~ s.strftime('%H:%M') ~ ' – ' ~ e.strftime('%H:%M') ~ ': **' ~ icon ~ ' ' ~ status ~ '** ' ~ kwh ~ ' kWh (' ~ d.source ~ ')' %}
+              {%- if s.date() == e.date() %}
+                {%- set end_str = e.strftime('%H:%M') %}
+              {%- else %}
+                {%- set end_str = e.strftime('%H:%M') ~ ' (' ~ weekdays[e.weekday()] ~ ')' %}
+              {%- endif %}
+              {%- set line = '- ' ~ s.strftime('%H:%M') ~ ' – ' ~ end_str ~ ': **' ~ icon ~ ' ' ~ status ~ '** ' ~ kwh ~ ' kWh' %}
               {%- set ns.items = ns.items + [line] %}
             {%- endif %}
           {%- endfor %}
