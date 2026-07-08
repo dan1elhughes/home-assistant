@@ -196,8 +196,8 @@ views:
               {%- set kwh = (d.charge_in_kwh | float(0) | abs) | round(1) %}
               {%- set active = now() >= s and now() < e %}
               {%- set icon = '⚡' if active else '🕐' %}
-              {%- set status = 'charging' if active else 'scheduled' %}
-              {%- set line = '- ' ~ icon ~ ' **' ~ s.strftime('%H:%M') ~ ' – ' ~ e.strftime('%H:%M') ~ '**: ' ~ status ~ ' (' ~ kwh ~ ' kWh)' %}
+              {%- set status = 'Charging' if active else 'Scheduled' %}
+              {%- set line = '- ' ~ s.strftime('%H:%M') ~ ' – ' ~ e.strftime('%H:%M') ~ ': **' ~ icon ~ ' ' ~ status ~ '** ' ~ kwh ~ ' kWh (' ~ d.source ~ ')' %}
               {%- set ns.items = ns.items + [line] %}
             {%- endif %}
           {%- endfor %}
