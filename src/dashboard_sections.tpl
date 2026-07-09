@@ -8,6 +8,8 @@ views:
     badges:
       - type: entity
         entity: sensor.envoy_122322027694_battery
+      - type: entity
+        entity: sensor.predbat_intent
     sections:
       - type: grid
         cards:
