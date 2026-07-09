@@ -1,5 +1,13 @@
 After making changes, run `./build.sh` and `./upload.sh`.
 
+## Project structure
+
+- `src/` — Nunjucks `.tpl` templates rendered by `build.sh` against `data.json`.
+  Only use `.tpl` when you need loops, variables, or macros.
+- `static/` — plain YAML (and other static files) copied verbatim into `dist/` by
+  the `rsync` step in `build.sh`. Put automations, scenes, and config that don't
+  need templating here.
+
 ## Home Assistant API
 
 The running instance is at `https://home.danhughes.dev`. The HA REST API
