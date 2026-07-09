@@ -5,6 +5,9 @@ views:
     path: home
     icon: mdi:home
     type: sections
+    badges:
+      - type: entity
+        entity: sensor.envoy_122322027694_battery
     sections:
       - type: grid
         cards:
