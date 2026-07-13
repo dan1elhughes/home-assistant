@@ -394,17 +394,17 @@ views:
             icon: mdi:shaker-outline
           - type: tile
             entity: sensor.washer_dryer_poor_i_dos_1_fill_level
-            name: Detergent 1
+            name: Laundry liquid
             icon: mdi:soap
           - type: tile
             entity: sensor.washer_dryer_poor_i_dos_2_fill_level
-            name: Detergent 2
+            name: Softener
             icon: mdi:soap
           - type: tile
-            entity: sensor.upstairs_error_message
+            entity: sensor.upstairs_error
             name: Upstairs error
           - type: tile
-            entity: sensor.downstairs_error_message
+            entity: sensor.downstairs_error
             name: Downstairs error
 
   {% for room in rooms|sort(attribute='id') %}

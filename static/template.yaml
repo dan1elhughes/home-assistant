@@ -247,3 +247,16 @@
     - name: One-room mode
       state: >
         {{ states('sensor.occupant_count') | int <= 1 }}
+
+- sensor:
+    - name: "Upstairs error"
+      icon: mdi:alert-circle-outline
+      state: >
+        {% set err = states('sensor.upstairs_error_message') %}
+        {{ err if err and err|trim != '' else 'OK' }}
+
+    - name: "Downstairs error"
+      icon: mdi:alert-circle-outline
+      state: >
+        {% set err = states('sensor.downstairs_error_message') %}
+        {{ err if err and err|trim != '' else 'OK' }}
