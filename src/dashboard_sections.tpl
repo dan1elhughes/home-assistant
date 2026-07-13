@@ -363,8 +363,6 @@ views:
                   value: "sensor.envoy_122322027694_reserve_battery_level"
                 - name: "entity_id"
                   value: "sensor.predbat_enphase_0_reserve"
-                - name: "state"
-                  value: "unavailable"
             sort:
               - state
             collapse: 8
