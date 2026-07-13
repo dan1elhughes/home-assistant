@@ -343,6 +343,41 @@ views:
                 include:
                   - entity_id: sensor.*_battery
 
+  - type: sections
+    title: Batteries
+    path: batteries
+    icon: mdi:battery
+    sections:
+      - type: grid
+        cards:
+          - type: custom:battery-state-card
+            title: Device Batteries
+            filter:
+              include:
+                - name: "attributes.device_class"
+                  value: "battery"
+              exclude:
+                - name: "entity_id"
+                  value: "binary_sensor.*"
+                - name: "entity_id"
+                  value: "sensor.envoy_122322027694_reserve_battery_level"
+                - name: "entity_id"
+                  value: "sensor.predbat_enphase_0_reserve"
+                - name: "state"
+                  value: "unavailable"
+            sort:
+              - state
+            collapse: 8
+            secondary_info: "{last_changed}"
+            colors:
+              steps:
+                - value: 20
+                  color: "#e74c3c"
+                - value: 50
+                  color: "#f39c12"
+                - value: 100
+                  color: "#27ae60"
+
   {% for room in rooms|sort(attribute='id') %}
   - title: {{ room.name | safe }}
     path: sub-{{ room.id }}
