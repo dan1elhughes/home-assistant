@@ -192,32 +192,33 @@ views:
         title: Octopus schedule
         content: |
           {% raw %}
-          {%- set entity = 'binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching' %}
+          {%- set cars = [
+              ('ID3', 'binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching'),
+              ('Zoe', 'binary_sensor.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_dispatching')
+            ] %}
           {%- set weekdays = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'] %}
-          {%- set planned = state_attr(entity, 'planned_dispatches') | default([]) %}
-          {%- if planned %}
           {%- set ns = namespace(items=[]) %}
-          {%- for d in planned | sort(attribute='start') %}
-            {%- set s = d.start | as_datetime %}
-            {%- set e = d.end | as_datetime %}
-            {%- if e > now() %}
-              {%- set kwh = (d.charge_in_kwh | float(0) | abs) | round(1) %}
-              {%- set active = now() >= s and now() < e %}
-              {%- set icon = '⚡' if active else '🕐' %}
-              {%- set status = 'Charging' if active else 'Scheduled' %}
-              {%- if s.date() == e.date() %}
-                {%- set end_str = e.strftime('%H:%M') %}
-              {%- else %}
-                {%- set end_str = e.strftime('%H:%M') ~ ' (' ~ weekdays[e.weekday()] ~ ')' %}
+          {%- for name, entity in cars %}
+            {%- set planned = state_attr(entity, 'planned_dispatches') | default([]) %}
+            {%- for d in planned | sort(attribute='start') %}
+              {%- set s = d.start | as_datetime %}
+              {%- set e = d.end | as_datetime %}
+              {%- if e > now() %}
+                {%- set kwh = (d.charge_in_kwh | float(0) | abs) | round(1) %}
+                {%- set active = now() >= s and now() < e %}
+                {%- set icon = '⚡' if active else '🕐' %}
+                {%- set status = 'Charging' if active else 'Scheduled' %}
+                {%- if s.date() == e.date() %}
+                  {%- set end_str = e.strftime('%H:%M') %}
+                {%- else %}
+                  {%- set end_str = e.strftime('%H:%M') ~ ' (' ~ weekdays[e.weekday()] ~ ')' %}
+                {%- endif %}
+                {%- set line = '- ' ~ name ~ ' · ' ~ s.strftime('%H:%M') ~ ' – ' ~ end_str ~ ': **' ~ icon ~ ' ' ~ status ~ '** ' ~ kwh ~ ' kWh' %}
+                {%- set ns.items = ns.items + [line] %}
               {%- endif %}
-              {%- set line = '- ' ~ s.strftime('%H:%M') ~ ' – ' ~ end_str ~ ': **' ~ icon ~ ' ' ~ status ~ '** ' ~ kwh ~ ' kWh' %}
-              {%- set ns.items = ns.items + [line] %}
-            {%- endif %}
+            {%- endfor %}
           {%- endfor %}
-          {{ ns.items | join('\n') }}
-          {%- else %}
-          No scheduled dispatch
-          {%- endif %}
+          {{ ns.items | join('\n') if ns.items else 'No scheduled dispatch' }}
           {% endraw %}
         view_layout:
           position: sidebar
@@ -417,12 +418,6 @@ views:
             heading: Zappi
             heading_style: title
             icon: mdi:ev-plug-type2
-          - type: tile
-            entity: switch.smart_charge
-            name: Smart charge (both cars)
-            features_position: inline
-            features:
-              - type: toggle
           - type: tile
             entity: select.myenergi_zappi_charge_mode
             name: Charge mode
