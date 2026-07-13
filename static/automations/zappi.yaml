@@ -3,9 +3,8 @@
   trigger:
     - platform: state
       entity_id:
-        - sensor.predbat_intent
         - select.myenergi_zappi_charge_mode
-        - switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+        - switch.smart_charge
         - input_boolean.auto_enable_smart_charge
   action:
     - choose:
@@ -13,7 +12,7 @@
           conditions:
             - alias: "Octopus smart charge enabled"
               condition: state
-              entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+              entity_id: switch.smart_charge
               state: "on"
           sequence:
             - alias: "Set Zappi to Fast"
@@ -35,42 +34,13 @@
                 entity_id: select.myenergi_zappi_charge_mode
               data:
                 option: "Stopped"
-        - alias: "Charge"
-          conditions:
-            - alias: "Predbat is charging or holding battery charge"
-              condition: template
-              value_template: "{{ states('sensor.predbat_intent') is match('^(Chrg|HoldChrg)') }}"
-            - alias: "Zappi currently stopped"
-              condition: state
-              entity_id: select.myenergi_zappi_charge_mode
-              state: "Stopped"
-            - alias: "Smart charge tonight is not enabled"
-              condition: state
-              entity_id: input_boolean.auto_enable_smart_charge
-              state: "off"
-          sequence:
-            - alias: "Set Zappi to Fast"
-              action: select.select_option
-              target:
-                entity_id: select.myenergi_zappi_charge_mode
-              data:
-                option: "Fast"
-        - alias: "Stop"
-          conditions:
-            - alias: "Predbat is not charging or holding battery charge"
-              condition: template
-              value_template: "{{ states('sensor.predbat_intent') is not match('^(Chrg|HoldChrg|FrzChrg)') }}"
-            - alias: "Zappi currently fast"
-              condition: state
-              entity_id: select.myenergi_zappi_charge_mode
-              state: "Fast"
-          sequence:
-            - alias: "Set Zappi to Stopped"
-              action: select.select_option
-              target:
-                entity_id: select.myenergi_zappi_charge_mode
-              data:
-                option: "Stopped"
+      default:
+        - alias: "Set Zappi to Stopped"
+          action: select.select_option
+          target:
+            entity_id: select.myenergi_zappi_charge_mode
+          data:
+            option: "Stopped"
 
 - alias: "Notify Dan when Zappi plug state changes"
   mode: single
@@ -94,13 +64,13 @@
   condition:
     - alias: "Smart charge currently on"
       condition: state
-      entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+      entity_id: switch.smart_charge
       state: "on"
   action:
     - alias: "Disable smart charge"
       action: switch.turn_off
       target:
-        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+        entity_id: switch.smart_charge
     - alias: "Stop scheduled start re-enabling it"
       action: input_boolean.turn_off
       target:

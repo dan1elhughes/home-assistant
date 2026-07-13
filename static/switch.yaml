@@ -1,0 +1,6 @@
+- platform: group
+  name: "Smart charge"
+  unique_id: smart_charge
+  entities:
+    - switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - switch.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_smart_charge

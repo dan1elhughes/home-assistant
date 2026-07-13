@@ -1,23 +1,24 @@
-- alias: "ID3 smart charge: set Predbat reservation profile"
+- alias: "Smart charge: set Predbat reservation profile"
   mode: single
   description: >-
-    When the ID3 Octopus Intelligent smart charge switch changes, sets a
-    coherent Predbat reservation profile so the battery holds charge back for
-    the car. Octopus frequently shifts the charge schedule within the 4-hour
-    planning blind spot, so best_soc_keep alone (a long-term planning metric,
-    ignored for the first 4h) can't protect against that — set_reserve_min is
-    the runtime floor that does. best_soc_keep + a bumped weight bias the
-    longer-term run-up to the window. All three revert to defaults when smart
-    charge is off. No default action — an unavailable/unknown state leaves
-    values untouched to avoid surprising behaviour.
+    When the smart charge group changes, sets a coherent Predbat reservation
+    profile so the battery holds charge back for the car. Octopus frequently
+    shifts the charge schedule within the 4-hour planning blind spot, so
+    best_soc_keep alone (a long-term planning metric, ignored for the first 4h)
+    can't protect against that — set_reserve_min is the runtime floor that
+    does. best_soc_keep + a bumped weight bias the longer-term run-up to the
+    window. All three revert to defaults when smart charge is off. No default
+    action — an unavailable/unknown state leaves values untouched to avoid
+    surprising behaviour.
   trigger:
     - platform: state
-      entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+      entity_id: switch.smart_charge
   action:
     choose:
       - conditions:
-          - condition: state
-            entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+          - alias: "Smart charge enabled"
+            condition: state
+            entity_id: switch.smart_charge
             state: "on"
         sequence:
           - alias: "Runtime floor: hold 10% (= 1.5 kWh of 15 kWh) — survives the 4h blind spot"
@@ -39,8 +40,9 @@
             data:
               value: 1
       - conditions:
-          - condition: state
-            entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+          - alias: "Smart charge off"
+            condition: state
+            entity_id: switch.smart_charge
             state: "off"
         sequence:
           - alias: "Restore default reserve minimum (hardware floor)"

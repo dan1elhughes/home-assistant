@@ -12,7 +12,7 @@
     - alias: "Enable smart charge"
       action: switch.turn_on
       target:
-        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+        entity_id: switch.smart_charge
     - alias: "Notify user"
       action: notify.dan
       data:
@@ -36,7 +36,7 @@
     - alias: "Disable smart charge"
       action: switch.turn_off
       target:
-        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+        entity_id: switch.smart_charge
     - alias: "Notify user"
       action: notify.dan
       data:
