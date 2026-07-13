@@ -466,3 +466,31 @@
         logger: PredbatControl
         level: info
         message: "Predbat complete - to_update:{{ mutation_plan.to_update | length }} to_add:{{ mutation_plan.to_add | length }} to_delete:{{ mutation_plan.to_delete | length }}"
+
+- alias: "Predbat mode follows Zappi plug status"
+  mode: single
+  description: "Prevents the battery discharging while the car is charging by switching Predbat to Control charge mode while the Zappi plug status is Charging."
+  trigger:
+    - platform: state
+      entity_id: sensor.myenergi_zappi_plug_status
+  action:
+    - choose:
+        - alias: "Charging"
+          conditions:
+            - condition: state
+              entity_id: sensor.myenergi_zappi_plug_status
+              state: "Charging"
+          sequence:
+            - alias: "Set Predbat to Control charge"
+              action: select.select_option
+              target:
+                entity_id: select.predbat_mode
+              data:
+                option: "Control charge"
+      default:
+        - alias: "Set Predbat to Control charge & discharge"
+          action: select.select_option
+          target:
+            entity_id: select.predbat_mode
+          data:
+            option: "Control charge & discharge"
