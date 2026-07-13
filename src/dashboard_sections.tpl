@@ -344,9 +344,9 @@ views:
                   - entity_id: sensor.*_battery
 
   - type: sections
-    title: Batteries
-    path: batteries
-    icon: mdi:battery
+    title: Maintenance
+    path: maintenance
+    icon: mdi:clipboard-list
     sections:
       - type: grid
         cards:
@@ -377,6 +377,35 @@ views:
                   color: "#f39c12"
                 - value: 100
                   color: "#27ae60"
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Appliances
+            heading_style: title
+            icon: mdi:washing-machine
+          - type: tile
+            entity: sensor.dishwasher_rinse_aid_nearly_empty
+            name: Rinse aid
+            icon: mdi:sparkles
+          - type: tile
+            entity: sensor.dishwasher_salt_nearly_empty
+            name: Salt
+            icon: mdi:shaker-outline
+          - type: tile
+            entity: sensor.washer_dryer_poor_i_dos_1_fill_level
+            name: Detergent 1
+            icon: mdi:soap
+          - type: tile
+            entity: sensor.washer_dryer_poor_i_dos_2_fill_level
+            name: Detergent 2
+            icon: mdi:soap
+          - type: tile
+            entity: sensor.upstairs_error_message
+            name: Upstairs error
+          - type: tile
+            entity: sensor.downstairs_error_message
+            name: Downstairs error
 
   {% for room in rooms|sort(attribute='id') %}
   - title: {{ room.name | safe }}
