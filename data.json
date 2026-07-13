@@ -206,22 +206,6 @@
       "other_entities": ["sensor.washer_dryer_operation_state"]
     },
     {
-      "id": "driveway",
-      "icon": "mdi:car-electric",
-      "name": "Driveway",
-      "other_entities": [
-        "select.myenergi_zappi_charge_mode",
-        "automation.zappi_control",
-        "switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge",
-        "number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target",
-        "select.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_target_time",
-        "input_boolean.auto_enable_smart_charge",
-        "input_datetime.smart_charge_start",
-        "input_boolean.auto_disable_smart_charge",
-        "input_datetime.smart_charge_end"
-      ]
-    },
-    {
       "id": "garage",
       "icon": "mdi:garage",
       "name": "Garage",

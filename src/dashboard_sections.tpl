@@ -405,6 +405,137 @@ views:
             entity: sensor.downstairs_error
             name: Downstairs error
 
+  - type: sections
+    max_columns: 4
+    title: Smart charge
+    path: smart-charge
+    icon: mdi:car-electric
+    sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Zappi
+            heading_style: title
+            icon: mdi:ev-plug-type2
+          - type: tile
+            entity: switch.smart_charge
+            name: Smart charge (both cars)
+            features_position: inline
+            features:
+              - type: toggle
+          - type: tile
+            entity: select.myenergi_zappi_charge_mode
+            name: Charge mode
+            hide_state: true
+            features_position: inline
+            features:
+              - type: select-options
+            grid_options:
+              columns: full
+          - type: tile
+            entity: sensor.myenergi_zappi_plug_status
+            name: Plug status
+          - type: tile
+            entity: sensor.myenergi_zappi_charge_added_session
+            name: Session charge
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: ID3
+            heading_style: title
+            icon: mdi:car-electric
+          - type: tile
+            entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+            name: Smart charge
+            features_position: inline
+            features:
+              - type: toggle
+          - type: tile
+            entity: number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target
+            name: Charge target
+            features_position: inline
+            features:
+              - type: numeric-input
+                style: slider
+            grid_options:
+              columns: full
+          - type: tile
+            entity: select.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_target_time
+            name: Target time
+            hide_state: true
+            features_position: inline
+            features:
+              - type: select-options
+            grid_options:
+              columns: full
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Zoe
+            heading_style: title
+            icon: mdi:car-electric
+          - type: tile
+            entity: switch.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_smart_charge
+            name: Smart charge
+            features_position: inline
+            features:
+              - type: toggle
+          - type: tile
+            entity: number.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_charge_target
+            name: Charge target
+            features_position: inline
+            features:
+              - type: numeric-input
+                style: slider
+            grid_options:
+              columns: full
+          - type: tile
+            entity: select.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_target_time
+            name: Target time
+            hide_state: true
+            features_position: inline
+            features:
+              - type: select-options
+            grid_options:
+              columns: full
+
+      - type: grid
+        cards:
+          - type: heading
+            heading: Schedule
+            heading_style: title
+            icon: mdi:clock-outline
+          - type: tile
+            entity: input_boolean.auto_enable_smart_charge
+            name: Auto enable
+            features_position: inline
+            features:
+              - type: toggle
+          - type: tile
+            entity: input_datetime.smart_charge_start
+            name: Start
+            features_position: inline
+            features:
+              - type: date-set
+            grid_options:
+              columns: full
+          - type: tile
+            entity: input_boolean.auto_disable_smart_charge
+            name: Auto disable
+            features_position: inline
+            features:
+              - type: toggle
+          - type: tile
+            entity: input_datetime.smart_charge_end
+            name: End
+            features_position: inline
+            features:
+              - type: date-set
+            grid_options:
+              columns: full
+
   {% for room in rooms|sort(attribute='id') %}
   - title: {{ room.name | safe }}
     path: sub-{{ room.id }}
