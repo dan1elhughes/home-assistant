@@ -4,3 +4,10 @@
   filters:
     - filter: time_throttle
       window_size: "00:01"
+
+- platform: derivative
+  source: sensor.barn_ac_energy
+  name: Current Barn AC Power Draw
+  round: 2
+  unit_time: h
+  time_window: "00:30:00"
