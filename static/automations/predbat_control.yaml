@@ -29,8 +29,7 @@
         desired_schedules: >
           {% set raw = state_attr('predbat.plan_html', 'raw') or {} %}
           {% set rows = raw.get('rows', []) %}
-          {# One Enphase slot per Predbat plan row — no grouping. #}
-          {% set slots = namespace(list=[]) %}
+           {% set slots = namespace(list=[]) %}
            {% for i in range(rows | length) %}
              {% set r = rows[i] %}
              {% set row_ts = as_datetime(r.time) %}
@@ -122,13 +121,30 @@
                {% endif %}
              {% endif %}
            {% endfor %}
-          {# Trim 5 min from back-to-back different-type slots so the inverter
-             has a gap to switch modes. Non-adjacent slots already have a gap. #}
-          {% set trimmed = namespace(list=[]) %}
-          {% for i in range(slots.list | length) %}
-            {% set sched = slots.list[i] %}
-            {% if i > 0 and slots.list[i-1].type != sched.type %}
-              {% set prev_end = as_datetime(slots.list[i-1].last_time) + timedelta(minutes=30) %}
+           {# Merge consecutive same-type same-limit same-day slots into one. #}
+           {% set merged = namespace(list=[]) %}
+           {% for i in range(slots.list | length) %}
+             {% set sched = slots.list[i] %}
+             {% if i > 0 and slots.list[i-1].type == sched.type
+                 and slots.list[i-1].limit == sched.limit
+                 and slots.list[i-1].day == sched.day %}
+               {% set prev = merged.list[-1] %}
+               {% set updated_prev = dict(prev,
+                 end_time=sched.end_time,
+                 last_time=sched.last_time
+               ) %}
+               {% set merged.list = merged.list[:-1] + [updated_prev] %}
+             {% else %}
+               {% set merged.list = merged.list + [sched] %}
+             {% endif %}
+           {% endfor %}
+           {# Trim 5 min from back-to-back different-type slots so the inverter
+              has a gap to switch modes. Non-adjacent slots already have a gap. #}
+           {% set trimmed = namespace(list=[]) %}
+           {% for i in range(merged.list | length) %}
+             {% set sched = merged.list[i] %}
+             {% if i > 0 and merged.list[i-1].type != sched.type %}
+               {% set prev_end = as_datetime(merged.list[i-1].last_time) + timedelta(minutes=30) %}
               {% set curr_start = as_datetime(sched.first_time) %}
               {% if prev_end == curr_start %}
                 {% set prev = trimmed.list[-1] %}
