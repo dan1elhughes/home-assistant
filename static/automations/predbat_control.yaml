@@ -41,28 +41,30 @@
              {% set state = r.state %}
              {% set is_charge = state in ['Chrg', 'HoldChrg'] %}
              {% set is_export = state == 'Exp' %}
-             {% if r.get('split', false) and i > 0 %}
-               {# Split slot: the battery changes direction mid-slot.
-                  Emit two back-to-back schedules — the first direction continues
-                  from the previous row, the second follows the current row. #}
-               {% set prev_row = rows[i-1] %}
-               {% if is_export %}
-                 {# Charge then export: first half charges to prev row target #}
-                 {% set first_target = (prev_row.state_target | string) | int(0) %}
-                 {% set second_target = (r.state_target | string) | int(0) %}
-                 {% if first_target > 0 %}
-                   {% set charge_end = row_ts + timedelta(minutes=5) %}
-                   {% set slots.list = slots.list + [{
-                     'type': 'cfg',
-                     'day': row_ts.isoweekday(),
-                     'start_time': row_ts.strftime('%H:%M'),
-                     'end_time': charge_end.strftime('%H:%M'),
-                     'limit': first_target,
-                     'first_time': r.time,
-                     'last_time': r.time
-                   }] %}
-                 {% endif %}
-                 {% if second_target > 0 %}
+              {% if r.get('split', false) and i > 0 %}
+                {# Split slot: the battery changes direction mid-slot.
+                   Only emit two schedules when the previous row is actively
+                   charging/exporting and overflows into this slot. Otherwise
+                   treat as a regular single-direction slot (first-half is
+                   just an arrow with no action). #}
+                {% set prev_row = rows[i-1] %}
+                {% if is_export and prev_row.state in ['Chrg', 'HoldChrg'] %}
+                  {# Charge overflows from previous Chrg slot into this Exp slot #}
+                  {% set first_target = (prev_row.state_target | string) | int(0) %}
+                  {% set second_target = (r.state_target | string) | int(0) %}
+                  {% if first_target > 0 %}
+                    {% set charge_end = row_ts + timedelta(minutes=5) %}
+                    {% set slots.list = slots.list + [{
+                      'type': 'cfg',
+                      'day': row_ts.isoweekday(),
+                      'start_time': row_ts.strftime('%H:%M'),
+                      'end_time': charge_end.strftime('%H:%M'),
+                      'limit': first_target,
+                      'first_time': r.time,
+                      'last_time': r.time
+                    }] %}
+                  {% endif %}
+                  {% if second_target > 0 %}
                     {# +10 min: 5 min charge + 5 min mode-switch gap #}
                     {% set export_start = row_ts + timedelta(minutes=10) %}
                     {% set slots.list = slots.list + [{
@@ -75,8 +77,8 @@
                       'last_time': r.time
                     }] %}
                   {% endif %}
-                {% elif is_charge %}
-                  {# Export then charge: first half exports to prev row target #}
+                {% elif is_charge and prev_row.state == 'Exp' %}
+                  {# Export overflows from previous Exp slot into this Chrg slot #}
                   {% set first_target = (prev_row.state_target | string) | int(0) %}
                   {% set second_target = (r.state_target | string) | int(0) %}
                   {% if first_target > 0 %}
@@ -104,7 +106,23 @@
                       'last_time': r.time
                     }] %}
                   {% endif %}
-               {% endif %}
+                {% else %}
+                  {# Split with no meaningful previous direction (prev is Demand,
+                     Exp→Exp, Chrg→Chrg, or first action row). Emit single slot. #}
+                  {% set intent = 'cfg' if is_charge else 'dtg' %}
+                  {% set target = (r.state_target | string) | int(0) %}
+                  {% if target > 0 %}
+                    {% set slots.list = slots.list + [{
+                      'type': intent,
+                      'day': row_ts.isoweekday(),
+                      'start_time': row_ts.strftime('%H:%M'),
+                      'end_time': slot_end_ts.strftime('%H:%M'),
+                      'limit': target,
+                      'first_time': r.time,
+                      'last_time': r.time
+                    }] %}
+                  {% endif %}
+                {% endif %}
              {% elif is_charge or is_export %}
                {% set intent = 'cfg' if is_charge else 'dtg' %}
                {% set target = (r.state_target | string) | int(0) %}
