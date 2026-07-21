@@ -122,6 +122,17 @@
           0
         {% endif %}
 
+    - name: "Barn AC power filtered"
+      unit_of_measurement: "kW"
+      device_class: power
+      state_class: measurement
+      state: >
+        {% if states('climate.barn_ac') == 'cool' %}
+          {{ states('sensor.current_barn_ac_power_draw') }}
+        {% else %}
+          0
+        {% endif %}
+
 # ── Predbat power inputs ──────────────────────────────────────────────
 # The Envoy can't see the car (separate circuit) and its "consumption" CT
 # already nets battery charge/discharge. Predbat models the car and battery
