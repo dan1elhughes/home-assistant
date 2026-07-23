@@ -11,3 +11,13 @@
   round: 2
   unit_time: h
   time_window: "00:30:00"
+
+{% for q in immich_queues %}
+- platform: derivative
+  source: sensor.immich_{{ q.name | lower | replace(' ', '_') }}_queued
+  name: Immich {{ q.name }} Rate per Hour
+  unique_id: immich_{{ q.name | lower | replace(' ', '_') }}_rate_per_hour
+  round: 1
+  unit_time: h
+  time_window: "00:05:00"
+{% endfor %}

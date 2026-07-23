@@ -13,7 +13,10 @@
   ],
   "groups": {
     "light.front_lights": {
-      "entities": ["light.driveway_light", "light.front_door_light"],
+      "entities": [
+        "light.driveway_light",
+        "light.front_door_light"
+      ],
       "name": "Front lights"
     },
     "light.bedroom_lights": {
@@ -34,11 +37,17 @@
       "name": "Garden lighting"
     },
     "light.dining_room_lights": {
-      "entities": ["light.kitchen_counter", "light.dining_table_light"],
+      "entities": [
+        "light.kitchen_counter",
+        "light.dining_table_light"
+      ],
       "name": "Dining room lights"
     },
     "light.kitchen_lights": {
-      "entities": ["light.kitchen_worklights", "light.kitchen_sink"],
+      "entities": [
+        "light.kitchen_worklights",
+        "light.kitchen_sink"
+      ],
       "name": "Kitchen lights"
     },
     "light.living_room_lights": {
@@ -59,7 +68,11 @@
       "name": "Office lights"
     }
   },
-  "people": ["person.dan", "person.katie", "person.guest"],
+  "people": [
+    "person.dan",
+    "person.katie",
+    "person.guest"
+  ],
   "rooms": [
     {
       "button_ieee": "00:12:4b:00:22:cf:67:01",
@@ -72,9 +85,14 @@
         "light.living_room_front_ceiling_light",
         "light.living_room_rear_ceiling_light"
       ],
-      "other_entities": ["scene.downstairs_on", "scene.movie_mode"],
+      "other_entities": [
+        "scene.downstairs_on",
+        "scene.movie_mode"
+      ],
       "name": "Living room",
-      "badges": ["climate.central_heating"],
+      "badges": [
+        "climate.central_heating"
+      ],
       "co2_sensor": "apollo_msr_2_15c4e4"
     },
     {
@@ -82,9 +100,14 @@
       "id": "bedroom",
       "icon": "mdi:bed",
       "lights": "light.bedroom_lights",
-      "ceiling": ["light.bedroom_ceiling_light"],
+      "ceiling": [
+        "light.bedroom_ceiling_light"
+      ],
       "name": "Bedroom",
-      "other_entities": ["cover.curtains", "fan.bedroom_fan"],
+      "other_entities": [
+        "cover.curtains",
+        "fan.bedroom_fan"
+      ],
       "badges": [
         "sensor.aranet_sensor_temperature",
         "sensor.aranet_sensor_humidity",
@@ -101,7 +124,9 @@
       "id": "katies_room",
       "icon": "mdi:rodent",
       "name": "Katie's room",
-      "ceiling": ["light.katie_s_room_ceiling_light"],
+      "ceiling": [
+        "light.katie_s_room_ceiling_light"
+      ],
       "badges": [
         "sensor.katie_s_room_sensor_temperature",
         "sensor.katie_s_room_sensor_humidity"
@@ -111,17 +136,25 @@
       "id": "kitchen",
       "icon": "mdi:fridge",
       "lights": "light.kitchen_lights",
-      "ceiling": ["light.kitchen_ceiling_lights"],
+      "ceiling": [
+        "light.kitchen_ceiling_lights"
+      ],
       "name": "Kitchen",
-      "other_entities": ["sensor.dishwasher_operation_state"]
+      "other_entities": [
+        "sensor.dishwasher_operation_state"
+      ]
     },
     {
       "id": "dining_room",
       "icon": "mdi:table-furniture",
       "lights": "light.dining_room_lights",
-      "ceiling": ["light.dining_room_ceiling_lights"],
+      "ceiling": [
+        "light.dining_room_ceiling_lights"
+      ],
       "name": "Dining room",
-      "other_entities": ["vacuum.robovac_x10_pro_omni"]
+      "other_entities": [
+        "vacuum.robovac_x10_pro_omni"
+      ]
     },
     {
       "button_ieee": "00:12:4b:00:29:0f:e9:c1",
@@ -129,7 +162,9 @@
       "id": "office",
       "icon": "mdi:monitor",
       "lights": "light.office_lights",
-      "ceiling": ["light.office_ceiling_light"],
+      "ceiling": [
+        "light.office_ceiling_light"
+      ],
       "name": "Office",
       "other_entities": [
         "switch.3d_printer",
@@ -138,9 +173,12 @@
         "light.desk_lights",
         "switch.office",
         "vacuum.upstairs",
-        "automation.ac_control"
+        "automation.ac_control",
+        "automation.immich_control"
       ],
-      "badges": ["climate.office_ac"],
+      "badges": [
+        "climate.office_ac"
+      ],
       "co2_sensor": "apollo_msr_2_1517ac"
     },
     {
@@ -171,7 +209,9 @@
         "sensor.barn_sensor_temperature",
         "sensor.barn_sensor_humidity"
       ],
-      "other_entities": ["climate.barn_ac"]
+      "other_entities": [
+        "climate.barn_ac"
+      ]
     },
     {
       "id": "garden",
@@ -187,30 +227,49 @@
       "id": "hallway",
       "icon": "mdi:door",
       "name": "Hallway",
-      "ceiling": ["light.hallway_ceiling_light"],
-      "badges": ["sensor.hallway_motion_sensor_temperature"],
-      "other_entities": ["input_boolean.motion_sensors_enabled"]
+      "ceiling": [
+        "light.hallway_ceiling_light"
+      ],
+      "badges": [
+        "sensor.hallway_motion_sensor_temperature"
+      ],
+      "other_entities": [
+        "input_boolean.motion_sensors_enabled"
+      ]
     },
     {
       "id": "landing",
       "icon": "mdi:stairs",
       "name": "Landing",
-      "ceiling": ["light.landing_ceiling_light"],
-      "badges": ["sensor.landing_motion_sensor_temperature"]
+      "ceiling": [
+        "light.landing_ceiling_light"
+      ],
+      "badges": [
+        "sensor.landing_motion_sensor_temperature"
+      ]
     },
     {
       "id": "utility_room",
       "icon": "mdi:toolbox",
       "name": "Utility room",
-      "ceiling": ["light.utility_room_ceiling_light"],
-      "other_entities": ["sensor.washer_dryer_operation_state"]
+      "ceiling": [
+        "light.utility_room_ceiling_light"
+      ],
+      "other_entities": [
+        "sensor.washer_dryer_operation_state"
+      ]
     },
     {
       "id": "garage",
       "icon": "mdi:garage",
       "name": "Garage",
-      "badges": ["sensor.envoy_122322027694_available_battery_energy"],
-      "other_entities": ["sensor.predbat_intent", "automation.predbat_control"]
+      "badges": [
+        "sensor.envoy_122322027694_available_battery_energy"
+      ],
+      "other_entities": [
+        "sensor.predbat_intent",
+        "automation.predbat_control"
+      ]
     }
   ],
   "leak_sensors": [
@@ -224,14 +283,24 @@
     }
   ],
   "devices": [
-    { "name": "Dan", "prefix": "sensor.pixel_9" },
-    { "name": "Katie", "prefix": "sensor.pixel_7a" }
+    {
+      "name": "Dan",
+      "prefix": "sensor.pixel_9"
+    },
+    {
+      "name": "Katie",
+      "prefix": "sensor.pixel_7a"
+    }
   ],
-  "disabled_dimmers": ["light.kitchen_worklights"],
+  "disabled_dimmers": [
+    "light.kitchen_worklights"
+  ],
   "light_sync": [
     {
       "source": "light.kitchen_worklights",
-      "targets": ["light.kitchen_sink"]
+      "targets": [
+        "light.kitchen_sink"
+      ]
     }
   ],
   "multiLightDimmers": [
@@ -257,10 +326,99 @@
     }
   ],
   "waste_collections": [
-    { "entity": "sensor.kingsclere_waste", "name": "Waste" },
-    { "entity": "sensor.kingsclere_recycling", "name": "Recycling" },
-    { "entity": "sensor.kingsclere_glass", "name": "Glass" },
-    { "entity": "sensor.kingsclere_food", "name": "Food" },
-    { "entity": "sensor.kingsclere_garden", "name": "Garden" }
+    {
+      "entity": "sensor.kingsclere_waste",
+      "name": "Waste"
+    },
+    {
+      "entity": "sensor.kingsclere_recycling",
+      "name": "Recycling"
+    },
+    {
+      "entity": "sensor.kingsclere_glass",
+      "name": "Glass"
+    },
+    {
+      "entity": "sensor.kingsclere_food",
+      "name": "Food"
+    },
+    {
+      "entity": "sensor.kingsclere_garden",
+      "name": "Garden"
+    }
+  ],
+  "immich_queues": [
+    {
+      "key": "thumbnailGeneration",
+      "name": "Generate Thumbnails",
+      "icon": "mdi:image-size-select-large",
+      "description": "Generate thumbnails for each asset, plus person thumbnails"
+    },
+    {
+      "key": "metadataExtraction",
+      "name": "Extract Metadata",
+      "icon": "mdi:file-search",
+      "description": "Extract GPS, faces, resolution and other metadata from assets"
+    },
+    {
+      "key": "faceDetection",
+      "name": "Face Detection",
+      "icon": "mdi:face-man",
+      "description": "Detect faces in assets using machine learning"
+    },
+    {
+      "key": "facialRecognition",
+      "name": "Facial Recognition",
+      "icon": "mdi:face-recognition",
+      "description": "Group detected faces into people"
+    },
+    {
+      "key": "smartSearch",
+      "name": "Smart Search",
+      "icon": "mdi:magnify",
+      "description": "Run machine learning on assets to support smart search"
+    },
+    {
+      "key": "duplicateDetection",
+      "name": "Duplicate Detection",
+      "icon": "mdi:file-compare",
+      "description": "Detect similar images using machine learning. Relies on Smart Search"
+    },
+    {
+      "key": "ocr",
+      "name": "OCR",
+      "icon": "mdi:text-recognition",
+      "description": "Recognise text in images using machine learning"
+    },
+    {
+      "key": "videoConversion",
+      "name": "Transcode Videos",
+      "icon": "mdi:video",
+      "description": "Transcode videos for wider compatibility with browsers and devices"
+    },
+    {
+      "key": "library",
+      "name": "External Libraries",
+      "icon": "mdi:bookshelf",
+      "description": "Scan external libraries for new and changed assets"
+    },
+    {
+      "key": "sidecar",
+      "name": "Sidecar Metadata",
+      "icon": "mdi:file-document-multiple",
+      "description": "Discover or synchronise sidecar metadata from the filesystem"
+    },
+    {
+      "key": "storageTemplateMigration",
+      "name": "Storage Template Migration",
+      "icon": "mdi:folder-move",
+      "description": "Apply the current storage template to previously uploaded assets"
+    },
+    {
+      "key": "migration",
+      "name": "Migration",
+      "icon": "mdi:database-arrow-right",
+      "description": "Migrate thumbnails for assets and faces to the latest folder structure"
+    }
   ]
 }

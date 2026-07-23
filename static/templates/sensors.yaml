@@ -133,14 +133,6 @@
           0
         {% endif %}
 
-# ── Predbat power inputs ──────────────────────────────────────────────
-# The Envoy can't see the car (separate circuit) and its "consumption" CT
-# already nets battery charge/discharge. Predbat models the car and battery
-# separately, so it needs PURE house load and TRUE grid. We derive both:
-#   pure house  = envoy_consumption - battery_charge + battery_discharge
-#   true grid   = myenergi hub import - export (meter-side, signed:
-#                 +ve = import, -ve = export, matching Predbat's convention)
-- sensor:
     - name: "Predbat house load power"
       unique_id: predbat_house_load_power
       device_class: power
@@ -173,73 +165,6 @@
         {% set exp = states('sensor.myenergi_myenergi_hub_power_export') | float(0) %}
         {{ (imp - exp) | round(0) }}
 
-- binary_sensor:
-    - name: "Octopus Intelligent Dispatching Filtered"
-      unique_id: octopus_intelligent_dispatching_filtered
-      availability: >
-        {{ has_value('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching')
-           and has_value('switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge') }}
-      state: >
-        {% set smart_charge = states('switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge') == 'on' %}
-        {{ states('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching') == 'on' and smart_charge }}
-      attributes:
-        planned_dispatches: >
-          {% set smart_charge = states('switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge') == 'on' %}
-          {% set raw = state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'planned_dispatches') or [] %}
-          {% set auto_disable = states('input_boolean.auto_disable_smart_charge') == 'on' %}
-          {% set end_time = states('input_datetime.smart_charge_end') %}
-          {% if smart_charge and raw %}
-            {% set ns = namespace(items=[]) %}
-            {% for slot in raw %}
-              {% set keep = true %}
-              {% if auto_disable and end_time and end_time not in ['unknown','unavailable',''] %}
-                {% set cutoff = today_at(end_time) if end_time | length <= 8 else as_datetime(end_time) %}
-                {% set slot_start = as_datetime(slot.start) if slot.start is defined else none %}
-                {% set slot_end = as_datetime(slot.end) if slot.end is defined else none %}
-                {# Discard if slot starts after cutoff, chop if it spans across #}
-                {% if slot_start and slot_start >= cutoff %}
-                  {% set keep = false %}
-                {% elif slot_end and slot_end > cutoff %}
-                  {% set slot = dict(slot, end=cutoff) %}
-                {% endif %}
-              {% endif %}
-              {% if keep %}
-                {% set item = {'start': slot.start.isoformat(), 'end': slot.end.isoformat(), 'charge_in_kwh': slot.charge_in_kwh, 'source': slot.source} %}
-                {% set ns.items = ns.items + [item] %}
-              {% endif %}
-            {% endfor %}
-            {{ ns.items }}
-          {% else %}
-            []
-          {% endif %}
-        completed_dispatches: >
-          {% set raw = state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'completed_dispatches') or [] %}
-          {% set ns = namespace(items=[]) %}
-          {% for slot in raw %}
-            {% set item = {'start': slot.start.isoformat(), 'end': slot.end.isoformat(), 'charge_in_kwh': slot.charge_in_kwh, 'source': slot.source, 'location': slot.location} %}
-            {% set ns.items = ns.items + [item] %}
-          {% endfor %}
-          {{ ns.items }}
-        started_dispatches: >
-          {% set raw = state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'started_dispatches') or [] %}
-          {% set ns = namespace(items=[]) %}
-          {% for slot in raw %}
-            {% set item = {'start': slot.start.isoformat(), 'end': slot.end.isoformat()} %}
-            {% set ns.items = ns.items + [item] %}
-          {% endfor %}
-          {{ ns.items }}
-        provider: >
-          {{ state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'provider') }}
-        vehicle_battery_size_in_kwh: >
-          {{ state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'vehicle_battery_size_in_kwh') }}
-        charge_point_power_in_kw: >
-          {{ state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'charge_point_power_in_kw') }}
-
-    - name: One-room mode
-      state: >
-        {{ states('sensor.occupant_count') | int <= 1 }}
-
-- sensor:
     - name: "Upstairs error"
       icon: mdi:alert-circle-outline
       state: >

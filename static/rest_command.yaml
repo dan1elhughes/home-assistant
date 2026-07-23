@@ -1,0 +1,15 @@
+immich_pause_job:
+  url: "https://photos.danhughes.dev/api/jobs/{{ job_name }}"
+  method: PUT
+  headers:
+    x-api-key: !secret immich_api_key_queue_management
+  content_type: application/json
+  payload: '{"command":"pause"}'
+
+immich_resume_job:
+  url: "https://photos.danhughes.dev/api/jobs/{{ job_name }}"
+  method: PUT
+  headers:
+    x-api-key: !secret immich_api_key_queue_management
+  content_type: application/json
+  payload: '{"command":"resume"}'

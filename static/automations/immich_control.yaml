@@ -1,0 +1,21 @@
+- alias: "Immich control"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: input_select.active_room
+  action:
+    - choose:
+        - conditions:
+            - condition: state
+              entity_id: input_select.active_room
+              state: "office"
+          sequence:
+            - action: switch.turn_off
+              entity_id: switch.immich_generate_thumbnails
+            - action: switch.turn_off
+              entity_id: switch.immich_extract_metadata
+      default:
+        - action: switch.turn_on
+          entity_id: switch.immich_generate_thumbnails
+        - action: switch.turn_on
+          entity_id: switch.immich_extract_metadata
