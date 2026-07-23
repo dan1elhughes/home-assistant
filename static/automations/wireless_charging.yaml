@@ -3,7 +3,7 @@
   trigger:
     - platform: state
       entity_id:
-        - sensor.pixel_9_charger_type
+        - sensor.pixel_10_charger_type
         - sensor.pixel_7a_charger_type
       to: "wireless"
 
@@ -21,7 +21,7 @@
         - alias: "Pixel 9 only charging"
           conditions:
             - condition: state
-              entity_id: sensor.pixel_9_charger_type
+              entity_id: sensor.pixel_10_charger_type
               state: "wireless"
             - condition: not
               conditions:
@@ -44,7 +44,7 @@
             - condition: not
               conditions:
                 - condition: state
-                  entity_id: sensor.pixel_9_charger_type
+                  entity_id: sensor.pixel_10_charger_type
                   state: "wireless"
           sequence:
             - action: scene.turn_on
@@ -54,7 +54,7 @@
         - alias: "Both Pixel 9 and Pixel 7a charging"
           conditions:
             - condition: state
-              entity_id: sensor.pixel_9_charger_type
+              entity_id: sensor.pixel_10_charger_type
               state: "wireless"
             - condition: state
               entity_id: sensor.pixel_7a_charger_type
