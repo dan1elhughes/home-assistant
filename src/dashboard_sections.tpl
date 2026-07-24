@@ -476,6 +476,9 @@ views:
             heading: Zoe
             heading_style: title
             icon: mdi:car-electric
+            badges:
+              - type: entity
+                entity: sensor.zoe_battery
           - type: tile
             entity: switch.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_smart_charge
             name: Smart charge
