@@ -46,3 +46,8 @@
         entity_id: cover.curtains
       data:
         position: 100
+    - action: cover.set_cover_position
+      target:
+        entity_id: cover.office_curtain_left
+      data:
+        position: 100

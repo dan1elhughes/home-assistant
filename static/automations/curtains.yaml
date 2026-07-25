@@ -9,6 +9,11 @@
         entity_id: cover.curtains
       data:
         position: 50
+    - action: cover.set_cover_position
+      target:
+        entity_id: cover.office_curtain_left
+      data:
+        position: 50
 
 - alias: "Dawn actions"
   mode: single
@@ -27,6 +32,11 @@
       action: cover.set_cover_position
       target:
         entity_id: cover.curtains
+      data:
+        position: 0
+    - action: cover.set_cover_position
+      target:
+        entity_id: cover.office_curtain_left
       data:
         position: 0
     - alias: "Enable hallway motion sensors"
