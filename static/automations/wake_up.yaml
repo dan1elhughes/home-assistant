@@ -41,8 +41,8 @@
         entity_id: input_select.active_room
         option: bedroom
     - alias: "Fully open curtains"
-      action: v6_quietdrift.set_switchbot_curtain_position
+      action: cover.set_cover_position
+      target:
+        entity_id: cover.curtains
       data:
         position: 100
-        entity_id: cover.curtains
-        speed: 1

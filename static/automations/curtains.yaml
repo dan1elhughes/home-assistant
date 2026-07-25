@@ -24,11 +24,11 @@
       state: home
   action:
     - alias: "Slowly close curtains"
-      action: v6_quietdrift.set_switchbot_curtain_position
+      action: cover.set_cover_position
+      target:
+        entity_id: cover.curtains
       data:
         position: 0
-        entity_id: cover.curtains
-        speed: 1
     - alias: "Enable hallway motion sensors"
       action: input_boolean.turn_on
       target:
