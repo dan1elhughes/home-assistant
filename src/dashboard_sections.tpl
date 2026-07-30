@@ -227,6 +227,32 @@ views:
           {% endraw %}
         view_layout:
           position: sidebar
+
+      - type: custom:apexcharts-card
+        header:
+          show: true
+          title: Export forecast
+        graph_span: 7d
+        span:
+          start: day
+        yaxis:
+          - id: price
+            decimals: 1
+            apex_config:
+              tickAmount: 6
+        series:
+          - entity: sensor.agile_predict_export
+            yaxis_id: price
+            name: Agile Export
+            color: "#E97451"
+            stroke_width: 3
+            unit: p/kWh
+            data_generator: |
+              return entity.attributes.prices.map((e) => {
+                return [new Date(e.date_time), e.agile_pred];
+              });
+        view_layout:
+          position: sidebar
   - type: sections
     max_columns: 4
     title: Devices
