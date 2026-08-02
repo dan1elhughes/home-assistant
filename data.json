@@ -34,7 +34,7 @@
       "name": "Garden lighting"
     },
     "light.dining_room_lights": {
-      "entities": ["light.kitchen_counter", "light.dining_table_light"],
+      "entities": ["light.kitchen_counter", "light.dining_room_plant_light"],
       "name": "Dining room lights"
     },
     "light.kitchen_lights": {
