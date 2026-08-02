@@ -135,7 +135,6 @@
         "switch.3d_printer",
         "climate.server_cabinet",
         "light.homelab_power_printer",
-        "light.desk_lights",
         "switch.office",
         "vacuum.upstairs",
         "automation.ac_control",
