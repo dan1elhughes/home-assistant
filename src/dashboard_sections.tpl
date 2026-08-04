@@ -471,6 +471,12 @@ views:
             heading: ID3
             heading_style: title
             icon: mdi:car-electric
+            badges:
+              - type: entity
+                show_icon: false
+                tap_action:
+                  action: more-info
+                entity: sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_state_of_charge
           - type: tile
             entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
             name: Smart charge
@@ -504,7 +510,10 @@ views:
             icon: mdi:car-electric
             badges:
               - type: entity
-                entity: sensor.zoe_battery
+                show_icon: false
+                tap_action:
+                  action: more-info
+                entity: sensor.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_state_of_charge
           - type: tile
             entity: switch.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_smart_charge
             name: Smart charge
