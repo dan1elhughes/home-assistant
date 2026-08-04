@@ -48,10 +48,10 @@ views:
           - condition: or
             conditions:
               - condition: state
-                entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
+                entity: calendar.octopus_energy_a_fad3b08a_octoplus_power_down
                 state: "on"
               - condition: state
-                entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+                entity: calendar.octopus_energy_a_fad3b08a_octoplus_power_up
                 state: "on"
         cards:
           - type: heading
@@ -59,11 +59,11 @@ views:
             heading_style: title
             icon: mdi:gift
           - type: entity
-            entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_saving_sessions
-            name: Saving session
+            entity: calendar.octopus_energy_a_fad3b08a_octoplus_power_down
+            name: Power Down
           - type: entity
-            entity: binary_sensor.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
-            name: Free electricity
+            entity: calendar.octopus_energy_a_fad3b08a_octoplus_power_up
+            name: Power Up
 
       - type: grid
         cards:
