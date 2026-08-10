@@ -23,12 +23,12 @@ notify_on_battery_schedule_changed:
   name: Notify on battery schedule changed
   icon: mdi:bell
 
-auto_enable_smart_charge:
-  name: Auto enable smart charge
-  icon: mdi:car-electric
+id3_auto_increment_charge_target:
+  name: ID3 auto increment charge target
+  icon: mdi:battery-plus
 
-auto_disable_smart_charge:
-  name: Auto disable smart charge
-  icon: mdi:car-electric
+zoe_auto_increment_charge_target:
+  name: Zoe auto increment charge target
+  icon: mdi:battery-plus
 
 # ── End of old battery inputs ──

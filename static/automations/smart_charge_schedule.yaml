@@ -1,47 +1,77 @@
-- alias: "Smart charge start"
+- alias: "ID3 auto increment charge target"
   mode: single
+  variables:
+    current_target: >-
+      {{ states('number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target') }}
+    increment: >-
+      {{ states('input_number.id3_charge_target_increment') }}
   trigger:
     - platform: time
-      at: input_datetime.smart_charge_start
+      at: input_datetime.id3_charge_target_increment_time
   condition:
-    - alias: "Auto enable smart charge enabled"
+    - alias: "Auto increment enabled"
       condition: state
-      entity_id: input_boolean.auto_enable_smart_charge
+      entity_id: input_boolean.id3_auto_increment_charge_target
       state: "on"
+    - alias: "Charge target and increment are numeric"
+      condition: template
+      value_template: >-
+        {{ is_number(current_target) and is_number(increment) }}
   action:
-    - alias: "Enable smart charge"
-      action: switch.turn_on
+    - variables:
+        new_target: >-
+          {{ [current_target | float + increment | float, 100] | min }}
+    - alias: "Increment charge target"
+      action: number.set_value
       target:
-        entity_id: switch.smart_charge
-    - alias: "Notify user"
-      action: notify.dan
+        entity_id: number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target
       data:
-        message: "Smart charge enabled"
-        data:
-          notification_icon: "mdi:car-electric"
-          channel: "smart_charge"
-          tag: auto_enable_smart_charge
+        value: "{{ new_target }}"
+    - if:
+        - alias: "Charge target reached 100%"
+          condition: template
+          value_template: "{{ new_target | float >= 100 }}"
+      then:
+        - alias: "Disable auto increment"
+          action: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.id3_auto_increment_charge_target
 
-- alias: "Smart charge end"
+- alias: "Zoe auto increment charge target"
   mode: single
+  variables:
+    current_target: >-
+      {{ states('number.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_charge_target') }}
+    increment: >-
+      {{ states('input_number.zoe_charge_target_increment') }}
   trigger:
     - platform: time
-      at: input_datetime.smart_charge_end
+      at: input_datetime.zoe_charge_target_increment_time
   condition:
-    - alias: "Auto disable smart charge enabled"
+    - alias: "Auto increment enabled"
       condition: state
-      entity_id: input_boolean.auto_disable_smart_charge
+      entity_id: input_boolean.zoe_auto_increment_charge_target
       state: "on"
+    - alias: "Charge target and increment are numeric"
+      condition: template
+      value_template: >-
+        {{ is_number(current_target) and is_number(increment) }}
   action:
-    - alias: "Disable smart charge"
-      action: switch.turn_off
+    - variables:
+        new_target: >-
+          {{ [current_target | float + increment | float, 100] | min }}
+    - alias: "Increment charge target"
+      action: number.set_value
       target:
-        entity_id: switch.smart_charge
-    - alias: "Notify user"
-      action: notify.dan
+        entity_id: number.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_charge_target
       data:
-        message: "Smart charge disabled"
-        data:
-          notification_icon: "mdi:car-electric"
-          channel: "smart_charge"
-          tag: auto_enable_smart_charge
+        value: "{{ new_target }}"
+    - if:
+        - alias: "Charge target reached 100%"
+          condition: template
+          value_template: "{{ new_target | float >= 100 }}"
+      then:
+        - alias: "Disable auto increment"
+          action: input_boolean.turn_off
+          target:
+            entity_id: input_boolean.zoe_auto_increment_charge_target

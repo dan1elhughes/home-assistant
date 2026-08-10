@@ -8,12 +8,12 @@ wake_up_katie:
   has_date: false
   has_time: true
 
-smart_charge_start:
-  name: Smart charge start
+id3_charge_target_increment_time:
+  name: ID3 charge target increment time
   has_date: false
   has_time: true
 
-smart_charge_end:
-  name: Smart charge end
+zoe_charge_target_increment_time:
+  name: Zoe charge target increment time
   has_date: false
   has_time: true

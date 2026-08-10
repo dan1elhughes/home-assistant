@@ -5,7 +5,6 @@
       entity_id:
         - select.myenergi_zappi_charge_mode
         - switch.smart_charge
-        - input_boolean.auto_enable_smart_charge
   action:
     - choose:
         - alias: "Smart Charge"
@@ -21,19 +20,6 @@
                 entity_id: select.myenergi_zappi_charge_mode
               data:
                 option: "Fast"
-        - alias: "Smart charge tonight - stop charger"
-          conditions:
-            - alias: "Smart charge tonight is enabled"
-              condition: state
-              entity_id: input_boolean.auto_enable_smart_charge
-              state: "on"
-          sequence:
-            - alias: "Set Zappi to Stopped"
-              action: select.select_option
-              target:
-                entity_id: select.myenergi_zappi_charge_mode
-              data:
-                option: "Stopped"
       default:
         - alias: "Set Zappi to Stopped"
           action: select.select_option
@@ -71,14 +57,6 @@
       action: switch.turn_off
       target:
         entity_id: switch.smart_charge
-    - alias: "Stop scheduled start re-enabling it"
-      action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.auto_enable_smart_charge
-    - alias: "Stop scheduled end disabling it"
-      action: input_boolean.turn_off
-      target:
-        entity_id: input_boolean.auto_disable_smart_charge
     - alias: "Notify Dan"
       action: notify.dan
       data:

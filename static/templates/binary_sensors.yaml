@@ -11,27 +11,11 @@
         planned_dispatches: >
           {% set smart_charge = states('switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge') == 'on' %}
           {% set raw = state_attr('binary_sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_dispatching', 'planned_dispatches') or [] %}
-          {% set auto_disable = states('input_boolean.auto_disable_smart_charge') == 'on' %}
-          {% set end_time = states('input_datetime.smart_charge_end') %}
           {% if smart_charge and raw %}
             {% set ns = namespace(items=[]) %}
             {% for slot in raw %}
-              {% set keep = true %}
-              {% if auto_disable and end_time and end_time not in ['unknown','unavailable',''] %}
-                {% set cutoff = today_at(end_time) if end_time | length <= 8 else as_datetime(end_time) %}
-                {% set slot_start = as_datetime(slot.start) if slot.start is defined else none %}
-                {% set slot_end = as_datetime(slot.end) if slot.end is defined else none %}
-                {# Discard if slot starts after cutoff, chop if it spans across #}
-                {% if slot_start and slot_start >= cutoff %}
-                  {% set keep = false %}
-                {% elif slot_end and slot_end > cutoff %}
-                  {% set slot = dict(slot, end=cutoff) %}
-                {% endif %}
-              {% endif %}
-              {% if keep %}
-                {% set item = {'start': slot.start.isoformat(), 'end': slot.end.isoformat(), 'charge_in_kwh': slot.charge_in_kwh, 'source': slot.source} %}
-                {% set ns.items = ns.items + [item] %}
-              {% endif %}
+              {% set item = {'start': slot.start.isoformat(), 'end': slot.end.isoformat(), 'charge_in_kwh': slot.charge_in_kwh, 'source': slot.source} %}
+              {% set ns.items = ns.items + [item] %}
             {% endfor %}
             {{ ns.items }}
           {% else %}

@@ -501,6 +501,34 @@ views:
               - type: select-options
             grid_options:
               columns: full
+          - type: tile
+            entity: input_boolean.id3_auto_increment_charge_target
+            name: Auto increment
+            features_position: inline
+            features:
+              - type: toggle
+          - type: tile
+            entity: input_number.id3_charge_target_increment
+            name: Increment
+            visibility:
+              - condition: state
+                entity: input_boolean.id3_auto_increment_charge_target
+                state: 'on'
+            features_position: inline
+            features:
+              - type: numeric-input
+                style: slider
+            grid_options:
+              columns: full
+          - type: tile
+            entity: input_datetime.id3_charge_target_increment_time
+            name: Increment time
+            visibility:
+              - condition: state
+                entity: input_boolean.id3_auto_increment_charge_target
+                state: 'on'
+            grid_options:
+              columns: full
 
       - type: grid
         cards:
@@ -538,39 +566,32 @@ views:
               - type: select-options
             grid_options:
               columns: full
-
-      - type: grid
-        cards:
-          - type: heading
-            heading: Schedule
-            heading_style: title
-            icon: mdi:clock-outline
           - type: tile
-            entity: input_boolean.auto_enable_smart_charge
-            name: Auto enable
+            entity: input_boolean.zoe_auto_increment_charge_target
+            name: Auto increment
             features_position: inline
             features:
               - type: toggle
           - type: tile
-            entity: input_datetime.smart_charge_start
-            name: Start
+            entity: input_number.zoe_charge_target_increment
+            name: Increment
+            visibility:
+              - condition: state
+                entity: input_boolean.zoe_auto_increment_charge_target
+                state: 'on'
             features_position: inline
             features:
-              - type: date-set
+              - type: numeric-input
+                style: slider
             grid_options:
               columns: full
           - type: tile
-            entity: input_boolean.auto_disable_smart_charge
-            name: Auto disable
-            features_position: inline
-            features:
-              - type: toggle
-          - type: tile
-            entity: input_datetime.smart_charge_end
-            name: End
-            features_position: inline
-            features:
-              - type: date-set
+            entity: input_datetime.zoe_charge_target_increment_time
+            name: Increment time
+            visibility:
+              - condition: state
+                entity: input_boolean.zoe_auto_increment_charge_target
+                state: 'on'
             grid_options:
               columns: full
 

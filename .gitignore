@@ -1,6 +1,7 @@
 /dist
 /.vscode
 /.secrets
+/.worktrees
 
 # Python virtual environment
 /.venv
