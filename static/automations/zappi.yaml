@@ -57,6 +57,12 @@
       action: switch.turn_off
       target:
         entity_id: switch.smart_charge
+    - alias: "Disable auto increment"
+      action: input_boolean.turn_off
+      target:
+        entity_id:
+          - input_boolean.id3_auto_increment_charge_target
+          - input_boolean.zoe_auto_increment_charge_target
     - alias: "Notify Dan"
       action: notify.dan
       data:
