@@ -138,7 +138,8 @@
         "switch.office",
         "vacuum.upstairs",
         "automation.ac_control",
-        "automation.immich_control"
+        "automation.immich_control",
+        "automation.office_ac_boost"
       ],
       "badges": ["climate.office_ac"],
       "co2_sensor": "apollo_msr_2_1517ac"

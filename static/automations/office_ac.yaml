@@ -29,3 +29,19 @@
         - action: climate.turn_off
           target:
             entity_id: climate.office_ac
+
+- alias: "Office AC boost"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: climate.office_ac
+      attribute: preset_mode
+  condition:
+    - condition: template
+      value_template: "{{ state_attr('climate.office_ac', 'preset_mode') != 'boost' }}"
+  action:
+    - action: climate.set_preset_mode
+      target:
+        entity_id: climate.office_ac
+      data:
+        preset_mode: boost
