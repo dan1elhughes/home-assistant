@@ -39,6 +39,9 @@
   condition:
     - condition: template
       value_template: "{{ state_attr('climate.office_ac', 'preset_mode') != 'boost' }}"
+    - condition: state
+      entity_id: climate.office_ac
+      state: "cool"
   action:
     - action: climate.set_preset_mode
       target:
