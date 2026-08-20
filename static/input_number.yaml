@@ -87,17 +87,15 @@ predbat_max_enphase_schedules:
 id3_charge_target_increment:
   name: ID3 charge target increment
   min: 1
-  max: 10
+  max: 20
   step: 1
-  initial: 5
   unit_of_measurement: "%"
   icon: mdi:battery-plus
 
 zoe_charge_target_increment:
   name: Zoe charge target increment
   min: 1
-  max: 10
+  max: 20
   step: 1
-  initial: 5
   unit_of_measurement: "%"
   icon: mdi:battery-plus
