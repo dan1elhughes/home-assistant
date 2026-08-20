@@ -1,0 +1,12 @@
+- platform: group
+  name: "Battery max temperature"
+  unique_id: battery_max_temperature
+  type: max
+  ignore_non_numeric: true
+  device_class: temperature
+  state_class: measurement
+  unit_of_measurement: "°C"
+  entities:
+    - sensor.encharge_492452002777_temperature
+    - sensor.encharge_492452002785_temperature
+    - sensor.encharge_492452002787_temperature

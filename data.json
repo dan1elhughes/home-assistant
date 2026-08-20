@@ -210,7 +210,10 @@
       "id": "garage",
       "icon": "mdi:garage",
       "name": "Garage",
-      "badges": ["sensor.envoy_122322027694_available_battery_energy"],
+      "badges": [
+        "sensor.envoy_122322027694_available_battery_energy",
+        "sensor.battery_max_temperature"
+      ],
       "other_entities": ["sensor.predbat_intent", "automation.predbat_control"]
     }
   ],

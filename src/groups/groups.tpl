@@ -1,4 +1,4 @@
-{% import './macros/lights.tpl' as lights with context %}
+{% import '../macros/lights.tpl' as lights with context %}
 
 # PRESENCE
 presence_home:
