@@ -1,4 +1,4 @@
-- alias: "Set server cabinet temperature based on active room"
+- alias: "Active room - office"
   trigger:
     - platform: state
       entity_id: input_select.active_room
@@ -14,6 +14,9 @@
                 entity_id: climate.server_cabinet
               data:
                 temperature: 30
+            - action: switch.turn_on
+              target:
+                entity_id: switch.office
       default:
         - action: climate.set_temperature
           target:
