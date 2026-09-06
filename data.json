@@ -43,10 +43,11 @@
     },
     "light.living_room_lights": {
       "entities": [
-        "light.living_room_side_light",
-        "light.tv_light",
         "light.living_room_lamp",
-        "light.side_table"
+        "light.living_room_side_light",
+        "light.living_room_small_lamp",
+        "light.side_table",
+        "light.tv_light"
       ],
       "name": "Living room lights"
     },
