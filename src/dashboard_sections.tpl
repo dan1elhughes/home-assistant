@@ -259,6 +259,25 @@ views:
     path: devices
     icon: mdi:alarm
     sections:
+      - type: grid
+        cards:
+          - type: heading
+            heading: Family alarm
+            heading_style: title
+            icon: mdi:alarm
+          - type: entities
+            entities:
+              - entity: input_datetime.family_alarm
+                name: Time
+              - entity: input_text.family_alarm_label
+                name: Label
+              - type: button
+                name: Send alarm
+                icon: mdi:alarm-plus
+                action_name: Send
+                tap_action:
+                  action: perform-action
+                  perform_action: script.family_alarm
       {% for device in devices %}
       - type: grid
         cards:

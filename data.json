@@ -231,11 +231,13 @@
   "devices": [
     {
       "name": "Dan",
-      "prefix": "sensor.pixel_10"
+      "prefix": "sensor.pixel_10",
+      "family_alarm": true
     },
     {
       "name": "Katie",
-      "prefix": "sensor.pixel_7a"
+      "prefix": "sensor.pixel_7a",
+      "family_alarm": true
     }
   ],
   "disabled_dimmers": ["light.kitchen_worklights"],

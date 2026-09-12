@@ -17,3 +17,8 @@ zoe_charge_target_increment_time:
   name: Zoe charge target increment time
   has_date: false
   has_time: true
+
+family_alarm:
+  name: Family alarm
+  has_date: false
+  has_time: true
