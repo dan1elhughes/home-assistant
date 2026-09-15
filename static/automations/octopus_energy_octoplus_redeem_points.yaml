@@ -8,7 +8,7 @@
         - action: notify.dan
           data:
             title: "Octoplus Points Redeemed"
-            message: "Your Octoplus points have been automatically redeemed for account credit."
+            message: "{{ message }}"
             data:
               channel: "energy"
               tag: octopus-points
