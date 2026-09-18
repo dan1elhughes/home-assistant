@@ -142,7 +142,7 @@
         "automation.immich_control",
         "automation.office_ac_boost"
       ],
-      "badges": ["climate.office_ac"],
+      "badges": ["climate.office_office_ac"],
       "co2_sensor": "apollo_msr_2_1517ac"
     },
     {
@@ -173,7 +173,7 @@
         "sensor.barn_sensor_temperature",
         "sensor.barn_sensor_humidity"
       ],
-      "other_entities": ["climate.barn_ac"]
+      "other_entities": ["climate.garden_barn_ac"]
     },
     {
       "id": "garden",
