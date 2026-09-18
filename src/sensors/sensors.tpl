@@ -6,7 +6,7 @@
       window_size: "00:01"
 
 - platform: derivative
-  source: sensor.barn_ac_energy
+  source: sensor.garden_barn_ac_energy
   name: Current Barn AC Power Draw
   round: 2
   unit_time: h

@@ -116,8 +116,8 @@
       device_class: power
       state_class: measurement
       state: >
-        {% if states('climate.office_ac') in ['heat', 'cool'] %}
-          {{ states('sensor.office_ac_power') }}
+        {% if states('climate.office_office_ac') in ['heat', 'cool'] %}
+          {{ states('sensor.office_office_ac_power') }}
         {% else %}
           0
         {% endif %}
@@ -127,7 +127,7 @@
       device_class: power
       state_class: measurement
       state: >
-        {% if states('climate.barn_ac') == 'cool' %}
+        {% if states('climate.garden_barn_ac') == 'cool' %}
           {{ states('sensor.current_barn_ac_power_draw') }}
         {% else %}
           0
