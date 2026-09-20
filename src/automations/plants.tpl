@@ -30,7 +30,7 @@
               data:
                 effect: "None"
                 rgb_color: [0, 0, 255]
-                brightness_pct: 100
+                brightness_pct: 20
 
         - conditions:
             - condition: state
