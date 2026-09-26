@@ -102,6 +102,10 @@
       "id": "katies_room",
       "icon": "mdi:rodent",
       "name": "Katie's room",
+      "badges": [
+        "sensor.katie_s_room_sensor_temperature",
+        "sensor.katie_s_room_sensor_humidity"
+      ],
       "ceiling": ["light.katie_s_room_ceiling_light"]
     },
     {
