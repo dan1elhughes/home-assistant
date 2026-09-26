@@ -1,8 +1,7 @@
-# Recorder lives in Postgres (in the homeassistant stack) rather than the
-# default SQLite-on-cephfs, which corrupts under concurrent history load.
-# postgres is an internal swarm service (not web-exposed); the password is a
-# fixed non-secret used only on the private overlay network.
-db_url: postgresql://homeassistant:POSTGRES@postgres:5432/homeassistant
+# Recorder lives in Postgres on TrueNAS (10.10.10.60, runbook Phase 2) rather
+# than the default SQLite-on-cephfs, which corrupts under concurrent history
+# load. The password is a fixed non-secret (runbook decision 10).
+db_url: postgresql://homeassistant:POSTGRES@10.10.10.60:5432/homeassistant
 purge_keep_days: 21
 exclude:
   entities:

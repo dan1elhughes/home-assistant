@@ -3,7 +3,7 @@
 set -euo pipefail
 
 server="10.10.10.20"
-config="/mnt/cephfs/homeassistant"
+config="/mnt/nas/homeassistant"
 
 # Sync the repo-managed automations dir with --delete so removed automations
 # are also removed on the server. Scoped to the automations/ subdir ONLY — never
