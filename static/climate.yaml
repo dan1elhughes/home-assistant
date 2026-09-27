@@ -9,7 +9,7 @@
   name: "Router"
   heater: light.homelab_power_router_fan
   target_sensor: sensor.filtered_ucg_max_temperature
+  cold_tolerance: 3
+  hot_tolerance: 3
   ac_mode: true
   max_temp: 100
-  min_cycle_duration:
-    minutes: 5
