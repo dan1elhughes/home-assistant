@@ -5,8 +5,22 @@
       entity_id:
         - select.myenergi_zappi_charge_mode
         - switch.smart_charge
+        - calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
   action:
     - choose:
+        - alias: "Free electricity session"
+          conditions:
+            - alias: "Octoplus free electricity session active"
+              condition: state
+              entity_id: calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+              state: "on"
+          sequence:
+            - alias: "Set Zappi to Fast"
+              action: select.select_option
+              target:
+                entity_id: select.myenergi_zappi_charge_mode
+              data:
+                option: "Fast"
         - alias: "Smart Charge"
           conditions:
             - alias: "Octopus smart charge enabled"
