@@ -176,3 +176,13 @@
       state: >
         {% set err = states('sensor.downstairs_error_message') %}
         {{ err if err and err|trim != '' else 'OK' }}
+
+    - name: "Homelab UPS power draw"
+      device_class: power
+      state_class: measurement
+      unit_of_measurement: "W"
+      availability: >
+        {{ states('sensor.homelab_ups_load') not in ['unknown', 'unavailable', 'none'] }}
+      state: >
+        {{ (states('sensor.homelab_ups_load') | float(0) / 100 * (states('sensor.homelab_ups_nominal_real_power') | float(780))) | round(0) }}
+

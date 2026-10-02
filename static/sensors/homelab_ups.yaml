@@ -1,0 +1,20 @@
+# Homelab UPS (CyberPower CP1300EPFCLCD via NUT):
+# Riemann sum of the instant power draw into a running kWh total, for the
+# energy dashboard to consume via utility_meter.
+#
+# ups.load is a percentage of the UPS nominal real power (780 W, exposed in
+# sensor.homelab_ups_nominal_real_power). power draw is unavailable whenever
+# the NUT source is, so the integration pauses (no energy is silently gained).
+
+- platform: integration
+  source: sensor.homelab_ups_power_draw
+  name: Homelab UPS energy
+  unique_id: homelab_ups_energy
+  unit_prefix: k
+  unit_time: h
+  round: 3
+  method: left
+  # Load holds steady for long stretches (integer % steps change slowly), so
+  # keep integrating on a timer between source changes.
+  max_sub_interval:
+    minutes: 5

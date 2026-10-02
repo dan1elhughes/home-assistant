@@ -1,0 +1,5 @@
+# utility_meter: daily reset counters, for the Energy dashboard.
+
+homelab_ups_energy_used:
+  source: sensor.homelab_ups_energy
+  cycle: daily
