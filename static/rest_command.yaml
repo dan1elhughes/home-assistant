@@ -13,3 +13,9 @@ immich_resume_job:
     x-api-key: !secret immich_api_key_queue_management
   content_type: application/json
   payload: '{"command":"resume"}'
+
+integration_entries:
+  url: "http://127.0.0.1:8123/api/config/config_entries/entry"
+  method: GET
+  headers:
+    authorization: !secret ha_reloader_authorization

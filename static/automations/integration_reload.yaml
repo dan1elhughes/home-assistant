@@ -1,0 +1,84 @@
+- id: integration_reload_failed_entries
+  alias: Integrations - reload failed entries
+  description: Up to three shared reload rounds at startup, with 20 seconds between rounds.
+  mode: single
+  max_exceeded: silent
+  trigger:
+    - platform: homeassistant
+      event: start
+  action:
+    - action: rest_command.integration_entries
+      response_variable: entry_response
+    - condition: template
+      value_template: >-
+        {{ entry_response.status == 200
+           and entry_response.content is sequence
+           and entry_response.content is not string
+           and entry_response.content is not mapping }}
+    - variables:
+        enabled_entries: >-
+          {{ entry_response.content
+             | selectattr('disabled_by', 'none')
+             | rejectattr('source', 'eq', 'ignore') | list }}
+        failed_entries: >-
+          {{ enabled_entries
+             | selectattr('state', 'in', ['setup_error', 'setup_retry'])
+             | map(attribute='entry_id') | list }}
+    - repeat:
+        while:
+          - condition: template
+            value_template: >-
+              {{ failed_entries | count > 0
+                 and states('input_number.integration_reload_attempts') | int(3) < 3 }}
+        sequence:
+          - repeat:
+              for_each: "{{ failed_entries }}"
+              sequence:
+                # Recheck each entry: it may recover while another entry reloads.
+                - if:
+                    - condition: template
+                      value_template: >-
+                        {{ config_entry_attr(repeat.item, 'disabled_by') is none
+                           and config_entry_attr(repeat.item, 'source') != 'ignore'
+                           and config_entry_attr(repeat.item, 'state')
+                               in ['setup_error', 'setup_retry'] }}
+                  then:
+                    - action: homeassistant.reload_config_entry
+                      continue_on_error: true
+                      data:
+                        entry_id: "{{ repeat.item }}"
+          - action: input_number.increment
+            target:
+              entity_id: input_number.integration_reload_attempts
+          - delay:
+              seconds: 20
+          - action: rest_command.integration_entries
+            response_variable: entry_response
+          - condition: template
+            value_template: >-
+              {{ entry_response.status == 200
+                 and entry_response.content is sequence
+                 and entry_response.content is not string
+                 and entry_response.content is not mapping }}
+          - variables:
+              enabled_entries: >-
+                {{ entry_response.content
+                   | selectattr('disabled_by', 'none')
+                   | rejectattr('source', 'eq', 'ignore') | list }}
+              failed_entries: >-
+                {{ enabled_entries
+                   | selectattr('state', 'in', ['setup_error', 'setup_retry'])
+                   | map(attribute='entry_id') | list }}
+    # Do not reset during a reload or core setup retry: that would remove the cap.
+    - if:
+        - condition: template
+          value_template: >-
+            {{ enabled_entries | count > 0
+               and enabled_entries | rejectattr('state', 'eq', 'loaded') | list | count == 0
+               and states('input_number.integration_reload_attempts') | int(0) > 0 }}
+      then:
+        - action: input_number.set_value
+          target:
+            entity_id: input_number.integration_reload_attempts
+          data:
+            value: 0

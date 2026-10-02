@@ -99,3 +99,12 @@ zoe_charge_target_increment:
   step: 1
   unit_of_measurement: "%"
   icon: mdi:battery-plus
+
+integration_reload_attempts:
+  name: Integration reload attempts
+  min: 0
+  max: 3
+  step: 1
+  initial: 0
+  mode: box
+  icon: mdi:reload
