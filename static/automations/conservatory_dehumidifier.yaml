@@ -2,9 +2,22 @@
   mode: single
   trigger:
     - platform: state
-      entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+      entity_id:
+        - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+        - calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
   action:
     - choose:
+        - conditions:
+            - condition: state
+              entity_id: calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+              state: "on"
+          sequence:
+            - action: humidifier.set_humidity
+              target:
+                entity_id: humidifier.dehumidifier
+              data:
+                # Set to the Off-Peak value
+                humidity: "{{ states('input_number.dehumidifier_offpeak') | int }}"
         - conditions:
             - condition: state
               entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
