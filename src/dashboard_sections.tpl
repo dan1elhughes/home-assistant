@@ -450,6 +450,10 @@ views:
             name: Softener
             icon: mdi:soap
           - type: tile
+            entity: sensor.dehumidifier_water_level
+            name: Dehumidifier water
+            icon: mdi:water-outline
+          - type: tile
             entity: sensor.upstairs_error
             name: Upstairs error
           - type: tile
