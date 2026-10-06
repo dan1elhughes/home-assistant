@@ -1,4 +1,5 @@
-- alias: "Immich control"
+- id: immich_control
+  alias: "Immich control"
   mode: single
   trigger:
     - platform: state

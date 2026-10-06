@@ -1,3 +1,4 @@
+id: movie_mode
 name: "Movie mode"
 icon: hass:movie
 entities:

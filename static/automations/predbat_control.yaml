@@ -1,4 +1,5 @@
-- alias: "Predbat control"
+- id: predbat_control
+  alias: "Predbat control"
   mode: single
   description: "Reads Predbat's charge/export plan and updates Enphase battery schedules via enphase_envoy_cloud_control. Mutates existing schedules in-place where possible to avoid mode toggling and API churn."
   trigger:

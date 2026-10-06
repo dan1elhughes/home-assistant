@@ -1,3 +1,4 @@
+id: downstairs_on
 name: "Downstairs on"
 entities:
   light.kitchen_lights:

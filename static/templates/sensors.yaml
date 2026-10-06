@@ -38,12 +38,14 @@
         {{ (states('sensor.myenergi_myenergi_hub_grid_export_today') | float * states('sensor.octopus_energy_electricity_15p0706167_2000060833200_export_current_rate') | float) | round(2) }}
 
     - name: "Garden sensor temperature"
+      unique_id: garden_sensor_temperature
       unit_of_measurement: "°C"
       icon: mdi:thermometer
       state: >
         {{ state_attr('weather.home', 'temperature') }}
 
     - name: "Garden sensor humidity"
+      unique_id: garden_sensor_humidity
       unit_of_measurement: "%"
       icon: mdi:water-percent
       state: >

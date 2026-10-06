@@ -651,13 +651,77 @@ views:
               - type: light-brightness
           {% endif %}
 
-          {% if room.other_entities %}
-          {% for device in room.other_entities %}
-          - type: tile
+          - type: custom:auto-entities
             grid_options:
               columns: full
-            entity: {{ device }}
-          {% endfor %}
-          {% endif %}
+            show_empty: false
+            card:
+              type: grid
+              columns: 1
+              square: false
+            card_param: cards
+            sort:
+              method: name
+            filter:
+              # One tile per device: the entity named like the device, else the
+              # shortest-named entity in the first matching main-control domain,
+              # else a switch named "<device> Power". Device-less entities also show.
+              template: |
+                {% raw %}
+                {%- set skip = ['sensor', 'binary_sensor', 'number', 'select', 'button', 'update', 'device_tracker', 'event', 'image'] -%}
+                {%- set prio = ['climate', 'humidifier', 'fan', 'vacuum', 'cover', 'lock', 'media_player', 'water_heater', 'plant'] -%}
+                {%- set in_area = area_entities('{% endraw %}{{ room.id }}{% raw %}') -%}
+                {%- set ns = namespace(out=[]) -%}
+                {%- for e in in_area if not device_id(e) and not is_hidden_entity(e) -%}
+                  {%- set ns.out = ns.out + [e] -%}
+                {%- endfor -%}
+                {%- for dev in area_devices('{% endraw %}{{ room.id }}{% raw %}') -%}
+                  {%- set dname = device_attr(dev, 'name_by_user') or device_attr(dev, 'name') -%}
+                  {%- set es = device_entities(dev) | select('in', in_area) | reject('is_hidden_entity') | list -%}
+                  {%- set t = namespace(pick=none, len=999) -%}
+                  {%- for e in es if t.pick is none and e.split('.')[0] not in skip and state_attr(e, 'friendly_name') == dname -%}
+                    {%- set t.pick = e -%}
+                  {%- endfor -%}
+                  {%- for d in prio if t.pick is none -%}
+                    {%- for e in es if e.split('.')[0] == d and state_attr(e, 'friendly_name') and (state_attr(e, 'friendly_name') | length) < t.len -%}
+                      {%- set t.len = state_attr(e, 'friendly_name') | length -%}
+                      {%- set t.pick = e -%}
+                    {%- endfor -%}
+                  {%- endfor -%}
+                  {%- for e in es if t.pick is none and e.split('.')[0] == 'switch' and state_attr(e, 'friendly_name') == dname ~ ' Power' -%}
+                    {%- set t.pick = e -%}
+                  {%- endfor -%}
+                  {%- if t.pick and t.pick not in ns.out -%}
+                    {%- set ns.out = ns.out + [t.pick] -%}
+                  {%- endif -%}
+                {%- endfor -%}
+                {%- set tiles = namespace(l=[]) -%}
+                {%- for e in ns.out -%}
+                  {%- set tiles.l = tiles.l + [{'entity': e, 'type': 'tile'}] -%}
+                {%- endfor -%}
+                {{ tiles.l }}
+                {% endraw %}
+              exclude:
+                - entity_category: config
+                - entity_category: diagnostic
+                - hidden_by: /.+/
+                {% if room.lights %}
+                - entity_id: {{ room.lights }}
+                {% for id in groups[room.lights].entities %}
+                - entity_id: {{ id }}
+                {% endfor %}
+                {% endif %}
+                {% for id in room.ceiling %}
+                - entity_id: {{ id }}
+                {% endfor %}
+                {% for id in room.badges %}
+                - entity_id: {{ id }}
+                {% endfor %}
+                {% if room.co2_sensor %}
+                - entity_id: light.{{ room.co2_sensor }}_rgb_light
+                {% endif %}
+                {% for plant in room.plants %}
+                - entity_id: {{ plant.indicator }}
+                {% endfor %}
 
   {% endfor %}

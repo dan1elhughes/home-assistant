@@ -1,4 +1,5 @@
-- alias: "AC control"
+- id: ac_control
+  alias: "AC control"
   mode: single
   trigger:
     - platform: state
@@ -30,7 +31,8 @@
           target:
             entity_id: climate.office_office_ac
 
-- alias: "Office AC boost"
+- id: office_ac_boost
+  alias: "Office AC boost"
   mode: single
   trigger:
     - platform: state

@@ -73,7 +73,6 @@
         "light.living_room_front_ceiling_light",
         "light.living_room_rear_ceiling_light"
       ],
-      "other_entities": ["scene.downstairs_on", "scene.movie_mode"],
       "name": "Living room",
       "badges": ["climate.central_heating"],
       "co2_sensor": "apollo_msr_2_15c4e4"
@@ -85,7 +84,6 @@
       "lights": "light.bedroom_lights",
       "ceiling": ["light.bedroom_ceiling_light"],
       "name": "Bedroom",
-      "other_entities": ["cover.curtains", "fan.bedroom_fan"],
       "badges": [
         "sensor.aranet_sensor_temperature",
         "sensor.aranet_sensor_humidity",
@@ -113,16 +111,14 @@
       "icon": "mdi:fridge",
       "lights": "light.kitchen_lights",
       "ceiling": ["light.kitchen_ceiling_lights"],
-      "name": "Kitchen",
-      "other_entities": ["sensor.dishwasher_operation_state"]
+      "name": "Kitchen"
     },
     {
       "id": "dining_room",
       "icon": "mdi:table-furniture",
       "lights": "light.dining_room_lights",
       "ceiling": ["light.dining_room_ceiling_lights"],
-      "name": "Dining room",
-      "other_entities": ["vacuum.robovac_x10_pro_omni"]
+      "name": "Dining room"
     },
     {
       "button_ieee": "00:12:4b:00:29:0f:e9:c1",
@@ -132,16 +128,6 @@
       "lights": "light.office_lights",
       "ceiling": ["light.office_ceiling_light"],
       "name": "Office",
-      "other_entities": [
-        "switch.3d_printer",
-        "climate.server_cabinet",
-        "light.homelab_power_printer",
-        "switch.office",
-        "vacuum.upstairs",
-        "automation.ac_control",
-        "automation.immich_control",
-        "automation.office_ac_boost"
-      ],
       "badges": ["climate.office_office_ac"],
       "co2_sensor": "apollo_msr_2_1517ac"
     },
@@ -158,11 +144,6 @@
           "entity": "plant.conservatory_monstera_deliciosa",
           "indicator": "light.apollo_plt_1_f59ec0_rgb_light"
         }
-      ],
-      "other_entities": [
-        "climate.conservatory_heater_heater",
-        "humidifier.dehumidifier",
-        "switch.heated_airer"
       ]
     },
     {
@@ -172,8 +153,7 @@
       "badges": [
         "sensor.barn_sensor_temperature",
         "sensor.barn_sensor_humidity"
-      ],
-      "other_entities": ["climate.garden_barn_ac"]
+      ]
     },
     {
       "id": "garden",
@@ -190,8 +170,7 @@
       "icon": "mdi:door",
       "name": "Hallway",
       "ceiling": ["light.hallway_ceiling_light"],
-      "badges": ["sensor.hallway_motion_sensor_temperature"],
-      "other_entities": ["input_boolean.motion_sensors_enabled"]
+      "badges": ["sensor.hallway_motion_sensor_temperature"]
     },
     {
       "id": "landing",
@@ -204,8 +183,7 @@
       "id": "utility_room",
       "icon": "mdi:toolbox",
       "name": "Utility room",
-      "ceiling": ["light.utility_room_ceiling_light"],
-      "other_entities": ["sensor.washer_dryer_operation_state"]
+      "ceiling": ["light.utility_room_ceiling_light"]
     },
     {
       "id": "garage",
@@ -214,8 +192,7 @@
       "badges": [
         "sensor.envoy_122322027694_available_battery_energy",
         "sensor.battery_max_temperature"
-      ],
-      "other_entities": ["sensor.predbat_intent", "automation.predbat_control"]
+      ]
     }
   ],
   "leak_sensors": [

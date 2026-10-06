@@ -1,5 +1,6 @@
 - platform: generic_thermostat
   name: "Server cabinet"
+  unique_id: server_cabinet
   heater: light.homelab_power_ventilation
   target_sensor: sensor.servers_sensor_temperature
   ac_mode: true
