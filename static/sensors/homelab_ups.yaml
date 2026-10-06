@@ -7,7 +7,7 @@
 # the NUT source is, so the integration pauses (no energy is silently gained).
 
 - platform: integration
-  source: sensor.homelab_ups_power_draw
+  source: sensor.homelab_ups_real_power
   name: Homelab UPS energy
   unique_id: homelab_ups_energy
   unit_prefix: k
