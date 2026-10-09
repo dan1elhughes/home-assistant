@@ -6,14 +6,18 @@
   action:
     - action: cover.set_cover_position
       target:
-        entity_id: cover.curtains
+        entity_id:
+          - cover.curtains
+          - cover.bedroom_bedroom_curtain_right
       data:
-        position: 50
+        position: 25
     - action: cover.set_cover_position
       target:
-        entity_id: cover.office_curtain_left
+        entity_id:
+          - cover.office_curtain_left
+          - cover.office_office_curtain_right
       data:
-        position: 50
+        position: 0
 
 - alias: "Dawn actions"
   mode: single
@@ -31,12 +35,16 @@
     - alias: "Slowly close curtains"
       action: cover.set_cover_position
       target:
-        entity_id: cover.curtains
+        entity_id:
+          - cover.curtains
+          - cover.bedroom_bedroom_curtain_right
       data:
         position: 0
     - action: cover.set_cover_position
       target:
-        entity_id: cover.office_curtain_left
+        entity_id:
+          - cover.office_curtain_left
+          - cover.office_office_curtain_right
       data:
         position: 0
     - alias: "Enable hallway motion sensors"

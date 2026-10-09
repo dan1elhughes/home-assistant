@@ -44,11 +44,15 @@
     - alias: "Fully open curtains"
       action: cover.set_cover_position
       target:
-        entity_id: cover.curtains
+        entity_id:
+          - cover.curtains
+          - cover.bedroom_bedroom_curtain_right
       data:
         position: 100
     - action: cover.set_cover_position
       target:
-        entity_id: cover.office_curtain_left
+        entity_id:
+          - cover.office_curtain_left
+          - cover.office_office_curtain_right
       data:
         position: 100
