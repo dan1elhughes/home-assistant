@@ -1,63 +1,62 @@
-- alias: "Smart charge: set Predbat reservation profile"
+- alias: "Smart charge: keep battery charge back for the car"
   mode: single
   description: >-
-    When the smart charge group changes, sets a coherent Predbat reservation
-    profile so the battery holds charge back for the car. Octopus frequently
-    shifts the charge schedule within the 4-hour planning blind spot, so
-    best_soc_keep alone (a long-term planning metric, ignored for the first 4h)
-    can't protect against that — set_reserve_min is the runtime floor that
-    does. best_soc_keep + a bumped weight bias the longer-term run-up to the
-    window. All three revert to defaults when smart charge is off. No default
-    action — an unavailable/unknown state leaves values untouched to avoid
-    surprising behaviour.
+    While the ID3 is smart charging on Octopus, keep some home battery charge
+    in reserve so the car can still charge. Octopus can move the charging slot
+    at short notice, in a window Predbat does not plan for, so the reserve
+    minimum (the level the battery will not drop below while running) is what
+    protects the car's charge. The keep target and its weight bias Predbat's
+    longer-term plan in the run-up to the charging window. All three go back to
+    their defaults when smart charge is off. There is no default action, so an
+    unknown or unavailable state leaves the values alone.
   trigger:
     - platform: state
-      entity_id: switch.smart_charge
+      entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
   action:
     choose:
       - conditions:
-          - alias: "Smart charge enabled"
+          - alias: "Smart charge is on"
             condition: state
-            entity_id: switch.smart_charge
+            entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
             state: "on"
         sequence:
-          - alias: "Runtime floor: hold 10% (= 1.5 kWh of 15 kWh) — survives the 4h blind spot"
+          - alias: "Hold the battery at 10% or more so the car can charge"
             action: input_number.set_value
             target:
               entity_id: input_number.predbat_set_reserve_min
             data:
               value: 10
-          - alias: "Long-term plan bias: keep 1.5 kWh"
+          - alias: "Ask Predbat to plan to keep 1.5 kWh spare for the car"
             action: input_number.set_value
             target:
               entity_id: input_number.predbat_best_soc_keep
             data:
               value: 1.5
-          - alias: "Stiffen the keep metric only while smart charge is on"
+          - alias: "Make the keep target count fully while smart charge is on"
             action: input_number.set_value
             target:
               entity_id: input_number.predbat_best_soc_keep_weight
             data:
               value: 1
       - conditions:
-          - alias: "Smart charge off"
+          - alias: "Smart charge is off"
             condition: state
-            entity_id: switch.smart_charge
+            entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
             state: "off"
         sequence:
-          - alias: "Restore default reserve minimum (hardware floor)"
+          - alias: "Put the reserve back to the normal 5%"
             action: input_number.set_value
             target:
               entity_id: input_number.predbat_set_reserve_min
             data:
               value: 5
-          - alias: "Clear keep target"
+          - alias: "Stop keeping charge back for the car"
             action: input_number.set_value
             target:
               entity_id: input_number.predbat_best_soc_keep
             data:
               value: 0
-          - alias: "Restore default keep weight"
+          - alias: "Put the keep weight back to normal"
             action: input_number.set_value
             target:
               entity_id: input_number.predbat_best_soc_keep_weight

@@ -55,3 +55,75 @@ family_alarm:
         entity_id: input_datetime.family_alarm
       data:
         time: "19:00:00"
+
+charge_id3:
+  alias: "Charge ID3"
+  description: >-
+    Sets the ID3 charge target to the car's current battery level rounded up to
+    the next 5%, sets the auto increment to 10% at 10:00, turns on Octopus smart
+    charge, and switches the charger mode to ID3.
+  icon: mdi:car
+  mode: single
+  sequence:
+    - alias: "Set the charge target to the current level rounded up to 5%"
+      action: number.set_value
+      target:
+        entity_id: number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target
+      data:
+        value: >-
+          {% raw %}{{ [ [((states('sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_state_of_charge') | float(0) / 5) | round(0, 'ceil') * 5) | int, 5] | max, 100] | min }}{% endraw %}
+    - alias: "Set the increment to 10%"
+      action: input_number.set_value
+      target:
+        entity_id: input_number.id3_charge_target_increment
+      data:
+        value: 10
+    - alias: "Set the increment time to 10:00"
+      action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.id3_charge_target_increment_time
+      data:
+        time: "10:00:00"
+    - alias: "Turn on auto increment"
+      action: input_boolean.turn_on
+      target:
+        entity_id: input_boolean.id3_auto_increment_charge_target
+    - alias: "Turn on ID3 smart charge"
+      action: switch.turn_on
+      target:
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - alias: "Set charger mode to ID3"
+      action: input_select.select_option
+      target:
+        entity_id: input_select.charger_mode
+      data:
+        option: ID3
+
+charge_zoe:
+  alias: "Charge Zoe"
+  description: >-
+    Turns off the ID3 smart charge and auto increment, sets the Zoe charge
+    target to 80%, and switches the charger mode to Zoe.
+  icon: mdi:car-electric
+  mode: single
+  sequence:
+    - alias: "Turn off ID3 auto increment"
+      action: input_boolean.turn_off
+      target:
+        entity_id: input_boolean.id3_auto_increment_charge_target
+    - alias: "Turn off ID3 smart charge"
+      action: switch.turn_off
+      target:
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - alias: "Set the Zoe charge target to 80%"
+      action: input_number.set_value
+      target:
+        entity_id: input_number.zoe_charge_target
+      data:
+        value: 80
+    - alias: "Set charger mode to Zoe"
+      action: input_select.select_option
+      target:
+        entity_id: input_select.charger_mode
+      data:
+        option: Zoe

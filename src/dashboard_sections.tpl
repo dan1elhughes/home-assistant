@@ -472,9 +472,15 @@ views:
             heading: Zappi
             heading_style: title
             icon: mdi:ev-plug-type2
+            badges:
+              - type: entity
+                show_icon: false
+                tap_action:
+                  action: more-info
+                entity: sensor.myenergi_zappi_charge_added_session
           - type: tile
-            entity: select.myenergi_zappi_charge_mode
-            name: Charge mode
+            entity: input_select.charger_mode
+            name: Charger mode
             hide_state: true
             features_position: inline
             features:
@@ -482,11 +488,11 @@ views:
             grid_options:
               columns: full
           - type: tile
+            entity: select.myenergi_zappi_charge_mode
+            name: Zappi mode
+          - type: tile
             entity: sensor.myenergi_zappi_plug_status
             name: Plug status
-          - type: tile
-            entity: sensor.myenergi_zappi_charge_added_session
-            name: Session charge
 
       - type: grid
         cards:
@@ -501,6 +507,18 @@ views:
                   action: more-info
                 entity: sensor.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_state_of_charge
           - type: tile
+            entity: script.charge_id3
+            name: Charge ID3
+            icon: mdi:car
+            hide_state: true
+            tap_action:
+              action: perform-action
+              perform_action: script.turn_on
+              target:
+                entity_id: script.charge_id3
+            grid_options:
+              columns: full
+          - type: tile
             entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
             name: Smart charge
             features_position: inline
@@ -509,6 +527,10 @@ views:
           - type: tile
             entity: number.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_charge_target
             name: Charge target
+            visibility:
+              - condition: state
+                entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+                state: 'on'
             features_position: inline
             features:
               - type: numeric-input
@@ -518,6 +540,10 @@ views:
           - type: tile
             entity: select.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_target_time
             name: Target time
+            visibility:
+              - condition: state
+                entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+                state: 'on'
             hide_state: true
             features_position: inline
             features:
@@ -527,6 +553,10 @@ views:
           - type: tile
             entity: input_boolean.id3_auto_increment_charge_target
             name: Auto increment
+            visibility:
+              - condition: state
+                entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+                state: 'on'
             features_position: inline
             features:
               - type: toggle
@@ -534,6 +564,9 @@ views:
             entity: input_number.id3_charge_target_increment
             name: Increment
             visibility:
+              - condition: state
+                entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+                state: 'on'
               - condition: state
                 entity: input_boolean.id3_auto_increment_charge_target
                 state: 'on'
@@ -547,6 +580,9 @@ views:
             entity: input_datetime.id3_charge_target_increment_time
             name: Increment time
             visibility:
+              - condition: state
+                entity: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+                state: 'on'
               - condition: state
                 entity: input_boolean.id3_auto_increment_charge_target
                 state: 'on'
@@ -564,57 +600,26 @@ views:
                 show_icon: false
                 tap_action:
                   action: more-info
-                entity: sensor.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_state_of_charge
+                entity: sensor.wp22lxc_battery
           - type: tile
-            entity: switch.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_smart_charge
-            name: Smart charge
-            features_position: inline
-            features:
-              - type: toggle
+            entity: script.charge_zoe
+            name: Charge Zoe
+            icon: mdi:car-electric
+            hide_state: true
+            tap_action:
+              action: perform-action
+              perform_action: script.turn_on
+              target:
+                entity_id: script.charge_zoe
+            grid_options:
+              columns: full
           - type: tile
-            entity: number.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_charge_target
+            entity: input_number.zoe_charge_target
             name: Charge target
             features_position: inline
             features:
               - type: numeric-input
                 style: slider
-            grid_options:
-              columns: full
-          - type: tile
-            entity: select.octopus_energy_00000000_0002_4000_8020_00000011612f_intelligent_target_time
-            name: Target time
-            hide_state: true
-            features_position: inline
-            features:
-              - type: select-options
-            grid_options:
-              columns: full
-          - type: tile
-            entity: input_boolean.zoe_auto_increment_charge_target
-            name: Auto increment
-            features_position: inline
-            features:
-              - type: toggle
-          - type: tile
-            entity: input_number.zoe_charge_target_increment
-            name: Increment
-            visibility:
-              - condition: state
-                entity: input_boolean.zoe_auto_increment_charge_target
-                state: 'on'
-            features_position: inline
-            features:
-              - type: numeric-input
-                style: slider
-            grid_options:
-              columns: full
-          - type: tile
-            entity: input_datetime.zoe_charge_target_increment_time
-            name: Increment time
-            visibility:
-              - condition: state
-                entity: input_boolean.zoe_auto_increment_charge_target
-                state: 'on'
             grid_options:
               columns: full
 

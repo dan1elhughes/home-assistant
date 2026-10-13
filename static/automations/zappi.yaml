@@ -1,19 +1,44 @@
 - alias: "Zappi control"
   mode: single
+  description: >-
+    Drives the Zappi from input_select.charger_mode. ID3: fast while the ID3
+    Octopus smart charge is on, otherwise fast on off-peak or Octoplus free
+    electricity. Zoe: fast on off-peak or free when the Zoe is plugged in and
+    below input_number.zoe_charge_target. Fast: charges straight away whatever
+    the price. Off: stopped. Defaults to Stopped.
   trigger:
     - platform: state
       entity_id:
         - select.myenergi_zappi_charge_mode
-        - switch.smart_charge
+        - input_select.charger_mode
+        - switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+        - binary_sensor.wp22lxc_plug
+        - sensor.wp22lxc_battery
+        - input_number.zoe_charge_target
+        - binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
         - calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
   action:
     - choose:
-        - alias: "Free electricity session"
+        - alias: "ID3 charge"
           conditions:
-            - alias: "Octoplus free electricity session active"
+            - alias: "Charger mode is ID3"
               condition: state
-              entity_id: calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
-              state: "on"
+              entity_id: input_select.charger_mode
+              state: "ID3"
+            - condition: or
+              conditions:
+                - alias: "ID3 smart charge on"
+                  condition: state
+                  entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+                  state: "on"
+                - alias: "Off-peak electricity"
+                  condition: state
+                  entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+                  state: "on"
+                - alias: "Octoplus free electricity session active"
+                  condition: state
+                  entity_id: calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+                  state: "on"
           sequence:
             - alias: "Set Zappi to Fast"
               action: select.select_option
@@ -21,12 +46,45 @@
                 entity_id: select.myenergi_zappi_charge_mode
               data:
                 option: "Fast"
-        - alias: "Smart Charge"
+        - alias: "Zoe charge"
           conditions:
-            - alias: "Octopus smart charge enabled"
+            - alias: "Charger mode is Zoe"
               condition: state
-              entity_id: switch.smart_charge
+              entity_id: input_select.charger_mode
+              state: "Zoe"
+            - alias: "Zoe is plugged in"
+              condition: state
+              entity_id: binary_sensor.wp22lxc_plug
               state: "on"
+            - condition: or
+              conditions:
+                - alias: "Off-peak electricity"
+                  condition: state
+                  entity_id: binary_sensor.octopus_energy_electricity_15p0706167_2000050773706_off_peak
+                  state: "on"
+                - alias: "Octoplus free electricity session active"
+                  condition: state
+                  entity_id: calendar.octopus_energy_a_fad3b08a_octoplus_free_electricity_session
+                  state: "on"
+            - alias: "Zoe is below its charge target"
+              condition: template
+              value_template: >-
+                {{ is_number(states('sensor.wp22lxc_battery'))
+                   and states('sensor.wp22lxc_battery') | float(0)
+                       < states('input_number.zoe_charge_target') | float(0) }}
+          sequence:
+            - alias: "Set Zappi to Fast"
+              action: select.select_option
+              target:
+                entity_id: select.myenergi_zappi_charge_mode
+              data:
+                option: "Fast"
+        - alias: "Fast charge now"
+          conditions:
+            - alias: "Charger mode is Fast"
+              condition: state
+              entity_id: input_select.charger_mode
+              state: "Fast"
           sequence:
             - alias: "Set Zappi to Fast"
               action: select.select_option
@@ -55,22 +113,32 @@
         data:
           tag: "zappi-plug-status"
 
-- alias: "Disable smart charge on disconnect"
+- alias: "Reset charge mode on disconnect"
   mode: single
+  description: >-
+    Resets the charger mode to Off and turns off the car charge controls when
+    the EV is unplugged.
   trigger:
     - platform: state
       entity_id: sensor.myenergi_zappi_plug_status
       to: "EV Disconnected"
   condition:
-    - alias: "Smart charge currently on"
-      condition: state
-      entity_id: switch.smart_charge
-      state: "on"
+    - alias: "Something to reset"
+      condition: template
+      value_template: >-
+        {{ not is_state('input_select.charger_mode', 'Off')
+           or is_state('switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge', 'on') }}
   action:
     - alias: "Disable smart charge"
       action: switch.turn_off
       target:
-        entity_id: switch.smart_charge
+        entity_id: switch.octopus_energy_00000000_0002_4000_8020_00000008191c_intelligent_smart_charge
+    - alias: "Set charger mode to Off"
+      action: input_select.select_option
+      target:
+        entity_id: input_select.charger_mode
+      data:
+        option: "Off"
     - alias: "Disable auto increment"
       action: input_boolean.turn_off
       target:

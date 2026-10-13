@@ -7,6 +7,15 @@ active_room:
     {% endfor %}
     - out
 
+charger_mode:
+  name: Charger mode
+  icon: mdi:car-electric
+  options:
+    - Fast
+    - ID3
+    - Zoe
+    - "Off"
+
 {% for x in multiLightDimmers %}
 {{ x.id }}:
   name: {{ x.name }}
