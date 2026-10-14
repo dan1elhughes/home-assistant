@@ -1,5 +1,5 @@
 - alias: "Zappi control"
-  mode: single
+  mode: queued
   description: >-
     Drives the Zappi from input_select.charger_mode. ID3: fast while the ID3
     Octopus smart charge is on, otherwise fast on off-peak or Octoplus free
