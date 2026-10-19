@@ -42,17 +42,19 @@
       data:
         option: bedroom
     - alias: "Fully open curtains"
-      action: cover.set_cover_position
-      target:
-        entity_id:
+      repeat:
+        for_each:
           - cover.curtains
           - cover.bedroom_bedroom_curtain_right
-      data:
-        position: 100
-    - action: cover.set_cover_position
-      target:
-        entity_id:
           - cover.office_curtain_left
           - cover.office_office_curtain_right
-      data:
-        position: 100
+        sequence:
+          - if:
+              - condition: template
+                value_template: "{{ state_attr(repeat.item, 'current_position') | float(100) < 100 }}"
+            then:
+              - action: cover.set_cover_position
+                target:
+                  entity_id: "{{ repeat.item }}"
+                data:
+                  position: 100
