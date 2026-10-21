@@ -11,6 +11,7 @@ entities:
 
   # Living room
   light.side_table: "off"
+  light.living_room_small_lamp: "off"
 
   light.tv_light:
     state: "on"
