@@ -19,3 +19,7 @@ integration_entries:
   method: GET
   headers:
     authorization: !secret ha_reloader_authorization
+
+zigbee_radio_restart:
+  url: "http://10.10.10.11/api2?action=4&cmd=1"
+  method: GET

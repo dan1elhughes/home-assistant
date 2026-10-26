@@ -1,6 +1,8 @@
 - id: integration_reload_failed_entries
   alias: Integrations - reload failed entries
-  description: Up to three shared reload rounds at startup, with 20 seconds between rounds.
+  description: >-
+    Up to three shared reload rounds at startup, with 20 seconds between rounds.
+    Restart the coordinator radio before reloading a failed ZHA entry.
   mode: single
   max_exceeded: silent
   trigger:
@@ -43,6 +45,17 @@
                            and config_entry_attr(repeat.item, 'state')
                                in ['setup_error', 'setup_retry'] }}
                   then:
+                    - if:
+                        - condition: template
+                          value_template: >-
+                            {{ repeat.item in enabled_entries
+                               | selectattr('domain', 'eq', 'zha')
+                               | map(attribute='entry_id') | list }}
+                      then:
+                        - action: rest_command.zigbee_radio_restart
+                          continue_on_error: true
+                        - delay:
+                            seconds: 5
                     - action: homeassistant.reload_config_entry
                       continue_on_error: true
                       data:
