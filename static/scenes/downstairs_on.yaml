@@ -16,3 +16,11 @@ entities:
   light.kitchen_ceiling_lights:
     state: "on"
     brightness: 25
+  light.dining_room_ceiling_lights:
+    state: "off"
+  light.living_room_front_ceiling_light:
+    state: "off"
+  light.living_room_rear_ceiling_light:
+    state: "off"
+  light.living_room_small_lamp:
+    state: "off"
