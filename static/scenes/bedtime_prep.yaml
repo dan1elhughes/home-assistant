@@ -8,10 +8,10 @@ entities:
   light.living_room_lights: "off"
   light.hallway_ceiling_light:
     state: "on"
-    brightness: 1
+    brightness: 3
   light.dan_bed_light:
     state: "on"
-    brightness: 1
+    brightness: 3
   light.downstairs_ceiling_lights:
     state: "on"
-    brightness: 1
+    brightness: 3
