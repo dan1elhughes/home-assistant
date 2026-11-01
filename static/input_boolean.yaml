@@ -15,10 +15,6 @@ wake_up_katie_enabled:
   name: Wake up Katie enabled
   icon: mdi:alarm
 
-motion_sensors_enabled:
-  name: Motion sensors enabled
-  icon: mdi:motion-sensor
-
 notify_on_battery_schedule_changed:
   name: Notify on battery schedule changed
   icon: mdi:bell

@@ -24,15 +24,6 @@
   trigger:
     - platform: time
       at: "23:30:00"
-    - platform: state
-      entity_id:
-{%- for person in people %}
-        - {{ person }}
-{%- endfor %}
-      from: not_home
-      to: home
-      for:
-        minutes: 5
   condition:
     - condition: state
       entity_id: light.front_lights

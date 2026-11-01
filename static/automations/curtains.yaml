@@ -47,7 +47,3 @@
           - cover.office_office_curtain_right
       data:
         position: 0
-    - alias: "Enable hallway motion sensors"
-      action: input_boolean.turn_on
-      target:
-        entity_id: input_boolean.motion_sensors_enabled

@@ -1,4 +1,34 @@
 {
+  "automatic_lights": {
+    "outdoor": [
+      {
+        "name": "Garden",
+        "light": "light.garden_lighting",
+        "triggers": ["binary_sensor.back_door_opening"]
+      },
+      {
+        "name": "Front lights",
+        "light": "light.front_lights",
+        "triggers": ["binary_sensor.doorbell_person"]
+      }
+    ],
+    "indoor": [
+      {
+        "name": "Hallway",
+        "light": "light.hallway_lights",
+        "triggers": ["binary_sensor.hallway_motion_sensors"],
+        "day_brightness": 100,
+        "night_brightness": 5
+      },
+      {
+        "name": "Downstairs bathroom",
+        "light": "light.downstairs_bathroom_light",
+        "triggers": ["binary_sensor.downstairs_bathroom_door"],
+        "day_brightness": 100,
+        "night_brightness": 100
+      }
+    ]
+  },
   "buttons": [
     {
       "ieee": "00:17:88:01:06:07:6c:d8",
