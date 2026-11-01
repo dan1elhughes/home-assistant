@@ -89,6 +89,11 @@
           entity_id: {{ sensor }}
           state: "off"
         {%- endfor %}
+    {%- if outdoor %}
+    - condition: state
+      entity_id: sun.sun
+      state: "below_horizon"
+    {%- endif %}
   {%- else %}
   condition:
     {%- for sensor in entry.triggers %}
@@ -96,6 +101,11 @@
       entity_id: {{ sensor }}
       state: "off"
     {%- endfor %}
+    {%- if outdoor %}
+    - condition: state
+      entity_id: sun.sun
+      state: "below_horizon"
+    {%- endif %}
   {%- endif %}
   action:
     - action: light.turn_off
