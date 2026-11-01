@@ -1,4 +1,4 @@
-{% macro lights(entry, outdoor) -%}
+{% macro lights(entry) -%}
 ### {{ entry.name }} ###
 - alias: "{{ entry.name }} automatic lights on"
   mode: single
@@ -8,26 +8,11 @@
       entity_id: {{ sensor }}
       to: "on"
     {%- endfor %}
-    {%- if entry.sunset %}
-    - platform: sun
-      event: sunset
-    {%- endif %}
-  {%- if outdoor %}
-  {%- if entry.sunset %}
-  condition:
-    - condition: or
-      conditions:
-        - condition: template
-          value_template: {% raw %}"{{ trigger.platform == 'sun' }}"{% endraw %}
-        - condition: state
-          entity_id: sun.sun
-          state: "below_horizon"
-  {%- else %}
+  {%- if entry.night_only %}
   condition:
     - condition: state
       entity_id: sun.sun
       state: "below_horizon"
-  {%- endif %}
   {%- endif %}
   action:
     {%- if entry.day_brightness and entry.night_brightness and entry.day_brightness != entry.night_brightness %}
@@ -74,49 +59,53 @@
       for:
         minutes: 5
     {%- endfor %}
-    {%- if entry.off_at %}
-    - platform: time
-      at: "{{ entry.off_at }}"
-    {%- endif %}
-  {%- if entry.off_at %}
-  condition:
-    - condition: or
-      conditions:
-        - condition: template
-          value_template: {% raw %}"{{ trigger.platform == 'time' }}"{% endraw %}
-        {%- for sensor in entry.triggers %}
-        - condition: state
-          entity_id: {{ sensor }}
-          state: "off"
-        {%- endfor %}
-    {%- if outdoor %}
-    - condition: state
-      entity_id: sun.sun
-      state: "below_horizon"
-    {%- endif %}
-  {%- else %}
   condition:
     {%- for sensor in entry.triggers %}
     - condition: state
       entity_id: {{ sensor }}
       state: "off"
     {%- endfor %}
-    {%- if outdoor %}
+    {%- if entry.night_only %}
     - condition: state
       entity_id: sun.sun
       state: "below_horizon"
     {%- endif %}
+  action:
+    - action: light.turn_off
+      target:
+        entity_id: {{ entry.light }}
+{%- if entry.sunset %}
+
+- alias: "{{ entry.name }} automatic lights on at sunset"
+  mode: single
+  trigger:
+    - platform: sun
+      event: sunset
+  action:
+    - action: light.turn_on
+      target:
+        entity_id: {{ entry.light }}
+{%- endif %}
+{%- if entry.off_at %}
+
+- alias: "{{ entry.name }} automatic lights off at {{ entry.off_at }}"
+  mode: single
+  trigger:
+    - platform: time
+      at: "{{ entry.off_at }}"
+  {%- if entry.night_only %}
+  condition:
+    - condition: state
+      entity_id: sun.sun
+      state: "below_horizon"
   {%- endif %}
   action:
     - action: light.turn_off
       target:
         entity_id: {{ entry.light }}
+{%- endif %}
 {% endmacro -%}
 
-{% for entry in automatic_lights.outdoor -%}
-{{ lights(entry, true) }}
-{% endfor -%}
-
-{% for entry in automatic_lights.indoor -%}
-{{ lights(entry, false) }}
+{% for entry in automatic_lights -%}
+{{ lights(entry) }}
 {% endfor %}
