@@ -4,7 +4,7 @@
       {
         "name": "Garden",
         "light": "light.garden_lighting",
-        "triggers": ["binary_sensor.back_door_opening"]
+        "triggers": ["binary_sensor.back_door_opening", "binary_sensor.garden_person_detected"]
       },
       {
         "name": "Front lights",
