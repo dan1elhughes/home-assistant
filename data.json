@@ -9,7 +9,9 @@
       {
         "name": "Front lights",
         "light": "light.front_lights",
-        "triggers": ["binary_sensor.doorbell_person"]
+        "triggers": ["binary_sensor.doorbell_person"],
+        "sunset": true,
+        "off_at": "23:30:00"
       }
     ],
     "indoor": [

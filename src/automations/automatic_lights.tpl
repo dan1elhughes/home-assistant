@@ -8,11 +8,26 @@
       entity_id: {{ sensor }}
       to: "on"
     {%- endfor %}
+    {%- if entry.sunset %}
+    - platform: sun
+      event: sunset
+    {%- endif %}
   {%- if outdoor %}
+  {%- if entry.sunset %}
+  condition:
+    - condition: or
+      conditions:
+        - condition: template
+          value_template: {% raw %}"{{ trigger.platform == 'sun' }}"{% endraw %}
+        - condition: state
+          entity_id: sun.sun
+          state: "below_horizon"
+  {%- else %}
   condition:
     - condition: state
       entity_id: sun.sun
       state: "below_horizon"
+  {%- endif %}
   {%- endif %}
   action:
     {%- if entry.day_brightness and entry.night_brightness and entry.day_brightness != entry.night_brightness %}
@@ -59,12 +74,29 @@
       for:
         minutes: 5
     {%- endfor %}
+    {%- if entry.off_at %}
+    - platform: time
+      at: "{{ entry.off_at }}"
+    {%- endif %}
+  {%- if entry.off_at %}
+  condition:
+    - condition: or
+      conditions:
+        - condition: template
+          value_template: {% raw %}"{{ trigger.platform == 'time' }}"{% endraw %}
+        {%- for sensor in entry.triggers %}
+        - condition: state
+          entity_id: {{ sensor }}
+          state: "off"
+        {%- endfor %}
+  {%- else %}
   condition:
     {%- for sensor in entry.triggers %}
     - condition: state
       entity_id: {{ sensor }}
       state: "off"
     {%- endfor %}
+  {%- endif %}
   action:
     - action: light.turn_off
       target:
