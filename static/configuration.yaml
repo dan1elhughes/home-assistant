@@ -46,7 +46,7 @@ lovelace:
     trmnl-page:
       mode: yaml
       title: TRMNL
-      icon: mdi:terminal
+      icon: mdi:image-filter-frames
       show_in_sidebar: true
       filename: dashboard_trmnl.yaml
     commute-page:
