@@ -1,4 +1,4 @@
-- alias: "Curtains partially closed at sunset"
+- alias: "Curtains closed at sunset"
   mode: single
   triggers:
     - trigger: sun
@@ -7,19 +7,13 @@
     - action: cover.set_cover_position
       target:
         entity_id:
-          - cover.curtains
-          - cover.bedroom_bedroom_curtain_right
-      data:
-        position: 25
-    - action: cover.set_cover_position
-      target:
-        entity_id:
-          - cover.office_curtain_left
-          - cover.office_office_curtain_right
+          - cover.bedroom_curtains
+          - cover.office_curtains
+          - cover.dining_room_curtains
       data:
         position: 0
 
-- alias: "Dawn actions"
+- alias: "Bedroom curtains closed before dawn"
   mode: single
   triggers:
     - trigger: numeric_state
@@ -32,18 +26,23 @@
       entity_id: group.presence_home
       state: home
   action:
-    - alias: "Slowly close curtains"
-      action: cover.set_cover_position
+    - action: cover.set_cover_position
       target:
-        entity_id:
-          - cover.curtains
-          - cover.bedroom_bedroom_curtain_right
+        entity_id: cover.bedroom_curtains
       data:
         position: 0
+
+- alias: "Curtains open at 8am"
+  mode: single
+  triggers:
+    - trigger: time
+      at: "08:00:00"
+  action:
     - action: cover.set_cover_position
       target:
         entity_id:
-          - cover.office_curtain_left
-          - cover.office_office_curtain_right
+          - cover.bedroom_curtains
+          - cover.office_curtains
+          - cover.dining_room_curtains
       data:
-        position: 0
+        position: 100
