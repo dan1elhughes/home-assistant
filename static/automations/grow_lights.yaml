@@ -1,0 +1,19 @@
+- alias: "Grow lights on at 10am"
+  mode: single
+  triggers:
+    - trigger: time
+      at: "10:00:00"
+  action:
+    - action: light.turn_on
+      target:
+        entity_id: light.bedroom_bedroom_shelf_power_grow_lights
+
+- alias: "Grow lights off at sunset"
+  mode: single
+  triggers:
+    - trigger: sun
+      event: sunset
+  action:
+    - action: light.turn_off
+      target:
+        entity_id: light.bedroom_bedroom_shelf_power_grow_lights
