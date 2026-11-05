@@ -14,7 +14,7 @@
       "light": "light.front_lights",
       "triggers": ["binary_sensor.doorbell_person"],
       "night_only": true,
-      "sunset": true,
+      "sunset": 30,
       "off_at": "23:30:00"
     },
     {

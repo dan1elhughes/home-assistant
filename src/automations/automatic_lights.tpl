@@ -85,6 +85,8 @@
     - action: light.turn_on
       target:
         entity_id: {{ entry.light }}
+      data:
+        brightness_pct: {{ entry.sunset }}
 {%- endif %}
 {%- if entry.off_at %}
 
