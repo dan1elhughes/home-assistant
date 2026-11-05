@@ -3,12 +3,81 @@
   description: >-
     Up to three shared reload rounds at startup, with 20 seconds between rounds.
     Restart the coordinator radio before reloading a failed ZHA entry.
+    Also recover ZHA after two minutes of failure, with up to three attempts
+    per run and at least 15 minutes between recovery runs.
   mode: single
   max_exceeded: silent
+  trigger_variables:
+    zha_entry_id: d359984ce025fd0dccdaa360417acf62
   trigger:
     - platform: homeassistant
       event: start
+    # Config entry changes do not update templates, so now() polls each minute.
+    - platform: template
+      id: zha_failure
+      value_template: >-
+        {{ now() is not none
+           and config_entry_attr(zha_entry_id, 'disabled_by') is none
+           and config_entry_attr(zha_entry_id, 'source') != 'ignore'
+           and config_entry_attr(zha_entry_id, 'state')
+               in ['setup_error', 'setup_retry', 'setup_in_progress'] }}
+      for:
+        minutes: 2
   action:
+    - if:
+        - condition: trigger
+          id: zha_failure
+      then:
+        - delay:
+            seconds: >-
+              {{ [0, 900 - (as_timestamp(now())
+                 - (state_attr('input_datetime.zha_recovery_last_started', 'timestamp')
+                    | float(0)))] | max | int }}
+        - action: input_datetime.set_datetime
+          target:
+            entity_id: input_datetime.zha_recovery_last_started
+          data:
+            timestamp: "{{ as_timestamp(now()) }}"
+        - repeat:
+            while:
+              - condition: template
+                value_template: >-
+                  {{ repeat.index <= 3
+                     and config_entry_attr(zha_entry_id, 'disabled_by') is none
+                     and config_entry_attr(zha_entry_id, 'source') != 'ignore'
+                     and config_entry_attr(zha_entry_id, 'state')
+                         in ['setup_error', 'setup_retry', 'setup_in_progress'] }}
+            sequence:
+              - action: rest_command.zigbee_radio_restart
+                continue_on_error: true
+              - delay:
+                  seconds: 5
+              - action: homeassistant.reload_config_entry
+                continue_on_error: true
+                data:
+                  entry_id: "{{ zha_entry_id }}"
+              - delay:
+                  seconds: 20
+        - if:
+            - condition: template
+              value_template: >-
+                {{ config_entry_attr(zha_entry_id, 'disabled_by') is none
+                   and config_entry_attr(zha_entry_id, 'source') != 'ignore'
+                   and config_entry_attr(zha_entry_id, 'state')
+                       in ['setup_error', 'setup_retry', 'setup_in_progress'] }}
+          then:
+            - action: persistent_notification.create
+              data:
+                notification_id: zha_recovery_failed
+                title: Zigbee recovery failed
+                message: >-
+                  ZHA is still unavailable after three radio restart and reload
+                  attempts. Check the SLZB-06 coordinator at 10.10.10.11.
+          else:
+            - action: persistent_notification.dismiss
+              data:
+                notification_id: zha_recovery_failed
+        - stop: ZHA runtime recovery finished
     - action: rest_command.integration_entries
       response_variable: entry_response
     - condition: template

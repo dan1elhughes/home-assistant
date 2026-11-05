@@ -22,3 +22,8 @@ family_alarm:
   name: Family alarm
   has_date: false
   has_time: true
+
+zha_recovery_last_started:
+  name: ZHA recovery last started
+  has_date: true
+  has_time: true
