@@ -14,3 +14,9 @@
   hot_tolerance: 3
   ac_mode: true
   max_temp: 100
+
+- platform: generic_thermostat
+  name: Virtual barn heating
+  heater: switch.barn_ac_power
+  target_sensor: sensor.barn_sensor_temperature
+  min_temp: 1
