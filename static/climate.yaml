@@ -17,6 +17,7 @@
 
 - platform: generic_thermostat
   name: Virtual barn heating
+  unique_id: virtual_barn_heating
   heater: switch.barn_ac_power
   target_sensor: sensor.barn_ac_temperature
   min_temp: 1

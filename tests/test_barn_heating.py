@@ -18,6 +18,7 @@ class BarnHeatingTests(unittest.TestCase):
         )
         self.assertIsNotNone(thermostat)
         self.assertEqual(thermostat["platform"], "generic_thermostat")
+        self.assertEqual(thermostat["unique_id"], "virtual_barn_heating")
         self.assertEqual(thermostat["heater"], "switch.barn_ac_power")
         self.assertEqual(thermostat["target_sensor"], "sensor.barn_ac_temperature")
         self.assertEqual(thermostat["min_temp"], 1)
