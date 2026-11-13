@@ -3,6 +3,22 @@
   triggers:
     - trigger: time
       at: "10:00:00"
+    - trigger: homeassistant
+      event: start
+    - trigger: state
+      entity_id: light.bedroom_bedroom_shelf_power_grow_lights
+      from:
+        - "unavailable"
+        - "unknown"
+      to: "off"
+  conditions:
+    - condition: time
+      after: "10:00:00"
+    - condition: sun
+      before: sunset
+    - condition: state
+      entity_id: light.bedroom_bedroom_shelf_power_grow_lights
+      state: "off"
   action:
     - action: light.turn_on
       target:
