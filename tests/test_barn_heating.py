@@ -19,8 +19,29 @@ class BarnHeatingTests(unittest.TestCase):
         self.assertIsNotNone(thermostat)
         self.assertEqual(thermostat["platform"], "generic_thermostat")
         self.assertEqual(thermostat["heater"], "switch.barn_ac_power")
-        self.assertEqual(thermostat["target_sensor"], "sensor.barn_sensor_temperature")
+        self.assertEqual(thermostat["target_sensor"], "sensor.barn_ac_temperature")
         self.assertEqual(thermostat["min_temp"], 1)
+
+    def test_temperature_sensor_uses_ac_reading(self):
+        sensors = yaml.safe_load((ROOT / "static/templates/sensors.yaml").read_text())[0]["sensor"]
+        sensor = next((item for item in sensors if item["name"] == "Barn AC temperature"), None)
+        self.assertIsNotNone(sensor)
+        self.assertEqual(sensor["device_class"], "temperature")
+        self.assertEqual(sensor["unit_of_measurement"], "°C")
+        env = NativeEnvironment()
+        env.globals["is_number"] = lambda value: isinstance(value, (int, float))
+        for reading in [3.0, 5.5, -2.0, None]:
+            with self.subTest(reading=reading):
+                def state_attr(entity, attribute):
+                    self.assertEqual(entity, "climate.garden_barn_ac")
+                    self.assertEqual(attribute, "current_temperature")
+                    return reading
+
+                self.assertEqual(env.from_string(sensor["state"]).render(state_attr=state_attr), reading)
+                self.assertEqual(
+                    env.from_string(sensor["availability"]).render(state_attr=state_attr),
+                    reading is not None,
+                )
 
     def test_switch_controls_current_ac_entity(self):
         path = ROOT / "static/templates/switches.yaml"

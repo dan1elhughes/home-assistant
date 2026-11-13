@@ -1,4 +1,13 @@
 - sensor:
+    - name: Barn AC temperature
+      device_class: temperature
+      state_class: measurement
+      unit_of_measurement: "°C"
+      availability: >
+        {{ is_number(state_attr('climate.garden_barn_ac', 'current_temperature')) }}
+      state: >
+        {{ state_attr('climate.garden_barn_ac', 'current_temperature') }}
+
     - name: Occupant count
       state: >
         {{ states.person | selectattr('state', 'equalto', 'home') | list | count }}
@@ -187,4 +196,3 @@
         {{ states('sensor.homelab_ups_load') not in ['unknown', 'unavailable', 'none'] }}
       state: >
         {{ (states('sensor.homelab_ups_load') | float(0) / 100 * (states('sensor.homelab_ups_nominal_real_power') | float(780))) | round(0) }}
-
