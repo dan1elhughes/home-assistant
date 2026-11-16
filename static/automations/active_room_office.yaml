@@ -9,6 +9,9 @@
               entity_id: input_select.active_room
               state: "office"
           sequence:
+            - action: switch.turn_on
+              target:
+                entity_id: switch.river_2_max_backup_reserve_enabled
             - action: climate.set_temperature
               target:
                 entity_id: climate.server_cabinet
@@ -18,6 +21,9 @@
               target:
                 entity_id: switch.office
       default:
+        - action: switch.turn_off
+          target:
+            entity_id: switch.river_2_max_backup_reserve_enabled
         - action: climate.set_temperature
           target:
             entity_id: climate.server_cabinet
