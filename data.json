@@ -16,6 +16,7 @@
       "night_only": true,
       "day_brightness": 100,
       "night_brightness": 100,
+      "off_brightness": 30,
       "sunset": 30,
       "off_at": "23:30:00"
     },

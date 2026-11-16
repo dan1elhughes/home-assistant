@@ -70,10 +70,22 @@
       entity_id: sun.sun
       state: "below_horizon"
     {%- endif %}
+    {%- if entry.off_brightness and entry.off_at %}
+    - condition: time
+      before: "{{ entry.off_at }}"
+    {%- endif %}
   action:
+    {%- if entry.off_brightness %}
+    - action: light.turn_on
+      target:
+        entity_id: {{ entry.light }}
+      data:
+        brightness_pct: {{ entry.off_brightness }}
+    {%- else %}
     - action: light.turn_off
       target:
         entity_id: {{ entry.light }}
+    {%- endif %}
 {%- if entry.sunset %}
 
 - alias: "{{ entry.name }} automatic lights on at sunset"
