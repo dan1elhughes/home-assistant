@@ -1,0 +1,79 @@
+- alias: "Front lights automatic lights on"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.doorbell_person
+      to: "on"
+  condition:
+    - condition: state
+      entity_id: sun.sun
+      state: "below_horizon"
+  action:
+    - action: light.turn_on
+      target:
+        entity_id: light.front_lights
+      data:
+        brightness_pct: 100
+
+- alias: "Front lights automatic lights off"
+  mode: single
+  trigger:
+    - platform: state
+      entity_id: binary_sensor.doorbell_person
+      from: "on"
+      to: "off"
+      for:
+        minutes: 5
+  condition:
+    - condition: state
+      entity_id: binary_sensor.doorbell_person
+      state: "off"
+  action:
+    - choose:
+        - conditions:
+            - condition: sun
+              after: sunset
+            - condition: time
+              before: "23:30:00"
+          sequence:
+            - action: light.turn_on
+              target:
+                entity_id: light.front_lights
+              data:
+                brightness_pct: 30
+      default:
+        - action: light.turn_off
+          target:
+            entity_id: light.front_lights
+
+- alias: "Front lights automatic lights on at sunset"
+  mode: single
+  trigger:
+    - platform: sun
+      event: sunset
+  action:
+    - action: light.turn_on
+      target:
+        entity_id: light.front_lights
+      data:
+        brightness_pct: 30
+
+- alias: "Front lights automatic lights off at 23:30:00"
+  mode: single
+  trigger:
+    - platform: time
+      at: "23:30:00"
+  action:
+    - action: light.turn_off
+      target:
+        entity_id: light.front_lights
+
+- alias: "Front lights automatic lights off at sunrise"
+  mode: single
+  trigger:
+    - platform: sun
+      event: sunrise
+  action:
+    - action: light.turn_off
+      target:
+        entity_id: light.front_lights

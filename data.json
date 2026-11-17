@@ -10,17 +10,6 @@
       "night_only": true
     },
     {
-      "name": "Front lights",
-      "light": "light.front_lights",
-      "triggers": ["binary_sensor.doorbell_person"],
-      "night_only": true,
-      "day_brightness": 100,
-      "night_brightness": 100,
-      "off_brightness": 30,
-      "sunset": 30,
-      "off_at": "23:30:00"
-    },
-    {
       "name": "Hallway",
       "light": "light.hallway_lights",
       "triggers": ["binary_sensor.hallway_motion_sensors"],
