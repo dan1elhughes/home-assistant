@@ -10,7 +10,8 @@ from jinja2.nativetypes import NativeEnvironment
 class ZhaRecoveryTests(unittest.TestCase):
     def setUp(self):
         path = Path(__file__).parents[1] / "static/automations/integration_reload.yaml"
-        self.automation = yaml.safe_load(path.read_text())[0]
+        self.automations = yaml.safe_load(path.read_text())
+        self.automation = self.automations[0]
         self.trigger = next(
             (item for item in self.automation["trigger"] if item.get("id") == "zha_failure"),
             None,
@@ -98,6 +99,61 @@ class ZhaRecoveryTests(unittest.TestCase):
         self.entry["state"] = "loaded"
         self.assertFalse(self.render(condition))
         self.assertEqual(result["else"][0]["action"], "persistent_notification.dismiss")
+
+    def test_repeated_send_errors_reload_loaded_zha_without_restarting_radio(self):
+        self.assertFalse(any(item.get("event_type") == "system_log_event"
+                             for item in self.automation["trigger"]))
+        recovery = next(item for item in self.automations
+                        if item["id"] == "zha_reload_after_send_errors")
+        self.assertEqual(recovery["mode"], "queued")
+        event_trigger = next(
+            (item for item in recovery["trigger"]
+             if item.get("event_type") == "system_log_event"), None
+        )
+        self.assertIsNotNone(event_trigger, "ZHA send errors have no recovery trigger")
+        self.assertEqual(event_trigger["event_data"], {"level": "ERROR"})
+        guard, snapshot, remember, recover = recovery["action"]
+        error = "Failed to send request: <Status.INVALID_PARAMETER: 2>"
+        context = SimpleNamespace(event=SimpleNamespace(data={
+            "message": ["Error during service call: " + error],
+            "name": "homeassistant.components.websocket_api.http.connection",
+            "timestamp": self.now.timestamp(),
+        }))
+        self.entry["state"] = "loaded"
+        stamps = {}
+        self.env.globals["state_attr"] = lambda entity, attr: stamps.get(entity)
+        template = guard["value_template"]
+        matches = recovery["condition"][0]["value_template"]
+        self.assertTrue(self.render(template, trigger=context))
+        self.assertTrue(self.render(matches, trigger=context))
+        repeat = recover["if"][0]["value_template"]
+        for elapsed, expected in [(121, False), (120, True), (30, True), (-1, False)]:
+            self.assertEqual(self.render(repeat, trigger=context,
+                                         previous_error=self.now.timestamp() - elapsed), expected)
+        self.assertEqual(self.render(remember["data"]["timestamp"], trigger=context),
+                         self.now.timestamp())
+        self.assertEqual(remember["action"], "input_datetime.set_datetime")
+        self.assertEqual([step["action"] for step in recover["then"]],
+                         ["input_datetime.set_datetime", "homeassistant.reload_config_entry"])
+        self.assertEqual(self.render(recover["then"][1]["data"]["entry_id"]), "test-entry")
+        stamps["input_datetime.zha_invalid_parameter_last_seen"] = self.now.timestamp() - 30
+        self.assertEqual(self.render(snapshot["variables"]["previous_error"]),
+                         self.now.timestamp() - 30)
+        stamps["input_datetime.zha_recovery_last_started"] = self.now.timestamp() - 899
+        self.assertFalse(self.render(template, trigger=context))
+        stamps.clear()
+        self.entry["state"] = "setup_retry"
+        self.assertFalse(self.render(template, trigger=context))
+        self.entry["state"] = "loaded"
+        context.event.data["message"] = ["Failed to send request: <Status.MAC_NO_ACK: 233>"]
+        self.assertFalse(self.render(matches, trigger=context))
+        context.event.data.update(name="homeassistant.components.automation.test",
+                                  message=["Error while executing automation: " + error])
+        self.assertFalse(self.render(matches, trigger=context))
+        context.event.data["message"] = ["Error executing script. Error for if at pos 1: " + error]
+        self.assertFalse(self.render(matches, trigger=context))
+        context.event.data["message"] = ["Error executing script. Error for call_service at pos 1: " + error]
+        self.assertTrue(self.render(matches, trigger=context))
 
 
 if __name__ == "__main__":

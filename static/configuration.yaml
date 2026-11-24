@@ -62,6 +62,9 @@ lovelace:
       show_in_sidebar: true
       filename: dashboard_immich.yaml
 
+system_log:
+  fire_event: true
+
 logger:
   default: warning
   logs:

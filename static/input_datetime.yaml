@@ -27,3 +27,9 @@ zha_recovery_last_started:
   name: ZHA recovery last started
   has_date: true
   has_time: true
+
+zha_invalid_parameter_last_seen:
+  name: ZHA invalid parameter last seen
+  has_date: true
+  has_time: true
+  initial: '2000-01-01 00:00:00'

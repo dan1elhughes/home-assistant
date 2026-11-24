@@ -164,3 +164,55 @@
             entity_id: input_number.integration_reload_attempts
           data:
             value: 0
+
+- id: zha_reload_after_send_errors
+  alias: Zigbee - reload ZHA after send errors
+  description: Reload loaded ZHA once after two invalid-parameter send errors within two minutes.
+  mode: queued
+  max_exceeded: silent
+  variables:
+    zha_entry_id: d359984ce025fd0dccdaa360417acf62
+  trigger:
+    - platform: event
+      event_type: system_log_event
+      event_data:
+        level: ERROR
+  condition:
+    - condition: template
+      value_template: >-
+        {% set event = trigger.event.data -%}
+        {% set message = event.message | first | default('') -%}
+        {{ 'Failed to send request:' in message
+           and '<Status.INVALID_PARAMETER: 2>' in message
+           and (event.name == 'homeassistant.components.api'
+                or event.name.startswith('homeassistant.components.websocket_api.')
+                or (event.name.startswith('homeassistant.components.automation.')
+                    and 'Error for call_service at pos ' in message)) }}
+  action:
+    - condition: template
+      value_template: >-
+        {{ config_entry_attr(zha_entry_id, 'state') == 'loaded'
+           and config_entry_attr(zha_entry_id, 'disabled_by') is none
+           and as_timestamp(now())
+               - (state_attr('input_datetime.zha_recovery_last_started', 'timestamp')
+                  | float(0)) >= 900 }}
+    - variables:
+        previous_error: >-
+          {{ state_attr('input_datetime.zha_invalid_parameter_last_seen', 'timestamp') | float(0) }}
+    - action: input_datetime.set_datetime
+      target:
+        entity_id: input_datetime.zha_invalid_parameter_last_seen
+      data:
+        timestamp: "{{ trigger.event.data.timestamp }}"
+    - if:
+        - condition: template
+          value_template: "{{ 0 <= trigger.event.data.timestamp - previous_error <= 120 }}"
+      then:
+        - action: input_datetime.set_datetime
+          target:
+            entity_id: input_datetime.zha_recovery_last_started
+          data:
+            timestamp: "{{ as_timestamp(now()) }}"
+        - action: homeassistant.reload_config_entry
+          data:
+            entry_id: "{{ zha_entry_id }}"
