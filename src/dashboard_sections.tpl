@@ -119,6 +119,9 @@ views:
           - entity: select.predbat_mode
             name: Mode
             icon: mdi:cog
+          - entity: automation.predbat_control
+            name: Predbat control
+            icon: mdi:robot-outline
           - type: section
             label: Overrides
           - entity: select.predbat_manual_charge
